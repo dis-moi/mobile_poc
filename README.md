@@ -1,2 +1,1 @@
-# mobile-poc
-Poc mobile of dis moi
+# mobile_poc
