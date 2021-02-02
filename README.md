@@ -41,7 +41,6 @@ yarn run android
 
 You’re welcome to help ! Please read the [**DisMoi** Contributing Guidelines](CONTRIBUTING.md).
 
-
 ## Follow us
 - 🌐 Web: https://www.dismoi.io
 - 🐦 Twitter: https://twitter.com/DisMoiCompagnon
