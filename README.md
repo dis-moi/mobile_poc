@@ -20,17 +20,21 @@ git clone git@github.com:dis-moi/mobile_poc.git dismoi-mobile
 
 [Get started with react-native environment setup](https://reactnative.dev/docs/environment-setup)
 
-3. Install dependencies
+3. Install [yarn](https://yarnpkg.com/)
+
+> https://classic.yarnpkg.com/en/docs/install
+
+4. Install dependencies
 
 ```bash
-npm install
+yarn
 ```
 
 4. Start the project
 
 ```bash
-react-native start
-react-native run-android
+yarn start
+yarn run android
 ```
 
 ## Contributing
