@@ -8,10 +8,6 @@ To lean more about the uses cases, visit the :fr: [**Dismoi** website](https://w
 
 > At the time of writing, information are stored in database and exposed via the [**Dismoi** Backend](https://github.com/dis-moi/backend).
 
-## Contributing
-
-You’re welcome to help ! Please read the [**DisMoi** Contributing Guidelines](CONTRIBUTING.md).
-
 ## Follow us
 - 🌐 Web: https://www.dismoi.io
 - 🐦 Twitter: https://twitter.com/DisMoiCompagnon
