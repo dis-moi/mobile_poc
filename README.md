@@ -8,9 +8,35 @@ To lean more about the uses cases, visit the :fr: [**Dismoi** website](https://w
 
 > At the time of writing, information are stored in database and exposed via the [**Dismoi** Backend](https://github.com/dis-moi/backend).
 
+## Development
+
+1. Clone the repository
+
+```bash
+git clone git@github.com:dis-moi/mobile_poc.git dismoi-mobile
+```
+
+2. Environment setup
+
+[Get started with react-native environment setup](https://reactnative.dev/docs/environment-setup)
+
+3. Install dependencies
+
+```bash
+npm install
+```
+
+4. Start the project
+
+```bash
+react-native start
+react-native run-android
+```
+
 ## Contributing
 
 You’re welcome to help ! Please read the [**DisMoi** Contributing Guidelines](CONTRIBUTING.md).
+
 
 ## Follow us
 - 🌐 Web: https://www.dismoi.io
