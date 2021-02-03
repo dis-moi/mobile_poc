@@ -4,6 +4,7 @@ import com.mobile_poc.AccessibilityServiceForChromeURLModule;
 
 import android.accessibilityservice.AccessibilityService;
 import android.view.accessibility.AccessibilityEvent;
+import android.accessibilityservice.AccessibilityServiceInfo;
 
 public class AccessibilityServiceForChromeURL extends AccessibilityService {
 
@@ -19,7 +20,7 @@ public class AccessibilityServiceForChromeURL extends AccessibilityService {
 
   @Override
   public void onAccessibilityEvent(AccessibilityEvent event) {
-
+    AccessibilityServiceForChromeURLModule.prepareEvent("The user is doing something with the chrome app");
   }
 
   @Override
