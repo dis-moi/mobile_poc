@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text, View} from 'react-native';
+import {Text, View, NativeEventEmitter} from 'react-native';
 import AccessibilityServiceForChromeURL from './getAccessibilityServiceForChromeURLNativeModule';
 
 const RANDOM_NUMBER_TO_TEST = 123;
@@ -10,6 +10,13 @@ function App() {
     setSuccessMessageFromNativeModule,
   ] = React.useState('');
 
+  const [
+    eventMessageFromChromeURLNativeModule,
+    setEventMessageFromChromeURLNativeModule,
+  ] = React.useState('');
+
+  let eventEmitterListener = React.useRef(null);
+
   React.useEffect(() => {
     AccessibilityServiceForChromeURL.sampleMethod(
       'TestingIfReactNativeIsConnectedToChromeURLNativeModule',
@@ -19,6 +26,22 @@ function App() {
         setSuccessMessageFromNativeModule(messageFromNativeModule);
       },
     );
+
+    const eventEmitter = new NativeEventEmitter(
+      AccessibilityServiceForChromeURL,
+    );
+    eventEmitterListener.current = eventEmitter.addListener(
+      'EventFromChromeURLNativeModule',
+      (event) => {
+        console.log(event);
+
+        setEventMessageFromChromeURLNativeModule(event);
+      },
+    );
+
+    return () => {
+      eventEmitterListener.current.remove();
+    };
   }, []);
 
   return (
@@ -26,6 +49,9 @@ function App() {
       <Text>Welcome to react native dismoi POC!</Text>
       <Text style={{color: 'green', paddingLeft: 20, paddingRight: 20}}>
         {successMessageFromNativeModule}
+      </Text>
+      <Text style={{color: 'tomato', paddingLeft: 20, paddingRight: 20}}>
+        {eventMessageFromChromeURLNativeModule}
       </Text>
     </View>
   );
