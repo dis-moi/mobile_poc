@@ -10,6 +10,11 @@ public class AccessibilityServiceForChromeURL extends AccessibilityService {
 
   @Override
   protected void onServiceConnected() {
+    AccessibilityServiceInfo info = getServiceInfo();
+    info.eventTypes = AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED;
+    info.feedbackType = AccessibilityServiceInfo.FEEDBACK_VISUAL;
+
+    this.setServiceInfo(info);
     AccessibilityServiceForChromeURLModule.prepareEvent("Accessibility service has been activated by user");
   }
 
