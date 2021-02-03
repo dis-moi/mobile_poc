@@ -1,4 +1,4 @@
-package com.mobile_poc;
+package com.dismoi.scout;
 
 import com.facebook.react.ReactActivity;
 
@@ -10,6 +10,6 @@ public class MainActivity extends ReactActivity {
    */
   @Override
   protected String getMainComponentName() {
-    return "mobile_poc";
+    return "dismoi";
   }
 }
