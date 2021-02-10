@@ -46,7 +46,7 @@ function App() {
 
   return (
     <View style={styles.centerScreen}>
-      <Text>Welcome to react native dismoi POC!</Text>
+      <Text>Welcome to react native DisMoi POC!</Text>
       <Text style={{color: 'green', paddingLeft: 20, paddingRight: 20}}>
         {successMessageFromNativeModule}
       </Text>
