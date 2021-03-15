@@ -22,7 +22,6 @@ function App() {
       'TestingIfReactNativeIsConnectedToChromeURLNativeModule',
       RANDOM_NUMBER_TO_TEST,
       (messageFromNativeModule) => {
-        console.log('messageFromModule', messageFromNativeModule);
         setSuccessMessageFromNativeModule(messageFromNativeModule);
       },
     );
@@ -33,8 +32,6 @@ function App() {
     eventEmitterListener.current = eventEmitter.addListener(
       'EventFromChromeURLNativeModule',
       (event) => {
-        console.log(event);
-
         setEventMessageFromChromeURLNativeModule(event);
       },
     );
