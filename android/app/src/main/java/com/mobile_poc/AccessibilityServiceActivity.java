@@ -1,31 +1,37 @@
-package com.mobile_poc;
-
-import com.mobile_poc.AccessibilityServiceForChromeURLModule;
+package com.dismoi.scout;
 
 import java.util.List;
-
+import android.os.IBinder;
 import android.accessibilityservice.AccessibilityService;
 import android.view.accessibility.AccessibilityEvent;
+import android.util.Log;
 import android.accessibilityservice.AccessibilityServiceInfo;
 import android.view.accessibility.AccessibilityNodeInfo;
 
-public class AccessibilityServiceForChromeURL extends AccessibilityService {
+public class AccessibilityServiceActivity extends AccessibilityService {
 
   @Override
   protected void onServiceConnected() {
     AccessibilityServiceInfo info = getServiceInfo();
     info.eventTypes = AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED;
-    info.feedbackType = AccessibilityServiceInfo.FEEDBACK_VISUAL;
+    info.flags = AccessibilityServiceInfo.DEFAULT;
+    info.flags = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
+    info.flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS;
+    info.flags = AccessibilityServiceInfo.FLAG_REQUEST_ENHANCED_WEB_ACCESSIBILITY;
+    info.flags = AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS;
+    info.feedbackType = AccessibilityServiceInfo.FEEDBACK_ALL_MASK;
+    info.notificationTimeout = 100;
+    info.packageNames = null;
 
     this.setServiceInfo(info);
-    AccessibilityServiceForChromeURLModule.prepareEvent("Accessibility service has been activated by user");
+    AccessibilityServiceModule.prepareEventFromAccessibilityServicePermission("true");
   }
 
   @Override
   public void onDestroy() {
-    AccessibilityServiceForChromeURLModule.prepareEvent("Accessibility service has been deactivated by user");
+    AccessibilityServiceModule.prepareEventFromAccessibilityServicePermission("false");
   }
-
+  
   private String captureUrl(AccessibilityNodeInfo info) {
     List<AccessibilityNodeInfo> nodes = info.findAccessibilityNodeInfosByViewId("com.android.chrome:id/url_bar");
     if (nodes == null || nodes.size() <= 0) {
@@ -44,9 +50,16 @@ public class AccessibilityServiceForChromeURL extends AccessibilityService {
 
   @Override
   public void onAccessibilityEvent(AccessibilityEvent event) {
+
     AccessibilityNodeInfo parentNodeInfo = event.getSource();
     if (parentNodeInfo == null) {
       return;
+    }
+
+    String usedPackage = event.getPackageName().toString();
+
+    if (usedPackage.indexOf("launcher") > -1) {
+      AccessibilityServiceModule.prepareEventFromLeavingChromeApp("true");
     }
 
     String capturedUrl = captureUrl(parentNodeInfo);
@@ -54,11 +67,13 @@ public class AccessibilityServiceForChromeURL extends AccessibilityService {
       return;
     }
 
-    AccessibilityServiceForChromeURLModule.prepareEvent(capturedUrl);
+    AccessibilityServiceModule.prepareEventFromLeavingChromeApp("false");
+    AccessibilityServiceModule.prepareEventFromChromeURL(capturedUrl);
   }
 
   @Override
   public void onInterrupt() {
-    AccessibilityServiceForChromeURLModule.prepareEvent("on interrupt");
+
+    AccessibilityServiceModule.prepareEventFromLeavingChromeApp("true");
   }
 }
