@@ -10,13 +10,13 @@ To learn more about the uses cases, visit the :fr: [**Dismoi** website](https://
 
 ## Why DisMoi - mobile ?
 
-This project should work the same way as web extension but for mobile: it shows a very simple DisMoi overlay that overlap the chrome app. The overlay can be removed when the user is leaving the app and is shown when the user enters an url that is matching a scout contributor. The standard option is that the message from the scout contributor should be displayed in the same screen as the chrome app.
+This project should work the same way as web extension but for mobile: it shows a very simple DisMoi overlay that overlap the chrome app. The overlay can be removed when the user is leaving the app and is shown when the user enters an url that is matching a scout advisor. The standard option is that the message from the scout advisor should be displayed in the same screen as the chrome app.
 
 Basically, we might want to do something close to amazon assistant by showing a panel above chrome, about a bit less than half the height of the screen.
 
 ## Goals and difficulties
 
-This app should facilitate the navigation with the chrome app by providing contextual information to the user but we should do everything to not "hurt" too much the user experience. The difficulty here is that on a small mobile screen it's harder to ignore the scout contributor layout. The user might be bothered and our app might be a source of trouble for the concentration and the focus of the user.
+This app should facilitate the navigation with the chrome app by providing contextual information to the user but we should do everything to not "hurt" too much the user experience. The difficulty here is that on a small mobile screen it's harder to ignore the scout advisor layout. The user might be bothered and our app might be a source of trouble for the concentration and the focus of the user.
 
 If we want this app to work well, it has to be very intrusive by having a full control of the device. So our app can read all content on the screen and even harware sensors. Hence, dismoi should show trust to the user. We need to this app's acceptability.
 
