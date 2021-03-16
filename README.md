@@ -11,7 +11,7 @@ To learn more about the use cases, visit the :fr: [**Dismoi** website](https://w
 
 ## Why DisMoi - mobile ?
 
-This project should work the same way as web extension but for mobile: it shows a very simple DisMoi overlay that overlap the chrome app. The overlay can be removed when the user is leaving the app and is shown when the user enters an url that is matching a scout advisor. The standard option is that the message from the scout advisor should be displayed in the same screen as the chrome app.
+This project should work the same way as web extension but for mobile: it shows a very simple DisMoi overlay that overlap the chrome app. The overlay can be removed when the user is leaving the app and is shown when the user enters an url that is matching an advisor. The standard option is that the message from the scout advisor should be displayed in the same screen as the chrome app.
 
 Basically, we might want to do something close to amazon assistant by showing a panel above chrome, about a bit less than half the height of the screen.
 
