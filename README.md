@@ -57,7 +57,7 @@ yarn run android
 
 ## Contributing
 
-You’re welcome to help ! Please read the [**DisMoi** Contributing Guidelines](https://github.com/dis-moi/backend/blob/master/CONTRIBUTING.md).
+You’re welcome to help ! Please read the [**DisMoi** Contributing Guidelines](CONTRIBUTING.md).
 
 ## Follow us
 - 🌐 Web: https://www.dismoi.io
