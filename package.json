@@ -6,7 +6,7 @@
     "android": "react-native run-android",
     "start": "react-native start",
     "lint": "eslint src/**/*.js",
-    "prettier": "prettier --write src/**/*.js"
+    "prettier": "prettier --write index.js src/**/*.js"
   },
   "husky": {
     "hooks": {
