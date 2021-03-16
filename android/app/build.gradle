@@ -129,7 +129,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.mobile_poc"
+        applicationId "com.dismoi.scout"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
@@ -186,6 +186,10 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
+    implementation 'androidx.appcompat:appcompat:1.0.0'
+
+    implementation 'com.github.txusballesteros:bubbles-for-android:develop-SNAPSHOT'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
       exclude group:'com.facebook.fbjni'
