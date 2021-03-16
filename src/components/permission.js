@@ -1,5 +1,5 @@
 import React from 'react';
-import {Text} from 'react-native';
+import { Text } from 'react-native';
 
 function Permission(props) {
   if (props.isAccessibilityServiceEnabled === true) {
@@ -10,7 +10,8 @@ function Permission(props) {
           color: 'green',
           paddingLeft: 40,
           paddingRight: 40,
-        }}>
+        }}
+      >
         You can now browse on the chrome app with dis_moi poc
       </Text>
     );
@@ -23,7 +24,8 @@ function Permission(props) {
         color: 'tomato',
         paddingLeft: 40,
         paddingRight: 40,
-      }}>
+      }}
+    >
       Please enable accessibility service for dismoi_poc to work well
     </Text>
   );

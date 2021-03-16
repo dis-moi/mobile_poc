@@ -5,8 +5,8 @@
   "scripts": {
     "android": "react-native run-android",
     "start": "react-native start",
-    "lint": "eslint src/**/*.js",
-    "prettier": "prettier --write index.js src/**/*.js"
+    "lint": "eslint '**/*.js'",
+    "prettier": "prettier --write '**/*.js'"
   },
   "husky": {
     "hooks": {
@@ -14,9 +14,9 @@
     }
   },
   "lint-staged": {
-    "src/**/*.js": [
-      "prettier --write",
-      "lint"
+    "**/*.js": [
+      "yarn prettier",
+      "yarn lint"
     ]
   },
   "dependencies": {

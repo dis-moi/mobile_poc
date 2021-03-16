@@ -1,8 +1,8 @@
 import React from 'react';
-import {AccessibilityService} from '../../nativeModules/get';
+import { AccessibilityService } from '../../nativeModules/get';
 
 function useFloatingBubbleRequestPermissionEffect(
-  eventMessageFromAccessibilityServicePermission,
+  eventMessageFromAccessibilityServicePermission
 ) {
   const [
     isAccessibilityServiceEnabled,

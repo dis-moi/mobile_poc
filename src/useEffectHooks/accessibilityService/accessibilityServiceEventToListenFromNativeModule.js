@@ -1,9 +1,9 @@
 import React from 'react';
-import {NativeEventEmitter} from 'react-native';
-import {AccessibilityService} from '../../nativeModules/get';
+import { NativeEventEmitter } from 'react-native';
+import { AccessibilityService } from '../../nativeModules/get';
 
 function useAccessibilityServiveEventToListenFromNativeModuleEffect(
-  eventToListenFromNativeModule,
+  eventToListenFromNativeModule
 ) {
   let eventListener = React.useRef(null);
 
@@ -16,7 +16,7 @@ function useAccessibilityServiveEventToListenFromNativeModuleEffect(
         eventToListenFromNativeModule,
         (event) => {
           setEventMessage(event);
-        },
+        }
       );
     }
 
