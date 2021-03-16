@@ -3,7 +3,7 @@ import {Text, View, DeviceEventEmitter} from 'react-native';
 
 import {FloatingBubble} from './nativeModules/get';
 
-import Permission from './modules/permission';
+import Permission from './components/permission';
 import {isValidHttpUrl} from './libraries';
 import {
   EVENT_FROM_CHROME_URL,
