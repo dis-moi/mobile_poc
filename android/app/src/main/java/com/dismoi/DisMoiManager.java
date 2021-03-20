@@ -70,9 +70,23 @@ public class DisMoiManager {
         }
     }
 
+    public void addDisMoiMessage(DisMoiMessageLayout bubble, int x, int y) {
+        Log.d("Notification", "[DisMoiManager] add bubble");
+        if (bounded) {
+            Log.d("Notification", "[DisMoiManager] inside bounded");
+            bubblesService.addDisMoiMessage(bubble, x, y);
+        }
+    }
+
     public void removeBubble(DisMoiLayout bubble) {
         if (bounded) {
             bubblesService.removeBubble(bubble);
+        }
+    }
+
+    public void removeDisMoiMessage(DisMoiMessageLayout message) {
+        if (bounded) {
+            bubblesService.removeMessage(message);
         }
     }
 
@@ -91,7 +105,7 @@ public class DisMoiManager {
         }
 
         public Builder setTrashLayout(int trashLayoutResourceId) {
-            disMoiManager.trashLayoutResourceId =trashLayoutResourceId;
+            disMoiManager.trashLayoutResourceId = trashLayoutResourceId;
             return this;
         }
 

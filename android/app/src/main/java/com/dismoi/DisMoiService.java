@@ -22,10 +22,12 @@ import com.dismoi.scout.DisMoiLayout;
 import com.dismoi.scout.DisMoiTrashLayout;
 import com.dismoi.scout.DisMoiLayoutCoordinator;
 import android.util.Log;
+import android.widget.Button;
 
 public class DisMoiService extends Service {
     private DisMoiServiceBinder binder = new DisMoiServiceBinder();
     private List<DisMoiLayout> bubbles = new ArrayList<>();
+    private List<DisMoiMessageLayout> messages = new ArrayList<>();
     private DisMoiTrashLayout bubblesTrash;
     private WindowManager windowManager;
     private DisMoiLayoutCoordinator layoutCoordinator;
@@ -61,6 +63,22 @@ public class DisMoiService extends Service {
         });
     }
 
+    private void recycleMessage(final DisMoiMessageLayout message) {
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                getWindowManager().removeView(message);
+                for (DisMoiMessageLayout cachedMessage : messages) {
+                    if (cachedMessage == message) {
+                        message.notifyBubbleRemoved();
+                        messages.remove(cachedMessage);
+                        break;
+                    }
+                }
+            }
+        });
+    }
+
     private WindowManager getWindowManager() {
         Log.d("Notification", "[DisMoiService] getWindowManager");
         if (windowManager == null) {
@@ -78,6 +96,15 @@ public class DisMoiService extends Service {
         bubble.setViewParams(layoutParams);
         bubble.setLayoutCoordinator(layoutCoordinator);
         bubbles.add(bubble);
+        addViewToWindow(bubble);
+    }
+
+    public void addDisMoiMessage(DisMoiMessageLayout bubble, int x, int y) {
+        WindowManager.LayoutParams layoutParams = buildLayoutParamsForMessage(x, y);
+        bubble.setWindowManager(getWindowManager());
+        bubble.setViewParams(layoutParams);
+        bubble.setLayoutCoordinator(layoutCoordinator);
+        messages.add(bubble);
         addViewToWindow(bubble);
     }
 
@@ -129,6 +156,22 @@ public class DisMoiService extends Service {
         return params;
     }
 
+    private WindowManager.LayoutParams buildLayoutParamsForMessage(int x, int y) {
+
+        Log.d("Notification", "[DisMoiService] buildLayoutParamsForBubble");
+
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY ,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSPARENT);
+        params.gravity = Gravity.TOP | Gravity.START;
+        params.x = x;
+        params.y = y;
+        return params;
+    }
+
     private WindowManager.LayoutParams buildLayoutParamsForTrash() {
         int x = 0;
         int y = 0;
@@ -146,6 +189,11 @@ public class DisMoiService extends Service {
     public void removeBubble(DisMoiLayout bubble) {
         Log.d("Notification", "[DisMoiService] removeBubble");
         recycleBubble(bubble);
+    }
+
+    public void removeMessage(DisMoiMessageLayout message) {
+        Log.d("Notification", "[DisMoiService] removeBubble");
+        recycleMessage(message);
     }
 
     public class DisMoiServiceBinder extends Binder {
