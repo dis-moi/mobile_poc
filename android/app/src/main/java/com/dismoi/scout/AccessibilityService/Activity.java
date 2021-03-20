@@ -1,14 +1,14 @@
-package com.dismoi.scout;
+package com.dismoi.scout.AccessibilityService;
 
-import java.util.List;
-import android.os.IBinder;
 import android.accessibilityservice.AccessibilityService;
-import android.view.accessibility.AccessibilityEvent;
-import android.util.Log;
 import android.accessibilityservice.AccessibilityServiceInfo;
+import android.os.Build;
+import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
-public class AccessibilityServiceActivity extends AccessibilityService {
+import java.util.List;
+
+public class Activity extends AccessibilityService {
 
   @Override
   protected void onServiceConnected() {
@@ -24,16 +24,19 @@ public class AccessibilityServiceActivity extends AccessibilityService {
     info.packageNames = null;
 
     this.setServiceInfo(info);
-    AccessibilityServiceModule.prepareEventFromAccessibilityServicePermission("true");
+    Module.prepareEventFromAccessibilityServicePermission("true");
   }
 
   @Override
   public void onDestroy() {
-    AccessibilityServiceModule.prepareEventFromAccessibilityServicePermission("false");
+    Module.prepareEventFromAccessibilityServicePermission("false");
   }
   
   private String captureUrl(AccessibilityNodeInfo info) {
-    List<AccessibilityNodeInfo> nodes = info.findAccessibilityNodeInfosByViewId("com.android.chrome:id/url_bar");
+    List<AccessibilityNodeInfo> nodes = null;
+    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+      nodes = info.findAccessibilityNodeInfosByViewId("com.android.chrome:id/url_bar");
+    }
     if (nodes == null || nodes.size() <= 0) {
       return null;
     }
@@ -50,7 +53,6 @@ public class AccessibilityServiceActivity extends AccessibilityService {
 
   @Override
   public void onAccessibilityEvent(AccessibilityEvent event) {
-
     AccessibilityNodeInfo parentNodeInfo = event.getSource();
     if (parentNodeInfo == null) {
       return;
@@ -58,8 +60,8 @@ public class AccessibilityServiceActivity extends AccessibilityService {
 
     String usedPackage = event.getPackageName().toString();
 
-    if (usedPackage.indexOf("launcher") > -1) {
-      AccessibilityServiceModule.prepareEventFromLeavingChromeApp("true");
+    if (usedPackage.contains("launcher")) {
+      Module.prepareEventFromLeavingChromeApp("true");
     }
 
     String capturedUrl = captureUrl(parentNodeInfo);
@@ -67,13 +69,12 @@ public class AccessibilityServiceActivity extends AccessibilityService {
       return;
     }
 
-    AccessibilityServiceModule.prepareEventFromLeavingChromeApp("false");
-    AccessibilityServiceModule.prepareEventFromChromeURL(capturedUrl);
+    Module.prepareEventFromLeavingChromeApp("false");
+    Module.prepareEventFromChromeURL(capturedUrl);
   }
 
   @Override
   public void onInterrupt() {
-
-    AccessibilityServiceModule.prepareEventFromLeavingChromeApp("true");
+    Module.prepareEventFromLeavingChromeApp("true");
   }
 }
