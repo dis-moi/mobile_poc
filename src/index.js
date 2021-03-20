@@ -39,12 +39,35 @@ function App() {
   useFloatingBubbleInitializeEffect();
 
   React.useEffect(() => {
-    function manipulateFloatingBubble() {
+    DeviceEventEmitter.addListener('floating-dismoi-bubble-press', (e) => {
+      return FloatingBubble.showFloatingDisMoiMessage(10, 1500).then(() => {
+        // What to do when user press on the bubble
+        console.log('Bubble press');
+      });
+    });
+
+    DeviceEventEmitter.addListener('floating-dismoi-bubble-remove', (e) => {
+      // What to do when user removes the bubble
+      return console.log('Remove Bubble');
+    });
+
+    DeviceEventEmitter.addListener('floating-dismoi-message-remove', (e) => {
+      // What to do when user removes the bubble
+      return console.log('DisMoi message remove');
+    });
+
+    DeviceEventEmitter.addListener('floating-dismoi-message-press', (e) => {
+      // What to do when user removes the bubble
+      console.log('DisMoi message press');
+      return FloatingBubble.hideFloatingDisMoiMessage().then(() =>
+        console.log('Hide Floating DisMoiMessage')
+      );
+    });
+
+    async function manipulateFloatingBubble() {
       // Initialize bubble manage
       if (eventMessageFromLeavingChromeApp === 'true') {
-        return FloatingBubble.hideFloatingBubble().then(() =>
-          console.log('Hide Floating Bubble')
-        );
+        return await FloatingBubble.hideFloatingDisMoiBubble();
       }
 
       if (
@@ -52,27 +75,15 @@ function App() {
         isValidHttpUrl(eventMessageFromChromeURL)
       ) {
         if (eventMessageFromChromeURL === 'backmarket.fr') {
-          FloatingBubble.showFloatingBubble(10, 1500).then(() =>
+          FloatingBubble.showFloatingDisMoiBubble(10, 1500).then(() =>
             console.log('Floating Bubble Added')
           );
         } else {
-          FloatingBubble.hideFloatingBubble().then(() =>
+          FloatingBubble.hideFloatingDisMoiBubble().then(() =>
             console.log('Hide Floating Bubble')
           );
         }
       }
-
-      DeviceEventEmitter.addListener('floating-bubble-press', (e) => {
-        FloatingBubble.showFloatingDisMoiMessage(10, 1500).then(() => {
-          // What to do when user press on the bubble
-          console.log('Bubble press');
-        });
-      });
-
-      DeviceEventEmitter.addListener('floating-bubble-remove', (e) => {
-        // What to do when user removes the bubble
-        console.log('Remove Bubble');
-      });
     }
 
     manipulateFloatingBubble();
