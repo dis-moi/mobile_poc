@@ -190,7 +190,7 @@ dependencies {
 
     // implementation project(':bubbles')
 
-    // implementation 'com.github.txusballesteros:bubbles-for-android:develop-SNAPSHOT'
+
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {

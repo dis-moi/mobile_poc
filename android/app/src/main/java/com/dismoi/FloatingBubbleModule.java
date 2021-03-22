@@ -23,7 +23,7 @@ import android.app.Activity;
 import com.dismoi.scout.DisMoiManager;
 import com.dismoi.scout.DisMoiLayout;
 import com.dismoi.scout.DisMoiMessageLayout;
-import android.widget.Button;
+import android.widget.ImageButton;
 import com.dismoi.scout.OnCallback;
 
 
@@ -133,9 +133,19 @@ public class FloatingBubbleModule extends ReactContextBaseJavaModule {
   private void addNewFloatingDisMoiMessage(int x, int y) {
     this.removeDisMoiBubble();
 
-    Log.d("Notification", "**************************** dis message message *********************************");
+   
 
     messageDisMoiView = (DisMoiMessageLayout) LayoutInflater.from(reactContext).inflate(R.layout.dismoi_message, null);
+
+    ImageButton ib = (ImageButton) messageDisMoiView.findViewById(R.id.close);
+    ib.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+          Log.d("Notification", "**************************** dismoi click *********************************");
+          sendEventToReactNative("floating-dismoi-message-press");
+        }
+    });
 
     messageDisMoiView.setOnBubbleRemoveListener(new DisMoiMessageLayout.OnBubbleRemoveListener() {
       @Override
@@ -144,18 +154,11 @@ public class FloatingBubbleModule extends ReactContextBaseJavaModule {
         sendEventToReactNative("floating-dismoi-message-remove");
       }
     });
-    messageDisMoiView.setOnBubbleClickListener(new DisMoiMessageLayout.OnBubbleClickListener() {
-      @Override
-      public void onBubbleClick(DisMoiMessageLayout bubble) {
-        Log.d("Notification", "on message click");
-        sendEventToReactNative("floating-dismoi-message-press");
-      }
-    });
-    messageDisMoiView.setShouldStickToWall(true);
+    // messageDisMoiView.setShouldStickToWall(true);
 
     Log.d("Notification", "disMoiManager.addBubble");
-
     disMoiManager.addDisMoiMessage(messageDisMoiView, x, y);
+
   }
 
   private void addNewFloatingDisMoiBubble(int x, int y) {

@@ -76,39 +76,6 @@ public class DisMoiMessageLayout extends DisMoiBaseLayout {
         super.onAttachedToWindow();
     }
 
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        if (event != null) {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    initialX = getViewParams().x;
-                    initialY = getViewParams().y;
-                    initialTouchX = event.getRawX();
-                    initialTouchY = event.getRawY();
-                    lastTouchDown = System.currentTimeMillis();
-                    updateSize();
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    int x = initialX + (int)(event.getRawX() - initialTouchX);
-                    int y = initialY + (int)(event.getRawY() - initialTouchY);
-                    getViewParams().x = x;
-                    getViewParams().y = y;
-                    getWindowManager().updateViewLayout(this, getViewParams());
-
-                    break;
-                case MotionEvent.ACTION_UP:
-                    goToWall();
-                    if (System.currentTimeMillis() - lastTouchDown < TOUCH_TIME_THRESHOLD) {
-                        if (onBubbleClickListener != null) {
-                            onBubbleClickListener.onBubbleClick(this);
-                        }
-                    }
-                    break;
-            }
-        }
-        return super.onTouchEvent(event);
-    }
-
     private void updateSize() {
         DisplayMetrics metrics = new DisplayMetrics();
         windowManager.getDefaultDisplay().getMetrics(metrics);
