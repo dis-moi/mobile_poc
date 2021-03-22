@@ -10,10 +10,10 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
 import com.facebook.react.bridge.JavaScriptModule;
 
-public class FloatingBubblePackage implements ReactPackage {
+public class FloatingLayoutPackage implements ReactPackage {
   @Override
   public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-    return Arrays.<NativeModule>asList(new FloatingBubbleModule(reactContext));
+    return Arrays.<NativeModule>asList(new FloatingLayoutModule(reactContext));
   }
 
   // Deprecated from RN 0.47

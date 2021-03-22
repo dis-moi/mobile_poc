@@ -61,7 +61,6 @@ public class AccessibilityServiceModule extends ReactContextBaseJavaModule {
     return false;
   }
 
-
   @ReactMethod
   public void isAccessibilityEnabled(Callback callback) {
     if (!isAccessibilitySettingsOn(reactContext.getApplicationContext())) {
@@ -71,13 +70,11 @@ public class AccessibilityServiceModule extends ReactContextBaseJavaModule {
     }
   }
 
-
   private static void sendEventToReactNative(
     ReactContext reactContext,
     String eventName,
     @Nullable String params
   ) {
-
     if (reactContext == null) {
       return;
     }
@@ -90,7 +87,6 @@ public class AccessibilityServiceModule extends ReactContextBaseJavaModule {
   public static void prepareEventFromChromeURL(String params) {
     sendEventToReactNative(reactContext, "EventFromChromeURL", params);
   }
-
 
   public static void prepareEventFromAccessibilityServicePermission(String params) {
     sendEventToReactNative(reactContext, "EventFromAccessibilityServicePermission", params);

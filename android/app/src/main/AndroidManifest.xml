@@ -38,7 +38,7 @@
         />
       </service>
 
-      <service android:name=".DisMoiService"
+      <service android:name=".FloatingService"
             android:enabled="true"
             android:exported="false" />
 
