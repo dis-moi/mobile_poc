@@ -47,7 +47,7 @@ public class Manager {
   };
 
   private Manager(Context context) {
-      this.context = context;
+    this.context = context;
   }
 
   private void configureBubblesService() {
@@ -61,12 +61,12 @@ public class Manager {
   }
 
   public void recycle() {
-      context.unbindService(disMoiServiceConnection);
+    context.unbindService(disMoiServiceConnection);
   }
 
-  public void addBubble(Bubble bubble, int x, int y) {
+  public void addDisMoiBubble(Bubble bubble, int x, int y) {
     if (bounded) {
-      bubblesService.addBubble(bubble, x, y);
+      bubblesService.addDisMoiBubble(bubble, x, y);
     }
   }
 

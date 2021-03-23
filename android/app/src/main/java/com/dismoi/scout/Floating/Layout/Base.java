@@ -22,6 +22,12 @@ public class Base extends FrameLayout {
     this.windowManager = windowManager;
   }
 
+  public void create(WindowManager getWindowManager, WindowManager.LayoutParams layoutParams, Coordinator layoutCoordinator) {
+    setWindowManager(getWindowManager);
+    setViewParams(layoutParams);
+    setLayoutCoordinator(layoutCoordinator);
+  }
+
   WindowManager getWindowManager() {
     return this.windowManager;
   }

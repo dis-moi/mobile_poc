@@ -28,6 +28,8 @@ public class FloatingService extends Service {
   private Trash bubblesTrash;
   private WindowManager windowManager;
   private Coordinator layoutCoordinator;
+  private Bubble bubble;
+  private Message message;
 
   @Override
   public IBinder onBind(Intent intent) {
@@ -82,22 +84,18 @@ public class FloatingService extends Service {
     return windowManager;
   }
 
-  public void addBubble(Bubble bubble, int x, int y) {
+  public void addDisMoiBubble(Bubble bubble, int x, int y) {
     WindowManager.LayoutParams layoutParams = buildLayoutParamsForBubble(x, y);
-    bubble.setWindowManager(getWindowManager());
-    bubble.setViewParams(layoutParams);
-    bubble.setLayoutCoordinator(layoutCoordinator);
+    bubble.create(getWindowManager(), layoutParams, layoutCoordinator);
     bubbles.add(bubble);
     addViewToWindow(bubble);
   }
 
-  public void addDisMoiMessage(Message bubble, int x, int y) {
+  public void addDisMoiMessage(Message message, int x, int y) {
     WindowManager.LayoutParams layoutParams = buildLayoutParamsForMessage(x, y);
-    bubble.setWindowManager(getWindowManager());
-    bubble.setViewParams(layoutParams);
-    bubble.setLayoutCoordinator(layoutCoordinator);
-    messages.add(bubble);
-    addViewToWindow(bubble);
+    message.create(getWindowManager(), layoutParams, layoutCoordinator);
+    messages.add(message);
+    addViewToWindow(message);
   }
 
   void addTrash(int trashLayoutResourceId) {

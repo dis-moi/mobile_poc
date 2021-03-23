@@ -122,8 +122,8 @@ public class Module extends ReactContextBaseJavaModule {
 
     messageDisMoiView = (Message) LayoutInflater.from(reactContext).inflate(R.layout.dismoi_message, null);
 
-    ImageButton ib = (ImageButton) messageDisMoiView.findViewById(R.id.close);
-    ib.setOnClickListener(new View.OnClickListener() {
+    ImageButton imageButton = (ImageButton) messageDisMoiView.findViewById(R.id.close);
+    imageButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
         sendEventToReactNative("floating-dismoi-message-press");
@@ -159,7 +159,7 @@ public class Module extends ReactContextBaseJavaModule {
       }
     });
     bubbleDisMoiView.setShouldStickToWall(true);
-    bubblesManager.addBubble(bubbleDisMoiView, x, y);
+    bubblesManager.addDisMoiBubble(bubbleDisMoiView, x, y);
   }
 
   private boolean hasPermission(){
