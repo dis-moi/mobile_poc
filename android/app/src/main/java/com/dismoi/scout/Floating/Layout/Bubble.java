@@ -36,28 +36,13 @@ public class Bubble extends Base {
     onBubbleClickListener = listener;
   }
 
-  public Bubble(Context context) {
-    super(context);
-
-    animator = new MoveAnimator();
-    windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-    initializeView();
-  }
-
   public Bubble(Context context, AttributeSet attrs) {
     super(context, attrs);
     animator = new MoveAnimator();
     windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     initializeView();
   }
-
-  public Bubble(Context context, AttributeSet attrs, int defStyleAttr) {
-    super(context, attrs, defStyleAttr);
-    animator = new MoveAnimator();
-    windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-    initializeView();
-  }
-
+  
   public void setShouldStickToWall(boolean shouldStick) {
     this.shouldStickToWall = shouldStick;
   }
