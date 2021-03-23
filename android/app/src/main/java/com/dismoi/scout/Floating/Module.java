@@ -22,6 +22,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import android.annotation.SuppressLint;
 
 public class Module extends ReactContextBaseJavaModule {
 
@@ -120,7 +121,7 @@ public class Module extends ReactContextBaseJavaModule {
   private void addNewFloatingDisMoiMessage(int x, int y) {
     this.removeDisMoiBubble();
 
-    messageDisMoiView = (Message) LayoutInflater.from(reactContext).inflate(R.layout.dismoi_message, null);
+    messageDisMoiView = (Message) LayoutInflater.from(reactContext).inflate(R.layout.dismoi_message, messageDisMoiView, false);
 
     ImageButton imageButton = (ImageButton) messageDisMoiView.findViewById(R.id.close);
     imageButton.setOnClickListener(new View.OnClickListener() {
@@ -142,8 +143,8 @@ public class Module extends ReactContextBaseJavaModule {
   }
 
   private void addNewFloatingDisMoiBubble(int x, int y) {
-    
-    bubbleDisMoiView = (Bubble) LayoutInflater.from(reactContext).inflate(R.layout.bubble_layout, null);
+
+    bubbleDisMoiView = (Bubble) LayoutInflater.from(reactContext).inflate(R.layout.bubble_layout, bubbleDisMoiView, false);
 
     bubbleDisMoiView.setOnBubbleRemoveListener(new Bubble.OnBubbleRemoveListener() {
       @Override
