@@ -23,7 +23,7 @@ import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
 
-public class Module extends ReactContextBaseJavaModule {
+public class FloatingModule extends ReactContextBaseJavaModule {
 
   private Manager bubblesManager;
   private Manager messagesManager;
@@ -31,7 +31,7 @@ public class Module extends ReactContextBaseJavaModule {
   private Bubble bubbleDisMoiView;
   private Message messageDisMoiView;
 
-  public Module(ReactApplicationContext reactContext) {
+  public FloatingModule(ReactApplicationContext reactContext) {
     super(reactContext);
     this.reactContext = reactContext;
   }
@@ -47,7 +47,7 @@ public class Module extends ReactContextBaseJavaModule {
   @NonNull
   @Override
   public String getName() {
-    return "FloatingLayout";
+    return "FloatingModule";
   }
 
   @ReactMethod // Notates a method that should be exposed to React

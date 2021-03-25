@@ -16,26 +16,26 @@ import com.facebook.react.modules.core.DeviceEventManagerModule;
 
 import javax.annotation.Nullable;
 
-public class Module extends ReactContextBaseJavaModule {
+public class AccessibilityServiceModule extends ReactContextBaseJavaModule {
 
   private static ReactApplicationContext reactContext;
 
-  public Module(ReactApplicationContext reactContext) { 
+  public AccessibilityServiceModule(ReactApplicationContext reactContext) { 
     super(reactContext);
     
-    Module.reactContext = reactContext;
+    AccessibilityServiceModule.reactContext = reactContext;
   }
 
   @NonNull
   @Override
   public String getName() {
-    return "AccessibilityService";
+    return "AccessibilityServiceModule";
   }
 
 
   private boolean isAccessibilitySettingsOn(Context mContext) {
     int accessibilityEnabled = 0;
-    final String service = reactContext.getPackageName() + "/" + Module.class.getCanonicalName();
+    final String service = reactContext.getPackageName() + "/" + AccessibilityServiceModule.class.getCanonicalName();
     try {
       accessibilityEnabled = Settings.Secure.getInt(
               mContext.getApplicationContext().getContentResolver(),
