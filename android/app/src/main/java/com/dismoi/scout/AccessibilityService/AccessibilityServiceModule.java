@@ -1,18 +1,23 @@
 package com.dismoi.scout.AccessibilityService;
 
 import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.provider.Settings;
 import android.text.TextUtils;
-import android.util.Log;
 
+import android.app.Activity;
 import androidx.annotation.NonNull;
 
 import com.facebook.react.bridge.Callback;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
+import android.content.Intent;
+import android.net.Uri;
 
 import javax.annotation.Nullable;
 
@@ -66,6 +71,13 @@ public class AccessibilityServiceModule extends ReactContextBaseJavaModule {
     } else {
       callback.invoke("1", null);
     }
+  }
+
+  @ReactMethod
+  public void redirectToAppAccessibilitySettings(final Promise promise) {
+    Activity currentActivity = getCurrentActivity();
+
+    currentActivity.startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
   }
 
   private static void sendEventToReactNative(

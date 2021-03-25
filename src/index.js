@@ -4,6 +4,7 @@ import { Text, View, DeviceEventEmitter } from 'react-native';
 import { FloatingModule } from './nativeModules/get';
 
 import Permission from './components/permission';
+import AllowPermissionButton from './components/allowPermissionButton';
 import { isValidHttpUrl } from './libraries';
 import {
   EVENT_FROM_CHROME_URL,
@@ -94,6 +95,7 @@ function App() {
       <Permission
         isAccessibilityServiceEnabled={accessibilityServiceIsEnabled}
       />
+      <AllowPermissionButton />
     </View>
   );
 }
