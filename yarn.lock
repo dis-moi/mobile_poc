@@ -5865,11 +5865,6 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.1.tgz#5b3531bd76a645a4c9fb6e693ed36419e3301339"
   integrity sha512-NAnt2iGDXohE5LI7uBnLnqvLQMtzhkiAOLXTmv+qnF9Ky7xAPcX8Up/xWIhxvLVGJvuLiNc4xQLtuqDRzb4fSA==
 
-react-native-check-accessibility@^1.1.8:
-  version "1.1.8"
-  resolved "https://registry.yarnpkg.com/react-native-check-accessibility/-/react-native-check-accessibility-1.1.8.tgz#9b57b0138f384048e56940ad441dcfa4fda99536"
-  integrity sha512-MRXDwyEd5JNDmlDrkjE9I12lFS6ih5bpngSCvMVo+DwCI+92PxDQiOuHOaS/eYdgzcl+qd4BXJiBSzOkl4zRog==
-
 react-native@0.63.4:
   version "0.63.4"
   resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.63.4.tgz#2210fdd404c94a5fa6b423c6de86f8e48810ec36"

@@ -70,6 +70,13 @@ public class AccessibilityServiceModule extends ReactContextBaseJavaModule {
       callback.invoke("0", null);
     } else {
       callback.invoke("1", null);
+      Activity currentActivity = getCurrentActivity();
+
+      Intent startActivity = reactContext.getPackageManager()
+         .getLaunchIntentForPackage(reactContext.getPackageName());
+      startActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+      currentActivity.startActivity(startActivity);
     }
   }
 
