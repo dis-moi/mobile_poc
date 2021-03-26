@@ -1,19 +1,19 @@
 package com.dismoi.scout;
 
-import com.dismoi.scout.AccessibilityServicePackage;
 import android.app.Application;
 import android.content.Context;
+
+import com.dismoi.scout.AccessibilityService.AccessibilityServicePackage;
+import com.dismoi.scout.Floating.FloatingLayoutPackage;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
-import com.dismoi.scout.FloatingBubblePackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-
-import com.dismoi.scout.FloatingWidgetActivity;
 
 public class MainApplication extends Application implements ReactApplication {
 
@@ -31,7 +31,7 @@ public class MainApplication extends Application implements ReactApplication {
       // Packages that cannot be autolinked yet can be added manually here, for example:
       packages.add(new AccessibilityServicePackage());
 
-      packages.add(new FloatingBubblePackage());
+      packages.add(new FloatingLayoutPackage());
       
       return packages;
     }
