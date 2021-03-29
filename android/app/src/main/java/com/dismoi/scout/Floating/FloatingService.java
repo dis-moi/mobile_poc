@@ -68,7 +68,6 @@ public class FloatingService extends Service {
         getWindowManager().removeView(message);
         for (Message cachedMessage : messages) {
           if (cachedMessage == message) {
-            message.notifyBubbleRemoved();
             messages.remove(cachedMessage);
             break;
           }
