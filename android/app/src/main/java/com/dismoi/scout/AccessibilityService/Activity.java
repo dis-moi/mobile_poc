@@ -68,19 +68,6 @@ public class Activity extends AccessibilityService {
     return packageManager.getApplicationLabel(applicationInfo);
   }
 
-  // private void sendEventsToReactNative(String usedPackage) {
-  //   PackageManager packageManager = this.getPackageManager();
-
-  //   ApplicationInfo applicationInfo = null;
-  //   try {
-  //     applicationInfo = packageManager.getApplicationInfo(usedPackage, 0);
-  //   } catch (PackageManager.NameNotFoundException e) {
-  //     e.printStackTrace();
-  //   }
-
-  //   return packageManager.getApplicationLabel(applicationInfo);
-  // }
-
   private Boolean disMoiAppIsOnFocusScreen(CharSequence applicationLabelName) {
     return applicationLabelName.toString().equals("DisMoi");
   }
