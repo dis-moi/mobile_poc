@@ -1,15 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
   ext {
-      buildToolsVersion = "29.0.2"
-      minSdkVersion = 16
-      compileSdkVersion = 29
-      targetSdkVersion = 29
+    buildToolsVersion = "29.0.2"
+    minSdkVersion = 16
+    compileSdkVersion = 29
+    targetSdkVersion = 29
   }
   repositories {
-      google()
-      jcenter()
-      maven { url "https://plugins.gradle.org/m2/" }
+    google()
+    jcenter()
   }
   dependencies {
     classpath('com.android.tools.build:gradle:4.1.2')
@@ -18,10 +17,8 @@ buildscript {
 
     // NOTE: Do not place your application dependencies here; they belong
     // in the individual module build.gradle files
-    classpath "gradle.plugin.com.github.konifar.gradle:plugin:0.3.3"
   }
 }
-
 
 allprojects {
   repositories {

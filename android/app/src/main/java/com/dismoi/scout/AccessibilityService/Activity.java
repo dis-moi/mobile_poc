@@ -2,7 +2,6 @@ package com.dismoi.scout.AccessibilityService;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
-import android.os.Build;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -23,12 +22,12 @@ public class Activity extends AccessibilityService {
     info.packageNames = null;
 
     this.setServiceInfo(info);
-    Module.prepareEventFromAccessibilityServicePermission("true");
+    AccessibilityServiceModule.prepareEventFromAccessibilityServicePermission("true");
   }
 
   @Override
   public void onDestroy() {
-    Module.prepareEventFromAccessibilityServicePermission("false");
+    AccessibilityServiceModule.prepareEventFromAccessibilityServicePermission("false");
   }
   
   private String captureUrl(AccessibilityNodeInfo info) {
@@ -60,7 +59,7 @@ public class Activity extends AccessibilityService {
     String usedPackage = event.getPackageName().toString();
 
     if (usedPackage.contains("launcher")) {
-      Module.prepareEventFromLeavingChromeApp("true");
+      AccessibilityServiceModule.prepareEventFromLeavingChromeApp("true");
     }
 
     String capturedUrl = captureUrl(parentNodeInfo);
@@ -68,12 +67,12 @@ public class Activity extends AccessibilityService {
       return;
     }
 
-    Module.prepareEventFromLeavingChromeApp("false");
-    Module.prepareEventFromChromeURL(capturedUrl);
+    AccessibilityServiceModule.prepareEventFromLeavingChromeApp("false");
+    AccessibilityServiceModule.prepareEventFromChromeURL(capturedUrl);
   }
 
   @Override
   public void onInterrupt() {
-    Module.prepareEventFromLeavingChromeApp("true");
+    AccessibilityServiceModule.prepareEventFromLeavingChromeApp("true");
   }
 }
