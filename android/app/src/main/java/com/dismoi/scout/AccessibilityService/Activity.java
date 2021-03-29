@@ -2,16 +2,22 @@ package com.dismoi.scout.AccessibilityService;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import java.util.List;
 
 public class Activity extends AccessibilityService {
+
   @Override
   protected void onServiceConnected() {
     AccessibilityServiceInfo info = getServiceInfo();
-    info.eventTypes = AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED;
+    info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
+
+    // Have to put TYPES_ALL_MASK so that I can detect events when url is changing
+    info.eventTypes = AccessibilityEvent.TYPES_ALL_MASK;
     info.flags = AccessibilityServiceInfo.DEFAULT;
     info.flags = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
     info.flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS;
@@ -22,12 +28,12 @@ public class Activity extends AccessibilityService {
     info.packageNames = null;
 
     this.setServiceInfo(info);
-    AccessibilityServiceModule.prepareEventFromAccessibilityServicePermission("true");
+    AccessibilityServiceModule.sendEventFromAccessibilityServicePermission("true");
   }
 
   @Override
   public void onDestroy() {
-    AccessibilityServiceModule.prepareEventFromAccessibilityServicePermission("false");
+    AccessibilityServiceModule.sendEventFromAccessibilityServicePermission("false");
   }
   
   private String captureUrl(AccessibilityNodeInfo info) {
@@ -49,6 +55,40 @@ public class Activity extends AccessibilityService {
     return url;
   }
 
+  private CharSequence getAppNameInScreen(String usedPackage) {
+    PackageManager packageManager = this.getPackageManager();
+
+    ApplicationInfo applicationInfo = null;
+    try {
+      applicationInfo = packageManager.getApplicationInfo(usedPackage, 0);
+    } catch (PackageManager.NameNotFoundException e) {
+      e.printStackTrace();
+    }
+
+    return packageManager.getApplicationLabel(applicationInfo);
+  }
+
+  // private void sendEventsToReactNative(String usedPackage) {
+  //   PackageManager packageManager = this.getPackageManager();
+
+  //   ApplicationInfo applicationInfo = null;
+  //   try {
+  //     applicationInfo = packageManager.getApplicationInfo(usedPackage, 0);
+  //   } catch (PackageManager.NameNotFoundException e) {
+  //     e.printStackTrace();
+  //   }
+
+  //   return packageManager.getApplicationLabel(applicationInfo);
+  // }
+
+  private Boolean disMoiAppIsOnFocusScreen(CharSequence applicationLabelName) {
+    return applicationLabelName.toString().equals("DisMoi");
+  }
+
+  private Boolean chromeAppIsOnFocusScreen(CharSequence applicationLabelName) {
+    return applicationLabelName.toString().equals("Chrome");
+  }
+
   @Override
   public void onAccessibilityEvent(AccessibilityEvent event) {
     AccessibilityNodeInfo parentNodeInfo = event.getSource();
@@ -56,45 +96,31 @@ public class Activity extends AccessibilityService {
       return;
     }
 
-    String packageName = event.getPackageName().toString();
-    PackageManager packageManager = this.getPackageManager();
+    String packageAppNameInScreen = event.getPackageName().toString();
 
-  while (i.hasNext()) {
-    ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo)(i.next());
-    try {
-      CharSequence c = pm.getApplicationLabel(pm.getApplicationInfo(
-      info.processName, PackageManager.GET_META_DATA));
-      Log.w("LABEL", c.toString());
-    } catch (Exception e) {
-        // Name Not FOund Exception
+    CharSequence applicationLabelName = getAppNameInScreen(packageAppNameInScreen);
+
+    if (disMoiAppIsOnFocusScreen(applicationLabelName) == true) {
+      return;
     }
-  }
 
-    ApplicationInfo applicationInfo = null;
-    try {
-      applicationInfo = packageManager.getApplicationInfo(packageName, 0);
-    } catch (PackageManager.NameNotFoundException e) {
-      e.printStackTrace();
-    }
-    CharSequence applicationLabel = packageManager.getApplicationLabel(applicationInfo);
-    Log.d("Notifications", "app name is: " + applicationLabel);
-
-    if (applicationLabel.toString().equals("Chrome")) {
+    if (chromeAppIsOnFocusScreen(applicationLabelName) == true) {
       String capturedUrl = captureUrl(parentNodeInfo);
       if (capturedUrl == null) {
         return;
       }
   
-      AccessibilityServiceModule.prepareEventFromChromeURL(capturedUrl);
-      AccessibilityServiceModule.prepareEventFromAppNameFocus(applicationLabel.toString());
-      return;
+      AccessibilityServiceModule.sendLeavingChromeAppEventToReactNative("false");
+      AccessibilityServiceModule.sendChromeUrlEventToReactNative(capturedUrl);
     }
-    // AccessibilityServiceModule.prepareEventFromChromeURL("");
-    AccessibilityServiceModule.prepareEventFromAppNameFocus(applicationLabel.toString());
+    
+    if (chromeAppIsOnFocusScreen(applicationLabelName) == false) {
+      AccessibilityServiceModule.sendLeavingChromeAppEventToReactNative("true");
+    }
   }
 
   @Override
   public void onInterrupt() {
-    AccessibilityServiceModule.prepareEventFromLeavingChromeApp("true");
+    AccessibilityServiceModule.sendLeavingChromeAppEventToReactNative("true");
   }
 }

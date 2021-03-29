@@ -11,18 +11,14 @@ import {
   EVENT_FROM_CHROME_URL,
   EVENT_FROM_ACCESSIBILITY_SERVICE_PERMISSION,
   EVENT_FROM_LEAVING_CHROME_APP,
-  EVENT_FROM_APP_NAME_FOCUS,
 } from './nativeModules/eventListToListen';
 
 import useAccessibilityServiveEventToListenFromNativeModuleEffect from './useEffectHooks/accessibilityService/eventToListenFromNativeModule';
 import useFloatingModuleRequestPermissionEffect from './useEffectHooks/floating/requestPermission';
 import useCheckIfAccessibilityIsEnabledEffect from './useEffectHooks/accessibilityService/checkIfAccessibilityIsEnabled';
-import useEventToListenForAppNameFocusNameEffect from './useEffectHooks/accessibilityService/eventToListenForAppFocusName';
 import useFloatingModuleInitializeEffect from './useEffectHooks/floating/initialize';
 
 function App() {
-  const [bubbleIsAdded, setBubbleIsAdded] = React.useState(false);
-
   const eventMessageFromChromeURL = useAccessibilityServiveEventToListenFromNativeModuleEffect(
     EVENT_FROM_CHROME_URL
   );
@@ -37,10 +33,6 @@ function App() {
 
   const accessibilityServiceIsEnabled = useCheckIfAccessibilityIsEnabledEffect(
     eventMessageFromAccessibilityServicePermission
-  );
-
-  const appNameFocused = useEventToListenForAppNameFocusNameEffect(
-    EVENT_FROM_APP_NAME_FOCUS
   );
 
   useFloatingModuleRequestPermissionEffect();
@@ -67,7 +59,6 @@ function App() {
 
     DeviceEventEmitter.addListener('floating-dismoi-message-press', (e) => {
       // What to do when user press on the message
-      console.log('DisMoi message press');
       return FloatingModule.hideFloatingDisMoiMessage().then(() =>
         console.log('Hide Floating DisMoiMessage')
       );
@@ -75,13 +66,8 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    console.log('app name focused 2');
-    console.log(appNameFocused);
-
     async function manipulateFloatingModule() {
-      // Initialize bubble manage
-      if (eventMessageFromChromeURL === '' && appNameFocused !== 'Chrome') {
-        console.log('******************* Hiding ****************************');
+      if (eventMessageFromLeavingChromeApp === 'true') {
         return await FloatingModule.hideFloatingDisMoiBubble();
       }
 
@@ -90,20 +76,19 @@ function App() {
         isValidHttpUrl(eventMessageFromChromeURL)
       ) {
         if (eventMessageFromChromeURL === 'backmarket.fr') {
-          if (appNameFocused === 'Chrome') {
-            FloatingModule.showFloatingDisMoiBubble(10, 1500).then(() => {
-              console.log(
-                '******************* Showing ****************************'
-              );
-              // setBubbleIsAdded(true);
-            });
-          }
+          FloatingModule.showFloatingDisMoiBubble(10, 1500).then(() =>
+            console.log('Floating Bubble Added')
+          );
+        } else {
+          FloatingModule.hideFloatingDisMoiBubble().then(() =>
+            console.log('Hide Floating Bubble')
+          );
         }
       }
     }
 
     manipulateFloatingModule();
-  }, [appNameFocused, eventMessageFromChromeURL]);
+  }, [eventMessageFromChromeURL, eventMessageFromLeavingChromeApp]);
 
   return (
     <View style={styles.centerScreen}>

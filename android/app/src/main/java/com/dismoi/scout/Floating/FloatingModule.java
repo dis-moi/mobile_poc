@@ -38,7 +38,7 @@ public class FloatingModule extends ReactContextBaseJavaModule {
   }
 
   @ReactMethod
-  public void reopenApp(){
+  public void reopenApp() {
     Intent launchIntent = reactContext.getPackageManager().getLaunchIntentForPackage(reactContext.getPackageName());
     if (launchIntent != null) {
       reactContext.startActivity(launchIntent);
@@ -87,6 +87,8 @@ public class FloatingModule extends ReactContextBaseJavaModule {
   public void hideFloatingDisMoiMessage(final Promise promise) {
     try {
       this.removeDisMoiMessage();
+
+      messageDisMoiView = null;
       promise.resolve("");
     } catch (Exception e) {
       promise.reject("");
