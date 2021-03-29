@@ -1,28 +1,27 @@
-package com.dismoi.scout;
+package com.dismoi.scout.Floating.Layout;
 
-import android.content.Context;
-import android.os.Vibrator;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.dismoi.scout.FloatingTrashLayout;
+import com.dismoi.scout.Floating.Layout.Trash;
+import com.dismoi.scout.Floating.FloatingService;
 
-final class FloatingLayoutCoordinator {
-  private static FloatingLayoutCoordinator INSTANCE;
-  private FloatingTrashLayout trashView;
+final public class Coordinator {
+  private static Coordinator INSTANCE;
+  private Trash trashView;
   private WindowManager windowManager;
   private FloatingService bubblesService;
 
-  private static FloatingLayoutCoordinator getInstance() {
+  private static Coordinator getInstance() {
     if (INSTANCE == null) {
-      INSTANCE = new FloatingLayoutCoordinator();
+      INSTANCE = new Coordinator();
     }
     return INSTANCE;
   }
 
-  private FloatingLayoutCoordinator() { }
+  private Coordinator() { }
 
-  public void notifyBubblePositionChanged(FloatingLayout bubble, int x, int y) {
+  public void notifyBubblePositionChanged(Bubble bubble, int x, int y) {
     if (trashView != null) {
       trashView.setVisibility(View.VISIBLE);
       if (checkIfBubbleIsOverTrash(bubble)) {
@@ -35,7 +34,7 @@ final class FloatingLayoutCoordinator {
     }
   }
 
-  private void applyTrashMagnetismToBubble(FloatingLayout bubble) {
+  private void applyTrashMagnetismToBubble(Bubble bubble) {
     View trashContentView = getTrashContent();
     int trashCenterX = (trashContentView.getLeft() + (trashContentView.getMeasuredWidth() / 2));
     int trashCenterY = (trashContentView.getTop() + (trashContentView.getMeasuredHeight() / 2));
@@ -46,7 +45,7 @@ final class FloatingLayoutCoordinator {
     windowManager.updateViewLayout(bubble, bubble.getViewParams());
   }
 
-  private boolean checkIfBubbleIsOverTrash(FloatingLayout bubble) {
+  private boolean checkIfBubbleIsOverTrash(Bubble bubble) {
     boolean result = false;
     if (trashView.getVisibility() == View.VISIBLE) {
       View trashContentView = getTrashContent();
@@ -71,7 +70,7 @@ final class FloatingLayoutCoordinator {
     return result;
   }
 
-  public void notifyBubbleRelease(FloatingLayout bubble) {
+  public void notifyBubbleRelease(Bubble bubble) {
     if (trashView != null) {
       if (checkIfBubbleIsOverTrash(bubble)) {
         bubblesService.removeBubble(bubble);
@@ -81,14 +80,14 @@ final class FloatingLayoutCoordinator {
   }
 
   public static class Builder {
-    private FloatingLayoutCoordinator layoutCoordinator;
+    private final Coordinator layoutCoordinator;
 
     public Builder(FloatingService service) {
       layoutCoordinator = getInstance();
       layoutCoordinator.bubblesService = service;
     }
 
-    public Builder setTrashView(FloatingTrashLayout trashView) {
+    public Builder setTrashView(Trash trashView) {
       layoutCoordinator.trashView = trashView;
       return this;
     }
@@ -98,7 +97,7 @@ final class FloatingLayoutCoordinator {
       return this;
     }
 
-    public FloatingLayoutCoordinator build() {
+    public Coordinator build() {
       return layoutCoordinator;
     }
   }

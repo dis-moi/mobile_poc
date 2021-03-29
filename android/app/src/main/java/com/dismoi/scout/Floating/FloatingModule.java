@@ -1,35 +1,37 @@
-package com.dismoi.scout;
+package com.dismoi.scout.Floating;
 
+import android.content.Intent;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
+import android.provider.Settings;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.ImageButton;
+
+import androidx.annotation.NonNull;
+
+import com.dismoi.scout.Floating.Layout.Bubble;
+import com.dismoi.scout.Floating.Layout.Message;
+import com.dismoi.scout.Floating.OnCallback;
+import com.dismoi.scout.R;
+import com.facebook.react.bridge.Arguments;
+import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.Promise;
-import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.modules.core.DeviceEventManagerModule;
-import android.util.Log;
 
-import android.os.Bundle;
-import android.os.Build;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.content.Intent;
-import android.provider.Settings;
-import android.net.Uri;
+public class FloatingModule extends ReactContextBaseJavaModule {
 
-import android.app.Activity;
-import android.widget.ImageButton;
-
-public class FloatingLayoutModule extends ReactContextBaseJavaModule {
-
-  private FloatingManager bubblesManager;
-  private FloatingManager messagesManager;
+  private Manager bubblesManager;
+  private Manager messagesManager;
   private final ReactApplicationContext reactContext;
-  private FloatingLayout bubbleDisMoiView;
-  private FloatingMessageLayout messageDisMoiView;
+  private Bubble bubbleDisMoiView;
+  private Message messageDisMoiView;
 
-  public FloatingLayoutModule(ReactApplicationContext reactContext) {
+  public FloatingModule(ReactApplicationContext reactContext) {
     super(reactContext);
     this.reactContext = reactContext;
   }
@@ -42,12 +44,13 @@ public class FloatingLayoutModule extends ReactContextBaseJavaModule {
     }
   }
 
+  @NonNull
   @Override
   public String getName() {
-    return "FloatingLayout";
+    return "FloatingModule";
   }
 
-  @ReactMethod // Notates a method that should be exposed to React
+  @ReactMethod
   public void showFloatingDisMoiBubble(int x, int y, final Promise promise) {
     try {
       this.addNewFloatingDisMoiBubble(x, y);
@@ -57,7 +60,7 @@ public class FloatingLayoutModule extends ReactContextBaseJavaModule {
     }
   }
 
-  @ReactMethod // Notates a method that should be exposed to React
+  @ReactMethod
   public void showFloatingDisMoiMessage(int x, int y, final Promise promise) {
     if (messageDisMoiView == null) {
       try {
@@ -69,7 +72,7 @@ public class FloatingLayoutModule extends ReactContextBaseJavaModule {
     }
   }
 
-  @ReactMethod // Notates a method that should be exposed to React
+  @ReactMethod
   public void hideFloatingDisMoiBubble(final Promise promise) {
     try {
       this.removeDisMoiBubble();
@@ -79,7 +82,7 @@ public class FloatingLayoutModule extends ReactContextBaseJavaModule {
     }
   }
 
-  @ReactMethod // Notates a method that should be exposed to React
+  @ReactMethod
   public void hideFloatingDisMoiMessage(final Promise promise) {
     try {
       this.removeDisMoiMessage();
@@ -89,15 +92,12 @@ public class FloatingLayoutModule extends ReactContextBaseJavaModule {
     }
   }
   
-  @ReactMethod // Notates a method that should be exposed to React
+  @ReactMethod
   public void requestPermission(final Promise promise) {
-    try {
-      this.requestPermissionAction(promise);
-    } catch (Exception e) {
-    }
+    this.requestPermissionAction(promise);
   }  
   
-  @ReactMethod // Notates a method that should be exposed to React
+  @ReactMethod
   public void checkPermission(final Promise promise) {
     try {
       promise.resolve(hasPermission());
@@ -106,7 +106,7 @@ public class FloatingLayoutModule extends ReactContextBaseJavaModule {
     }
   }  
   
-  @ReactMethod // Notates a method that should be exposed to React
+  @ReactMethod
   public void initialize(final Promise promise) {
     try {
       this.initializeBubblesManager();
@@ -120,21 +120,13 @@ public class FloatingLayoutModule extends ReactContextBaseJavaModule {
   private void addNewFloatingDisMoiMessage(int x, int y) {
     this.removeDisMoiBubble();
 
-    messageDisMoiView = (FloatingMessageLayout) LayoutInflater.from(reactContext).inflate(R.layout.dismoi_message, null);
+    messageDisMoiView = (Message) LayoutInflater.from(reactContext).inflate(R.layout.dismoi_message, null);
 
-    ImageButton ib = (ImageButton) messageDisMoiView.findViewById(R.id.close);
-    ib.setOnClickListener(new View.OnClickListener() {
+    ImageButton imageButton = (ImageButton) messageDisMoiView.findViewById(R.id.close);
+    imageButton.setOnClickListener(new View.OnClickListener() {
       @Override
       public void onClick(View v) {
         sendEventToReactNative("floating-dismoi-message-press");
-      }
-    });
-
-    messageDisMoiView.setOnBubbleRemoveListener(new FloatingMessageLayout.OnBubbleRemoveListener() {
-      @Override
-      public void onBubbleRemoved(FloatingMessageLayout bubble) {
-        messageDisMoiView = null;
-        sendEventToReactNative("floating-dismoi-message-remove");
       }
     });
 
@@ -143,23 +135,23 @@ public class FloatingLayoutModule extends ReactContextBaseJavaModule {
 
   private void addNewFloatingDisMoiBubble(int x, int y) {
     
-    bubbleDisMoiView = (FloatingLayout) LayoutInflater.from(reactContext).inflate(R.layout.bubble_layout, null);
+    bubbleDisMoiView = (Bubble) LayoutInflater.from(reactContext).inflate(R.layout.bubble_layout, null);
 
-    bubbleDisMoiView.setOnBubbleRemoveListener(new FloatingLayout.OnBubbleRemoveListener() {
+    bubbleDisMoiView.setOnBubbleRemoveListener(new Bubble.OnBubbleRemoveListener() {
       @Override
-      public void onBubbleRemoved(FloatingLayout bubble) {
+      public void onBubbleRemoved(Bubble bubble) {
         bubbleDisMoiView = null;
         sendEventToReactNative("floating-dismoi-bubble-remove");
       }
     });
-    bubbleDisMoiView.setOnBubbleClickListener(new FloatingLayout.OnBubbleClickListener() {
+    bubbleDisMoiView.setOnBubbleClickListener(new Bubble.OnBubbleClickListener() {
       @Override
-      public void onBubbleClick(FloatingLayout bubble) {
+      public void onBubbleClick(Bubble bubble) {
         sendEventToReactNative("floating-dismoi-bubble-press");
       }
     });
     bubbleDisMoiView.setShouldStickToWall(true);
-    bubblesManager.addBubble(bubbleDisMoiView, x, y);
+    bubblesManager.addDisMoiBubble(bubbleDisMoiView, x, y);
   }
 
   private boolean hasPermission(){
@@ -171,27 +163,22 @@ public class FloatingLayoutModule extends ReactContextBaseJavaModule {
 
   private void removeDisMoiBubble() {
     if (bubbleDisMoiView != null) {
-      try {
-        bubblesManager.removeBubble(bubbleDisMoiView);
-      } catch(Exception e){
-
-      }
+      bubblesManager.removeBubble(bubbleDisMoiView);
     }
   }
 
   private void removeDisMoiMessage() {
     if (messageDisMoiView != null) {
-      try {
-        messagesManager.removeDisMoiMessage(messageDisMoiView);
-      } catch(Exception e){
-
-      }
+      messagesManager.removeDisMoiMessage(messageDisMoiView);
     }
   }
 
   public void requestPermissionAction(final Promise promise) {
     if (!hasPermission()) {
-      Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + reactContext.getPackageName()));
+      Intent intent = null;
+      if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+        intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + reactContext.getPackageName()));
+      }
       Bundle bundle = new Bundle();
       reactContext.startActivityForResult(intent, 0, bundle);
     } 
@@ -204,11 +191,9 @@ public class FloatingLayoutModule extends ReactContextBaseJavaModule {
 
   private void initializeDisMoiMessageManager() {
 
-    messagesManager = new FloatingManager.Builder(reactContext).setTrashLayout(R.layout.bubble_trash_layout).setInitializationCallback(new OnCallback() {
+    messagesManager = new Manager.Builder(reactContext).setTrashLayout(R.layout.bubble_trash_layout).setInitializationCallback(new OnCallback() {
       @Override
-      public void onInitialized() {
-        // addNewBubble();
-      }
+      public void onInitialized() {}
     }).build();
 
     messagesManager.initialize();
@@ -216,11 +201,9 @@ public class FloatingLayoutModule extends ReactContextBaseJavaModule {
 
   private void initializeBubblesManager() {
 
-    bubblesManager = new FloatingManager.Builder(reactContext).setTrashLayout(R.layout.bubble_trash_layout).setInitializationCallback(new OnCallback() {
+    bubblesManager = new Manager.Builder(reactContext).setTrashLayout(R.layout.bubble_trash_layout).setInitializationCallback(new OnCallback() {
       @Override
-      public void onInitialized() {
-        // addNewBubble();
-      }
+      public void onInitialized() {}
     }).build();
 
     bubblesManager.initialize();

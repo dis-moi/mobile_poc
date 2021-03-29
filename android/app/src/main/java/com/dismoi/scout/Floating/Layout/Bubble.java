@@ -1,4 +1,4 @@
-package com.dismoi.scout;
+package com.dismoi.scout.Floating.Layout;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
@@ -11,9 +11,10 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.WindowManager;
-import android.util.Log;
 
-public class FloatingLayout extends FloatingBaseLayout {
+import com.dismoi.scout.R;
+
+public class Bubble extends Base {
   private float initialTouchX;
   private float initialTouchY;
   private int initialX;
@@ -22,9 +23,9 @@ public class FloatingLayout extends FloatingBaseLayout {
   private OnBubbleClickListener onBubbleClickListener;
   private static final int TOUCH_TIME_THRESHOLD = 150;
   private long lastTouchDown;
-  private MoveAnimator animator;
+  private final MoveAnimator animator;
   private int width;
-  private WindowManager windowManager;
+  private final WindowManager windowManager;
   private boolean shouldStickToWall = true;
 
   public void setOnBubbleRemoveListener(OnBubbleRemoveListener listener) {
@@ -35,33 +36,18 @@ public class FloatingLayout extends FloatingBaseLayout {
     onBubbleClickListener = listener;
   }
 
-  public FloatingLayout(Context context) {
-    super(context);
-
-    animator = new MoveAnimator();
-    windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-    initializeView();
-  }
-
-  public FloatingLayout(Context context, AttributeSet attrs) {
+  public Bubble(Context context, AttributeSet attrs) {
     super(context, attrs);
     animator = new MoveAnimator();
     windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     initializeView();
   }
-
-  public FloatingLayout(Context context, AttributeSet attrs, int defStyleAttr) {
-    super(context, attrs, defStyleAttr);
-    animator = new MoveAnimator();
-    windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-    initializeView();
-  }
-
+  
   public void setShouldStickToWall(boolean shouldStick) {
     this.shouldStickToWall = shouldStick;
   }
 
-  void notifyBubbleRemoved() {
+  public void notifyBubbleRemoved() {
     if (onBubbleRemoveListener != null) {
       onBubbleRemoveListener.onBubbleRemoved(this);
     }
@@ -155,11 +141,11 @@ public class FloatingLayout extends FloatingBaseLayout {
   }
 
   public interface OnBubbleRemoveListener {
-    void onBubbleRemoved(FloatingLayout bubble);
+    void onBubbleRemoved(Bubble bubble);
   }
 
   public interface OnBubbleClickListener {
-    void onBubbleClick(FloatingLayout bubble);
+    void onBubbleClick(Bubble bubble);
   }
 
   public void goToWall() {
@@ -178,7 +164,7 @@ public class FloatingLayout extends FloatingBaseLayout {
 
 
   private class MoveAnimator implements Runnable {
-    private Handler handler = new Handler(Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
     private float destinationX;
     private float destinationY;
     private long startingTime;

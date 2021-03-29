@@ -1,5 +1,5 @@
 import React from 'react';
-import { AccessibilityService } from '../../nativeModules/get';
+import { AccessibilityServiceModule } from '../../nativeModules/get';
 
 function useFloatingBubbleRequestPermissionEffect(
   eventMessageFromAccessibilityServicePermission
@@ -11,7 +11,7 @@ function useFloatingBubbleRequestPermissionEffect(
 
   React.useEffect(() => {
     function callIsAccessibilityEnabledMethod() {
-      AccessibilityService.isAccessibilityEnabled((result) => {
+      AccessibilityServiceModule.isAccessibilityEnabled((result) => {
         if (result === '1') {
           setIsAccessibilityServiceEnabled(true);
         }

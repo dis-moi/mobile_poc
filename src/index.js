@@ -2,9 +2,10 @@
 import React from 'react';
 import { Text, View, DeviceEventEmitter } from 'react-native';
 
-import { FloatingLayout } from './nativeModules/get';
+import { FloatingModule } from './nativeModules/get';
 
 import Permission from './components/permission';
+import AllowPermissionButton from './components/allowPermissionButton';
 import { isValidHttpUrl } from './libraries';
 import {
   EVENT_FROM_CHROME_URL,
@@ -13,9 +14,9 @@ import {
 } from './nativeModules/eventListToListen';
 
 import useAccessibilityServiveEventToListenFromNativeModuleEffect from './useEffectHooks/accessibilityService/eventToListenFromNativeModule';
-import useFloatingLayoutRequestPermissionEffect from './useEffectHooks/floatingLayout/requestPermission';
+import useFloatingModuleRequestPermissionEffect from './useEffectHooks/floating/requestPermission';
 import useCheckIfAccessibilityIsEnabledEffect from './useEffectHooks/accessibilityService/checkIfAccessibilityIsEnabled';
-import useFloatingLayoutInitializeEffect from './useEffectHooks/floatingLayout/initialize';
+import useFloatingModuleInitializeEffect from './useEffectHooks/floating/initialize';
 
 function App() {
   const eventMessageFromChromeURL = useAccessibilityServiveEventToListenFromNativeModuleEffect(
@@ -34,13 +35,13 @@ function App() {
     eventMessageFromAccessibilityServicePermission
   );
 
-  useFloatingLayoutRequestPermissionEffect();
+  useFloatingModuleRequestPermissionEffect();
 
-  useFloatingLayoutInitializeEffect();
+  useFloatingModuleInitializeEffect();
 
   React.useEffect(() => {
     DeviceEventEmitter.addListener('floating-dismoi-bubble-press', (e) => {
-      return FloatingLayout.showFloatingDisMoiMessage(10, 1500).then(() => {
+      return FloatingModule.showFloatingDisMoiMessage(10, 1500).then(() => {
         // What to do when user press on the bubble
         console.log('Bubble press');
       });
@@ -59,15 +60,15 @@ function App() {
     DeviceEventEmitter.addListener('floating-dismoi-message-press', (e) => {
       // What to do when user removes the bubble
       console.log('DisMoi message press');
-      return FloatingLayout.hideFloatingDisMoiMessage().then(() =>
+      return FloatingModule.hideFloatingDisMoiMessage().then(() =>
         console.log('Hide Floating DisMoiMessage')
       );
     });
 
-    async function manipulateFloatingLayout() {
+    async function manipulateFloatingModule() {
       // Initialize bubble manage
       if (eventMessageFromLeavingChromeApp === 'true') {
-        return await FloatingLayout.hideFloatingDisMoiBubble();
+        return await FloatingModule.hideFloatingDisMoiBubble();
       }
 
       if (
@@ -75,18 +76,18 @@ function App() {
         isValidHttpUrl(eventMessageFromChromeURL)
       ) {
         if (eventMessageFromChromeURL === 'backmarket.fr') {
-          FloatingLayout.showFloatingDisMoiBubble(10, 1500).then(() =>
+          FloatingModule.showFloatingDisMoiBubble(10, 1500).then(() =>
             console.log('Floating Bubble Added')
           );
         } else {
-          FloatingLayout.hideFloatingDisMoiBubble().then(() =>
+          FloatingModule.hideFloatingDisMoiBubble().then(() =>
             console.log('Hide Floating Bubble')
           );
         }
       }
     }
 
-    manipulateFloatingLayout();
+    manipulateFloatingModule();
   }, [eventMessageFromChromeURL, eventMessageFromLeavingChromeApp]);
 
   return (
@@ -95,6 +96,7 @@ function App() {
       <Permission
         isAccessibilityServiceEnabled={accessibilityServiceIsEnabled}
       />
+      <AllowPermissionButton />
     </View>
   );
 }

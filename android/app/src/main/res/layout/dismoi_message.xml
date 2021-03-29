@@ -1,34 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.dismoi.scout.FloatingMessageLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:clipChildren="false"
-    android:clipToPadding="false">
+<com.dismoi.scout.Floating.Layout.Message
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:clipChildren="false"
+  android:clipToPadding="false">
 
-<RelativeLayout
+  <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_alignParentBottom="true"
     android:background="@android:color/white"
   >
-
     <TextView
         android:layout_width="match_parent"
         android:layout_height="140dp"
         android:gravity="center"
         android:layout_centerInParent="true"
-        android:text="Felix loves Jilly !!!"
-        android:textSize="30sp" />
-
-</RelativeLayout>
-    <ImageButton
-        android:id="@+id/close"
-        android:layout_width="38dp"
-        android:layout_height="38dp"
-        android:layout_gravity="right|top"
-        android:src="@drawable/close" />
-
-
-
-</com.dismoi.scout.FloatingMessageLayout>
+        android:text="Mieux vaut acheter votre produit reconditionné ailleurs. Derrière la bonne image de marque de la plus grande place de marché du reconditionné en France, très nombreux sont les clients de Back Market à se plaindre sur le web : faible autonomie de batterie, accessoires défaillant, écran abîmé, connectivité, service-après vente, etc. "
+        android:textSize="10sp" />
+  </RelativeLayout>
+  <ImageButton
+    android:id="@+id/close"
+    android:layout_width="38dp"
+    android:layout_height="38dp"
+    android:layout_gravity="right|top"
+    android:src="@drawable/close" />
+</com.dismoi.scout.Floating.Layout.Message>

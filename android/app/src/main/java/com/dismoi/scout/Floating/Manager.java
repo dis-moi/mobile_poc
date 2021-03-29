@@ -1,32 +1,38 @@
-package com.dismoi.scout;
+package com.dismoi.scout.Floating;
 
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.util.Log;
+import android.text.Layout;
 
-public class FloatingManager {
-  private static FloatingManager INSTANCE;
-  private Context context;
+import com.dismoi.scout.Floating.FloatingService;
+import com.dismoi.scout.Floating.OnCallback;
+
+import com.dismoi.scout.Floating.Layout.Bubble;
+import com.dismoi.scout.Floating.Layout.Message;
+
+public class Manager {
+  private static Manager INSTANCE;
+  private final Context context;
   private boolean bounded;
   private FloatingService bubblesService;
   private int trashLayoutResourceId;
   private OnCallback listener;
 
-  private static FloatingManager getInstance(Context context) {
+  private static Manager getInstance(Context context) {
     if (INSTANCE == null) {
-      INSTANCE = new FloatingManager(context);
+      INSTANCE = new Manager(context);
     }
     return INSTANCE;
   }
 
-  private ServiceConnection disMoiServiceConnection = new ServiceConnection() {
+  private final ServiceConnection disMoiServiceConnection = new ServiceConnection() {
     @Override
     public void onServiceConnected(ComponentName name, IBinder service) {
       FloatingService.FloatingServiceBinder binder = (FloatingService.FloatingServiceBinder)service;
-      FloatingManager.this.bubblesService = binder.getService();
+      Manager.this.bubblesService = binder.getService();
       configureBubblesService();
       bounded = true;
       if (listener != null) {
@@ -40,8 +46,8 @@ public class FloatingManager {
     }
   };
 
-  private FloatingManager(Context context) {
-      this.context = context;
+  private Manager(Context context) {
+    this.context = context;
   }
 
   private void configureBubblesService() {
@@ -55,35 +61,35 @@ public class FloatingManager {
   }
 
   public void recycle() {
-      context.unbindService(disMoiServiceConnection);
+    context.unbindService(disMoiServiceConnection);
   }
 
-  public void addBubble(FloatingLayout bubble, int x, int y) {
+  public void addDisMoiBubble(Bubble bubble, int x, int y) {
     if (bounded) {
-      bubblesService.addBubble(bubble, x, y);
+      bubblesService.addDisMoiBubble(bubble, x, y);
     }
   }
 
-  public void addDisMoiMessage(FloatingMessageLayout bubble, int x, int y) {
+  public void addDisMoiMessage(Message message, int x, int y) {
     if (bounded) {
-      bubblesService.addDisMoiMessage(bubble, x, y);
+      bubblesService.addDisMoiMessage(message, x, y);
     }
   }
 
-  public void removeBubble(FloatingLayout bubble) {
+  public void removeBubble(Bubble bubble) {
     if (bounded) {
       bubblesService.removeBubble(bubble);
     }
   }
 
-  public void removeDisMoiMessage(FloatingMessageLayout message) {
+  public void removeDisMoiMessage(Message message) {
     if (bounded) {
       bubblesService.removeMessage(message);
     }
   }
 
   public static class Builder {
-    private FloatingManager disMoiManager;
+    private final Manager disMoiManager;
 
     public Builder(Context context) {
       this.disMoiManager = getInstance(context);
@@ -99,7 +105,7 @@ public class FloatingManager {
       return this;
     }
 
-    public FloatingManager build() {
+    public Manager build() {
       return disMoiManager;
     }
   }

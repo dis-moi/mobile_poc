@@ -1,15 +1,17 @@
 package com.dismoi.scout;
 
-import com.dismoi.scout.AccessibilityServicePackage;
 import android.app.Application;
 import android.content.Context;
+
+import com.dismoi.scout.AccessibilityService.AccessibilityServicePackage;
+import com.dismoi.scout.Floating.FloatingLayoutPackage;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
-import com.dismoi.scout.FloatingLayoutPackage;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.soloader.SoLoader;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 

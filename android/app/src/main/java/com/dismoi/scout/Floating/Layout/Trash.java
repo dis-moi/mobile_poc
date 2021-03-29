@@ -1,4 +1,4 @@
-package com.dismoi.scout;
+package com.dismoi.scout.Floating.Layout;
 
 import android.animation.AnimatorInflater;
 import android.animation.AnimatorSet;
@@ -6,21 +6,23 @@ import android.content.Context;
 import android.os.Vibrator;
 import android.util.AttributeSet;
 
-class FloatingTrashLayout extends FloatingBaseLayout {
+import com.dismoi.scout.R;
+
+public class Trash extends Base {
   public static final int VIBRATION_DURATION_IN_MS = 70;
   private boolean magnetismApplied = false;
   private boolean attachedToWindow = false;
   private boolean isVibrateInThisSession = false;
 
-  public FloatingTrashLayout(Context context) {
+  public Trash(Context context) {
     super(context);
   }
 
-  public FloatingTrashLayout(Context context, AttributeSet attrs) {
+  public Trash(Context context, AttributeSet attrs) {
     super(context, attrs);
   }
 
-  public FloatingTrashLayout(Context context, AttributeSet attrs, int defStyleAttr) {
+  public Trash(Context context, AttributeSet attrs, int defStyleAttr) {
     super(context, attrs, defStyleAttr);
   }
 

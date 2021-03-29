@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
 import React from 'react';
-import { FloatingLayout } from '../../nativeModules/get';
+import { FloatingModule } from '../../nativeModules/get';
 
 function useFloatingLayoutInitializeEffect() {
   React.useEffect(() => {
     function callFloatingLayoutInitializeMethod() {
-      FloatingLayout.initialize().then(() =>
+      FloatingModule.initialize().then(() =>
         console.log('Initialized the bubble')
       );
     }

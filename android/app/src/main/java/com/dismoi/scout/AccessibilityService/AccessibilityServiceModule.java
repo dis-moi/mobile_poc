@@ -1,24 +1,25 @@
-package com.dismoi.scout;
-
-import com.facebook.react.bridge.ReactApplicationContext;
-import com.facebook.react.bridge.ReactContextBaseJavaModule;
-import com.facebook.react.bridge.ReactMethod;
-import com.facebook.react.bridge.Callback;
-import com.facebook.react.bridge.ReactContext;
-import com.facebook.react.modules.core.DeviceEventManagerModule;
-import android.util.Log;
-import javax.annotation.Nullable;
+package com.dismoi.scout.AccessibilityService;
 
 import android.content.Context;
-import androidx.core.view.accessibility.AccessibilityEventCompat;
-import android.view.accessibility.AccessibilityEvent;
-
-import android.view.accessibility.AccessibilityManager;
-
-import android.text.TextUtils;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.provider.Settings;
+import android.text.TextUtils;
 
+import android.app.Activity;
+import androidx.annotation.NonNull;
+
+import com.facebook.react.bridge.Callback;
 import com.facebook.react.bridge.Promise;
+import com.facebook.react.bridge.ReactApplicationContext;
+import com.facebook.react.bridge.ReactContext;
+import com.facebook.react.bridge.ReactContextBaseJavaModule;
+import com.facebook.react.bridge.ReactMethod;
+import com.facebook.react.modules.core.DeviceEventManagerModule;
+import android.content.Intent;
+import android.net.Uri;
+
+import javax.annotation.Nullable;
 
 public class AccessibilityServiceModule extends ReactContextBaseJavaModule {
 
@@ -30,10 +31,12 @@ public class AccessibilityServiceModule extends ReactContextBaseJavaModule {
     AccessibilityServiceModule.reactContext = reactContext;
   }
 
+  @NonNull
   @Override
   public String getName() {
-    return "AccessibilityService";
+    return "AccessibilityServiceModule";
   }
+
 
   private boolean isAccessibilitySettingsOn(Context mContext) {
     int accessibilityEnabled = 0;
@@ -67,7 +70,21 @@ public class AccessibilityServiceModule extends ReactContextBaseJavaModule {
       callback.invoke("0", null);
     } else {
       callback.invoke("1", null);
+      Activity currentActivity = getCurrentActivity();
+
+      Intent startActivity = reactContext.getPackageManager()
+         .getLaunchIntentForPackage(reactContext.getPackageName());
+      startActivity.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+
+      currentActivity.startActivity(startActivity);
     }
+  }
+
+  @ReactMethod
+  public void redirectToAppAccessibilitySettings(final Promise promise) {
+    Activity currentActivity = getCurrentActivity();
+
+    currentActivity.startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
   }
 
   private static void sendEventToReactNative(
