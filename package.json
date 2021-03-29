@@ -5,18 +5,19 @@
   "scripts": {
     "android": "react-native run-android",
     "start": "react-native start",
-    "lint": "eslint '**/*.js'",
+    "lintJavascript": "eslint '**/*.js'",
+    "lintJava": "cd android && ./gradlew removeUnusedResources && ./gradlew lintDebug",
     "prettier": "prettier --write '**/*.js'"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "lint-staged && yarn lintJava"
     }
   },
   "lint-staged": {
     "**/*.js": [
       "yarn prettier",
-      "yarn lint"
+      "yarn lintJavascript"
     ]
   },
   "dependencies": {

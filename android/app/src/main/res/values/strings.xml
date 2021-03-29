@@ -4,4 +4,9 @@
   <string name="app_name">DisMoi</string>
   <string name="accessibility_service_label">DisMoi</string>
   <string name="accessibility_service_description">By granting permission to this app you will allow DisMoi to read over the url events from the chrome app</string>
+  <string name="dis_moi_logo">DisMoi logo</string>
+  <string name="trash">Trash the icon</string>
+  <string name="dis_moi_message_content">Mieux vaut acheter votre produit reconditionné ailleurs. Derrière la bonne image de marque de la plus grande place de marché du reconditionné en France, très nombreux sont les clients de Back Market à se plaindre sur le web : faible autonomie de batterie, accessoires défaillant, écran abîmé, connectivité, service-après vente, etc.</string>
+  <string name="notification_number">1</string>
+  <string name="close_dis_moi_content_message_button">Close button</string>
 </resources>

@@ -5,16 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
-import android.text.Layout;
-
-import com.dismoi.scout.Floating.FloatingService;
-import com.dismoi.scout.Floating.OnCallback;
 
 import com.dismoi.scout.Floating.Layout.Bubble;
 import com.dismoi.scout.Floating.Layout.Message;
 
 public class Manager {
-  private static Manager INSTANCE;
   private final Context context;
   private boolean bounded;
   private FloatingService bubblesService;
@@ -22,10 +17,7 @@ public class Manager {
   private OnCallback listener;
 
   private static Manager getInstance(Context context) {
-    if (INSTANCE == null) {
-      INSTANCE = new Manager(context);
-    }
-    return INSTANCE;
+    return new Manager(context);
   }
 
   private final ServiceConnection disMoiServiceConnection = new ServiceConnection() {

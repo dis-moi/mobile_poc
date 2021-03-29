@@ -11,6 +11,7 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.WindowManager;
+import android.annotation.SuppressLint;
 
 import com.dismoi.scout.R;
 
@@ -42,7 +43,7 @@ public class Bubble extends Base {
     windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     initializeView();
   }
-  
+
   public void setShouldStickToWall(boolean shouldStick) {
     this.shouldStickToWall = shouldStick;
   }
@@ -63,6 +64,7 @@ public class Bubble extends Base {
     playAnimation();
   }
 
+  @SuppressLint("ClickableViewAccessibility")
   @Override
   public boolean onTouchEvent(MotionEvent event) {
     if (event != null) {
