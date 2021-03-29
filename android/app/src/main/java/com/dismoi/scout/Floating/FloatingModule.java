@@ -50,7 +50,7 @@ public class FloatingModule extends ReactContextBaseJavaModule {
     return "FloatingModule";
   }
 
-  @ReactMethod // Notates a method that should be exposed to React
+  @ReactMethod
   public void showFloatingDisMoiBubble(int x, int y, final Promise promise) {
     try {
       this.addNewFloatingDisMoiBubble(x, y);
@@ -60,7 +60,7 @@ public class FloatingModule extends ReactContextBaseJavaModule {
     }
   }
 
-  @ReactMethod // Notates a method that should be exposed to React
+  @ReactMethod
   public void showFloatingDisMoiMessage(int x, int y, final Promise promise) {
     if (messageDisMoiView == null) {
       try {
@@ -72,7 +72,7 @@ public class FloatingModule extends ReactContextBaseJavaModule {
     }
   }
 
-  @ReactMethod // Notates a method that should be exposed to React
+  @ReactMethod
   public void hideFloatingDisMoiBubble(final Promise promise) {
     try {
       this.removeDisMoiBubble();
@@ -82,7 +82,7 @@ public class FloatingModule extends ReactContextBaseJavaModule {
     }
   }
 
-  @ReactMethod // Notates a method that should be exposed to React
+  @ReactMethod
   public void hideFloatingDisMoiMessage(final Promise promise) {
     try {
       this.removeDisMoiMessage();
@@ -92,12 +92,12 @@ public class FloatingModule extends ReactContextBaseJavaModule {
     }
   }
   
-  @ReactMethod // Notates a method that should be exposed to React
+  @ReactMethod
   public void requestPermission(final Promise promise) {
     this.requestPermissionAction(promise);
   }  
   
-  @ReactMethod // Notates a method that should be exposed to React
+  @ReactMethod
   public void checkPermission(final Promise promise) {
     try {
       promise.resolve(hasPermission());
@@ -106,7 +106,7 @@ public class FloatingModule extends ReactContextBaseJavaModule {
     }
   }  
   
-  @ReactMethod // Notates a method that should be exposed to React
+  @ReactMethod
   public void initialize(final Promise promise) {
     try {
       this.initializeBubblesManager();
@@ -127,14 +127,6 @@ public class FloatingModule extends ReactContextBaseJavaModule {
       @Override
       public void onClick(View v) {
         sendEventToReactNative("floating-dismoi-message-press");
-      }
-    });
-
-    messageDisMoiView.setOnBubbleRemoveListener(new Message.OnBubbleRemoveListener() {
-      @Override
-      public void onBubbleRemoved(Message bubble) {
-        messageDisMoiView = null;
-        sendEventToReactNative("floating-dismoi-message-remove");
       }
     });
 
@@ -201,9 +193,7 @@ public class FloatingModule extends ReactContextBaseJavaModule {
 
     messagesManager = new Manager.Builder(reactContext).setTrashLayout(R.layout.bubble_trash_layout).setInitializationCallback(new OnCallback() {
       @Override
-      public void onInitialized() {
-        // addNewBubble();
-      }
+      public void onInitialized() {}
     }).build();
 
     messagesManager.initialize();
@@ -213,9 +203,7 @@ public class FloatingModule extends ReactContextBaseJavaModule {
 
     bubblesManager = new Manager.Builder(reactContext).setTrashLayout(R.layout.bubble_trash_layout).setInitializationCallback(new OnCallback() {
       @Override
-      public void onInitialized() {
-        // addNewBubble();
-      }
+      public void onInitialized() {}
     }).build();
 
     bubblesManager.initialize();
