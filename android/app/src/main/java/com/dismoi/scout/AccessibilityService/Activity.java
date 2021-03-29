@@ -2,7 +2,9 @@ package com.dismoi.scout.AccessibilityService;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
-import android.os.Build;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
+import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -58,19 +60,41 @@ public class Activity extends AccessibilityService {
       return;
     }
 
-    String usedPackage = event.getPackageName().toString();
+    String packageName = event.getPackageName().toString();
+    PackageManager packageManager = this.getPackageManager();
 
-    if (usedPackage.contains("launcher")) {
-      AccessibilityServiceModule.prepareEventFromLeavingChromeApp("true");
+  while (i.hasNext()) {
+    ActivityManager.RunningAppProcessInfo info = (ActivityManager.RunningAppProcessInfo)(i.next());
+    try {
+      CharSequence c = pm.getApplicationLabel(pm.getApplicationInfo(
+      info.processName, PackageManager.GET_META_DATA));
+      Log.w("LABEL", c.toString());
+    } catch (Exception e) {
+        // Name Not FOund Exception
     }
+  }
 
-    String capturedUrl = captureUrl(parentNodeInfo);
-    if (capturedUrl == null) {
+    ApplicationInfo applicationInfo = null;
+    try {
+      applicationInfo = packageManager.getApplicationInfo(packageName, 0);
+    } catch (PackageManager.NameNotFoundException e) {
+      e.printStackTrace();
+    }
+    CharSequence applicationLabel = packageManager.getApplicationLabel(applicationInfo);
+    Log.d("Notifications", "app name is: " + applicationLabel);
+
+    if (applicationLabel.toString().equals("Chrome")) {
+      String capturedUrl = captureUrl(parentNodeInfo);
+      if (capturedUrl == null) {
+        return;
+      }
+  
+      AccessibilityServiceModule.prepareEventFromChromeURL(capturedUrl);
+      AccessibilityServiceModule.prepareEventFromAppNameFocus(applicationLabel.toString());
       return;
     }
-
-    AccessibilityServiceModule.prepareEventFromLeavingChromeApp("false");
-    AccessibilityServiceModule.prepareEventFromChromeURL(capturedUrl);
+    // AccessibilityServiceModule.prepareEventFromChromeURL("");
+    AccessibilityServiceModule.prepareEventFromAppNameFocus(applicationLabel.toString());
   }
 
   @Override

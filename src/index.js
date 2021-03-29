@@ -9,14 +9,18 @@ import {
   EVENT_FROM_CHROME_URL,
   EVENT_FROM_ACCESSIBILITY_SERVICE_PERMISSION,
   EVENT_FROM_LEAVING_CHROME_APP,
+  EVENT_FROM_APP_NAME_FOCUS,
 } from './nativeModules/eventListToListen';
 
 import useAccessibilityServiveEventToListenFromNativeModuleEffect from './useEffectHooks/accessibilityService/eventToListenFromNativeModule';
 import useFloatingModuleRequestPermissionEffect from './useEffectHooks/floating/requestPermission';
 import useCheckIfAccessibilityIsEnabledEffect from './useEffectHooks/accessibilityService/checkIfAccessibilityIsEnabled';
+import useEventToListenForAppNameFocusNameEffect from './useEffectHooks/accessibilityService/eventToListenForAppFocusName';
 import useFloatingModuleInitializeEffect from './useEffectHooks/floating/initialize';
 
 function App() {
+  const [bubbleIsAdded, setBubbleIsAdded] = React.useState(false);
+
   const eventMessageFromChromeURL = useAccessibilityServiveEventToListenFromNativeModuleEffect(
     EVENT_FROM_CHROME_URL
   );
@@ -31,6 +35,10 @@ function App() {
 
   const accessibilityServiceIsEnabled = useCheckIfAccessibilityIsEnabledEffect(
     eventMessageFromAccessibilityServicePermission
+  );
+
+  const appNameFocused = useEventToListenForAppNameFocusNameEffect(
+    EVENT_FROM_APP_NAME_FOCUS
   );
 
   useFloatingModuleRequestPermissionEffect();
@@ -62,10 +70,16 @@ function App() {
         console.log('Hide Floating DisMoiMessage')
       );
     });
+  }, []);
+
+  React.useEffect(() => {
+    console.log('app name focused 2');
+    console.log(appNameFocused);
 
     async function manipulateFloatingModule() {
       // Initialize bubble manage
-      if (eventMessageFromLeavingChromeApp === 'true') {
+      if (eventMessageFromChromeURL === '' && appNameFocused !== 'Chrome') {
+        console.log('******************* Hiding ****************************');
         return await FloatingModule.hideFloatingDisMoiBubble();
       }
 
@@ -74,19 +88,20 @@ function App() {
         isValidHttpUrl(eventMessageFromChromeURL)
       ) {
         if (eventMessageFromChromeURL === 'backmarket.fr') {
-          FloatingModule.showFloatingDisMoiBubble(10, 1500).then(() =>
-            console.log('Floating Bubble Added')
-          );
-        } else {
-          FloatingModule.hideFloatingDisMoiBubble().then(() =>
-            console.log('Hide Floating Bubble')
-          );
+          if (appNameFocused === 'Chrome') {
+            FloatingModule.showFloatingDisMoiBubble(10, 1500).then(() => {
+              console.log(
+                '******************* Showing ****************************'
+              );
+              // setBubbleIsAdded(true);
+            });
+          }
         }
       }
     }
 
     manipulateFloatingModule();
-  }, [eventMessageFromChromeURL, eventMessageFromLeavingChromeApp]);
+  }, [appNameFocused, eventMessageFromChromeURL]);
 
   return (
     <View style={styles.centerScreen}>

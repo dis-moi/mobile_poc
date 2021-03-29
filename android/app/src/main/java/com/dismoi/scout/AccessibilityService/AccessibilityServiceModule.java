@@ -86,6 +86,10 @@ public class AccessibilityServiceModule extends ReactContextBaseJavaModule {
     sendEventToReactNative(reactContext, "EventFromChromeURL", params);
   }
 
+  public static void prepareEventFromAppNameFocus(String appNameFocus) {
+    sendEventToReactNative(reactContext, "EventFromAppNameFocus", appNameFocus);
+  }
+
   public static void prepareEventFromAccessibilityServicePermission(String params) {
     sendEventToReactNative(reactContext, "EventFromAccessibilityServicePermission", params);
   }
