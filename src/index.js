@@ -61,12 +61,12 @@ function App() {
     });
 
     DeviceEventEmitter.addListener('floating-dismoi-message-remove', (e) => {
-      // What to do when user removes the bubble
+      // What to do when user removes the message
       return console.log('DisMoi message remove');
     });
 
     DeviceEventEmitter.addListener('floating-dismoi-message-press', (e) => {
-      // What to do when user removes the bubble
+      // What to do when user press on the message
       console.log('DisMoi message press');
       return FloatingModule.hideFloatingDisMoiMessage().then(() =>
         console.log('Hide Floating DisMoiMessage')

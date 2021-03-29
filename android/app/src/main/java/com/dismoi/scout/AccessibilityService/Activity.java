@@ -8,7 +8,6 @@ import android.view.accessibility.AccessibilityNodeInfo;
 import java.util.List;
 
 public class Activity extends AccessibilityService {
-
   @Override
   protected void onServiceConnected() {
     AccessibilityServiceInfo info = getServiceInfo();
