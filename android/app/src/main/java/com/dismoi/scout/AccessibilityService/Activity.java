@@ -6,7 +6,6 @@ import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
-
 import java.util.List;
 
 public class Activity extends AccessibilityService {
@@ -82,27 +81,30 @@ public class Activity extends AccessibilityService {
     if (parentNodeInfo == null) {
       return;
     }
-
     String packageAppNameInScreen = event.getPackageName().toString();
+
+    int type = event.getEventType();
 
     CharSequence applicationLabelName = getAppNameInScreen(packageAppNameInScreen);
 
-    if (disMoiAppIsOnFocusScreen(applicationLabelName) == true) {
-      return;
-    }
-
-    if (chromeAppIsOnFocusScreen(applicationLabelName) == true) {
-      String capturedUrl = captureUrl(parentNodeInfo);
-      if (capturedUrl == null) {
+    if (type == 32 || type == 16) {
+      if (disMoiAppIsOnFocusScreen(applicationLabelName) == true) {
         return;
       }
   
-      AccessibilityServiceModule.sendLeavingChromeAppEventToReactNative("false");
-      AccessibilityServiceModule.sendChromeUrlEventToReactNative(capturedUrl);
-    }
-    
-    if (chromeAppIsOnFocusScreen(applicationLabelName) == false) {
-      AccessibilityServiceModule.sendLeavingChromeAppEventToReactNative("true");
+      if (chromeAppIsOnFocusScreen(applicationLabelName) == false) {
+        AccessibilityServiceModule.sendLeavingChromeAppEventToReactNative("true");
+      }
+  
+      if (chromeAppIsOnFocusScreen(applicationLabelName) == true) {
+        String capturedUrl = captureUrl(parentNodeInfo);
+        if (capturedUrl == null) {
+          return;
+        }
+  
+        AccessibilityServiceModule.sendLeavingChromeAppEventToReactNative("false");
+        AccessibilityServiceModule.sendChromeUrlEventToReactNative(capturedUrl);
+      }
     }
   }
 

@@ -12,7 +12,8 @@ function Permission(props) {
           paddingRight: 40,
         }}
       >
-        You can now browse on the chrome app with dis_moi poc
+        You can now browse on the chrome app and check backmarket.fr with
+        dis_moi poc
       </Text>
     );
   }
