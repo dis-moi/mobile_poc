@@ -2,16 +2,22 @@ package com.dismoi.scout.AccessibilityService;
 
 import android.accessibilityservice.AccessibilityService;
 import android.accessibilityservice.AccessibilityServiceInfo;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
 import java.util.List;
 
 public class Activity extends AccessibilityService {
+
   @Override
   protected void onServiceConnected() {
     AccessibilityServiceInfo info = getServiceInfo();
-    info.eventTypes = AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED;
+    info.eventTypes = AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED;
+
+    // Have to put TYPES_ALL_MASK so that I can detect events when url is changing
+    info.eventTypes = AccessibilityEvent.TYPES_ALL_MASK;
     info.flags = AccessibilityServiceInfo.DEFAULT;
     info.flags = AccessibilityServiceInfo.FLAG_INCLUDE_NOT_IMPORTANT_VIEWS;
     info.flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS;
@@ -22,12 +28,12 @@ public class Activity extends AccessibilityService {
     info.packageNames = null;
 
     this.setServiceInfo(info);
-    AccessibilityServiceModule.prepareEventFromAccessibilityServicePermission("true");
+    AccessibilityServiceModule.sendEventFromAccessibilityServicePermission("true");
   }
 
   @Override
   public void onDestroy() {
-    AccessibilityServiceModule.prepareEventFromAccessibilityServicePermission("false");
+    AccessibilityServiceModule.sendEventFromAccessibilityServicePermission("false");
   }
   
   private String captureUrl(AccessibilityNodeInfo info) {
@@ -49,6 +55,27 @@ public class Activity extends AccessibilityService {
     return url;
   }
 
+  private CharSequence getAppNameInScreen(String usedPackage) {
+    PackageManager packageManager = this.getPackageManager();
+
+    ApplicationInfo applicationInfo = null;
+    try {
+      applicationInfo = packageManager.getApplicationInfo(usedPackage, 0);
+    } catch (PackageManager.NameNotFoundException e) {
+      e.printStackTrace();
+    }
+
+    return packageManager.getApplicationLabel(applicationInfo);
+  }
+
+  private Boolean disMoiAppIsOnFocusScreen(CharSequence applicationLabelName) {
+    return applicationLabelName.toString().equals("DisMoi");
+  }
+
+  private Boolean chromeAppIsOnFocusScreen(CharSequence applicationLabelName) {
+    return applicationLabelName.toString().equals("Chrome");
+  }
+
   @Override
   public void onAccessibilityEvent(AccessibilityEvent event) {
     AccessibilityNodeInfo parentNodeInfo = event.getSource();
@@ -56,23 +83,31 @@ public class Activity extends AccessibilityService {
       return;
     }
 
-    String usedPackage = event.getPackageName().toString();
+    String packageAppNameInScreen = event.getPackageName().toString();
 
-    if (usedPackage.contains("launcher")) {
-      AccessibilityServiceModule.prepareEventFromLeavingChromeApp("true");
-    }
+    CharSequence applicationLabelName = getAppNameInScreen(packageAppNameInScreen);
 
-    String capturedUrl = captureUrl(parentNodeInfo);
-    if (capturedUrl == null) {
+    if (disMoiAppIsOnFocusScreen(applicationLabelName) == true) {
       return;
     }
 
-    AccessibilityServiceModule.prepareEventFromLeavingChromeApp("false");
-    AccessibilityServiceModule.prepareEventFromChromeURL(capturedUrl);
+    if (chromeAppIsOnFocusScreen(applicationLabelName) == true) {
+      String capturedUrl = captureUrl(parentNodeInfo);
+      if (capturedUrl == null) {
+        return;
+      }
+  
+      AccessibilityServiceModule.sendLeavingChromeAppEventToReactNative("false");
+      AccessibilityServiceModule.sendChromeUrlEventToReactNative(capturedUrl);
+    }
+    
+    if (chromeAppIsOnFocusScreen(applicationLabelName) == false) {
+      AccessibilityServiceModule.sendLeavingChromeAppEventToReactNative("true");
+    }
   }
 
   @Override
   public void onInterrupt() {
-    AccessibilityServiceModule.prepareEventFromLeavingChromeApp("true");
+    AccessibilityServiceModule.sendLeavingChromeAppEventToReactNative("true");
   }
 }

@@ -78,7 +78,7 @@ public class FloatingService extends Service {
 
   private WindowManager getWindowManager() {
     if (windowManager == null) {
-      windowManager = (WindowManager)getSystemService(WINDOW_SERVICE);
+      windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
     }
     return windowManager;
   }

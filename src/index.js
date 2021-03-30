@@ -59,14 +59,14 @@ function App() {
 
     DeviceEventEmitter.addListener('floating-dismoi-message-press', (e) => {
       // What to do when user press on the message
-      console.log('DisMoi message press');
       return FloatingModule.hideFloatingDisMoiMessage().then(() =>
         console.log('Hide Floating DisMoiMessage')
       );
     });
+  }, []);
 
+  React.useEffect(() => {
     async function manipulateFloatingModule() {
-      // Initialize bubble manage
       if (eventMessageFromLeavingChromeApp === 'true') {
         return await FloatingModule.hideFloatingDisMoiBubble();
       }
