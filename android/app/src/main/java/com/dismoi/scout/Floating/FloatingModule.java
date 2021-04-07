@@ -123,7 +123,7 @@ public class FloatingModule extends ReactContextBaseJavaModule {
   private void addNewFloatingDisMoiMessage(int x, int y) {
     this.removeDisMoiBubble();
 
-    messageDisMoiView = (Message) LayoutInflater.from(reactContext).inflate(R.layout.dismoi_message, messageDisMoiView, false);
+    messageDisMoiView = (Message) LayoutInflater.from(reactContext).inflate(R.layout.constraint_layout_example, messageDisMoiView, false);
 
     ImageButton imageButton = (ImageButton) messageDisMoiView.findViewById(R.id.close);
     imageButton.setOnClickListener(new View.OnClickListener() {

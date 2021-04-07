@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 
 import com.dismoi.scout.R;
 
-public class Trash extends Base {
+public class Trash extends Layout {
   public static final int VIBRATION_DURATION_IN_MS = 70;
   private boolean magnetismApplied = false;
   private boolean attachedToWindow = false;
@@ -61,7 +61,7 @@ public class Trash extends Base {
 
   void vibrate() {
     if (!isVibrateInThisSession){
-      final Vibrator vibrator = (Vibrator)getContext().getSystemService(Context.VIBRATOR_SERVICE);
+      final Vibrator vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
       vibrator.vibrate(VIBRATION_DURATION_IN_MS);
       isVibrateInThisSession = true;
     }

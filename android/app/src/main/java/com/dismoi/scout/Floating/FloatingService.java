@@ -12,14 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.dismoi.scout.Floating.Layout.Bubble;
+import com.dismoi.scout.Floating.Layout.Coordinator;
+import com.dismoi.scout.Floating.Layout.Layout;
 import com.dismoi.scout.Floating.Layout.Message;
 import com.dismoi.scout.Floating.Layout.Trash;
-import com.dismoi.scout.Floating.Layout.Coordinator;
-import com.dismoi.scout.Floating.Layout.Base;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FloatingService extends Service {
   private final FloatingServiceBinder binder = new FloatingServiceBinder();
@@ -94,7 +94,8 @@ public class FloatingService extends Service {
     WindowManager.LayoutParams layoutParams = buildLayoutParamsForMessage(x, y);
     message.create(getWindowManager(), layoutParams, layoutCoordinator);
     messages.add(message);
-    addViewToWindow(message);
+    
+    addViewToWindowForMessage(message);
   }
 
   void addTrash(int trashLayoutResourceId) {
@@ -116,10 +117,20 @@ public class FloatingService extends Service {
             .build();
   }
 
-  private void addViewToWindow(final Base view) {
+  private void addViewToWindow(final Layout view) {
     new Handler(Looper.getMainLooper()).post(new Runnable() {
       @Override
       public void run() {
+        getWindowManager().addView(view, view.getViewParams());
+      }
+    });
+  }
+
+  private void addViewToWindowForMessage(final Layout view) {
+    new Handler(Looper.getMainLooper()).post(new Runnable() {
+      @Override
+      public void run() {
+        
         getWindowManager().addView(view, view.getViewParams());
       }
     });

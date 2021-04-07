@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <resources>
   <string name="app_name">DisMoi</string>
   <string name="accessibility_service_label">DisMoi</string>
@@ -21,7 +20,9 @@ Freedom of information : You receive only the information of contributors you ha
 Each Dismoi user can also ask a question about the web page they are visiting, to which contributors may respond to.</string>
   <string name="dis_moi_logo">DisMoi logo</string>
   <string name="trash">Trash the icon</string>
-  <string name="dis_moi_message_content">Mieux vaut acheter votre produit reconditionné ailleurs. Derrière la bonne image de marque de la plus grande place de marché du reconditionné en France, très nombreux sont les clients de Back Market à se plaindre sur le web : faible autonomie de batterie, accessoires défaillant, écran abîmé, connectivité, service-après vente, etc.</string>
+  <string name="dis_moi_message_content">Mieux vaut acheter votre produit reconditionné ailleurs. Derrière la bonne image de marque…</string>
   <string name="notification_number">1</string>
   <string name="close_dis_moi_content_message_button">Close button</string>
+    <string name="scout_name">Le même en mieux</string>
+    <string name="dismoi_logo_description">dismoi logo</string>
 </resources>

@@ -15,7 +15,7 @@ import android.annotation.SuppressLint;
 
 import com.dismoi.scout.R;
 
-public class Bubble extends Base {
+public class Bubble extends Layout {
   private float initialTouchX;
   private float initialTouchY;
   private int initialX;
@@ -40,6 +40,7 @@ public class Bubble extends Base {
   public Bubble(Context context, AttributeSet attrs) {
     super(context, attrs);
     animator = new MoveAnimator();
+    
     windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     initializeView();
   }
