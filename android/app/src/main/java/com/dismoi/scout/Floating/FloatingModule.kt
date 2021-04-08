@@ -17,6 +17,7 @@ import com.dismoi.scout.R
 import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import android.util.Log
+import android.widget.LinearLayout
 
 class FloatingModule(private val reactContext: ReactApplicationContext) : ReactContextBaseJavaModule(reactContext) {
   private var bubblesManager: Manager? = null
@@ -104,11 +105,27 @@ class FloatingModule(private val reactContext: ReactApplicationContext) : ReactC
     }
   }
 
+  private fun addNewFloatingDisMoiMessageDetail(x: Int, y: Int) {
+    removeDisMoiBubble()
+    removeDisMoiMessage()
+    messageDisMoiView = LayoutInflater.from(reactContext).inflate(R.layout.message, messageDisMoiView, false) as Message
+    val imageButton = messageDisMoiView!!.findViewById<View>(R.id.close) as ImageButton
+    imageButton.setOnClickListener { sendEventToReactNative("floating-dismoi-message-press") }
+
+    messagesManager!!.addDisMoiMessage(messageDisMoiView!!, x, y)
+  }
+
   private fun addNewFloatingDisMoiMessage(x: Int, y: Int) {
     removeDisMoiBubble()
     messageDisMoiView = LayoutInflater.from(reactContext).inflate(R.layout.messages, messageDisMoiView, false) as Message
     val imageButton = messageDisMoiView!!.findViewById<View>(R.id.close) as ImageButton
     imageButton.setOnClickListener { sendEventToReactNative("floating-dismoi-message-press") }
+
+    val layoutMessage = messageDisMoiView!!.findViewById<View>(R.id.message) as LinearLayout
+    layoutMessage.setOnClickListener { 
+      Log.d("Notification", "button press") 
+      addNewFloatingDisMoiMessageDetail(10, 1500)
+    }
     messagesManager!!.addDisMoiMessage(messageDisMoiView!!, x, y)
   }
 

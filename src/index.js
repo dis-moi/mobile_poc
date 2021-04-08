@@ -68,7 +68,8 @@ function App() {
   React.useEffect(() => {
     async function manipulateFloatingModule() {
       if (eventMessageFromLeavingChromeApp === 'true') {
-        return await FloatingModule.hideFloatingDisMoiBubble();
+        await FloatingModule.hideFloatingDisMoiBubble();
+        return await FloatingModule.hideFloatingDisMoiMessage();
       }
 
       if (
@@ -81,6 +82,9 @@ function App() {
           );
         } else {
           FloatingModule.hideFloatingDisMoiBubble().then(() =>
+            console.log('Hide Floating Bubble')
+          );
+          FloatingModule.hideFloatingDisMoiMessage().then(() =>
             console.log('Hide Floating Bubble')
           );
         }

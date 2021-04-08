@@ -25,4 +25,7 @@ Each Dismoi user can also ask a question about the web page they are visiting, t
   <string name="close_dis_moi_content_message_button">Close button</string>
     <string name="scout_name">Le même en mieux</string>
     <string name="dismoi_logo_description">dismoi logo</string>
+    <string name="mieux_vaut_acheter_backmarket">Mieux vaut acheter votre produit reconditionné ailleurs. Derrière la bonne image de marque de la plus grande place de marché du reconditionné en France, très nombreux sont les clients de Back Market à se plaindre sur le web : faible autonomie de batterie, accessoires défaillant, écran abîmé, connectivité, service-après vente, etc. - Pour un smartphone reconditionné, orientez vous plutôt vers la marque Smaaart ou directement vers les marques elles-mêmes, par exemple Apple Refurbish. - Pour les autres produits, privilégiez les produits vendus par le fabriquant lui-même, sur BackMarket (il est parfois signalé par la mention Boutique Officielle sous l image du produit) ou sur le site de la marque elle-même. En savoir plus sur les risques d acheter chez BackMarket</string>
+  <string name="selon_le_monde">Selon Le Monde</string>
+  <string name="selon_le_monde_backmarket_est_un_choix_moins_s_r_moins_cologique_et_moins_citoyen">Selon le monde backmarket est un choix moins sûr, moins écologique, et moins citoyen…</string>
 </resources>

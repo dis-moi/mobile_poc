@@ -130,6 +130,7 @@ android {
     disable "UnusedResources"
     disable "KotlinPropertyAccess"
     disable "UnknownNullness"
+    disable "Typos"
   }
 
   compileSdkVersion rootProject.ext.compileSdkVersion
