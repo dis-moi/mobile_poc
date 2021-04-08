@@ -4,9 +4,7 @@ import { AccessibilityServiceModule } from '../nativeModules/get';
 
 const NewModuleButton = () => {
   const onPress = () => {
-    AccessibilityServiceModule.redirectToAppAccessibilitySettings().then(
-      () => {}
-    );
+    AccessibilityServiceModule.redirectToAppAccessibilitySettings();
   };
 
   return (
