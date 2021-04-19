@@ -10,7 +10,6 @@ import { isValidHttpUrl } from './libraries';
 import {
   EVENT_FROM_CHROME_URL,
   EVENT_FROM_ACCESSIBILITY_SERVICE_PERMISSION,
-  EVENT_FROM_LEAVING_CHROME_APP,
 } from './nativeModules/eventListToListen';
 
 import useAccessibilityServiveEventToListenFromNativeModuleEffect from './useEffectHooks/accessibilityService/eventToListenFromNativeModule';
@@ -27,10 +26,6 @@ function App() {
     EVENT_FROM_ACCESSIBILITY_SERVICE_PERMISSION
   );
 
-  const eventMessageFromLeavingChromeApp = useAccessibilityServiveEventToListenFromNativeModuleEffect(
-    EVENT_FROM_LEAVING_CHROME_APP
-  );
-
   const accessibilityServiceIsEnabled = useCheckIfAccessibilityIsEnabledEffect(
     eventMessageFromAccessibilityServicePermission
   );
@@ -41,8 +36,6 @@ function App() {
 
   React.useEffect(() => {
     DeviceEventEmitter.addListener('floating-dismoi-bubble-press', (e) => {
-      console.log('.................');
-
       return FloatingModule.showFloatingDisMoiMessage(10, 1500).then(() => {
         // What to do when user press on the bubble
         console.log('Bubble press');
@@ -68,9 +61,6 @@ function App() {
   }, []);
 
   React.useEffect(() => {
-    console.log('event message from chrome url');
-    console.log(eventMessageFromChromeURL);
-
     function getNoticeIds(matchingContexts) {
       return matchingContexts
         .map((res) => {
@@ -84,11 +74,6 @@ function App() {
     }
 
     async function manipulateFloatingModule() {
-      if (eventMessageFromLeavingChromeApp === 'true') {
-        await FloatingModule.hideFloatingDisMoiBubble();
-        return await FloatingModule.hideFloatingDisMoiMessage();
-      }
-
       if (
         eventMessageFromChromeURL &&
         isValidHttpUrl(eventMessageFromChromeURL)
@@ -109,10 +94,6 @@ function App() {
 
         if (notices.length > 0) {
           const numberOfNotice = notices.length;
-          console.log('notices');
-          console.log(notices);
-          console.log('event message from chrome url');
-          console.log(eventMessageFromChromeURL);
 
           FloatingModule.showFloatingDisMoiBubble(
             10,
@@ -133,10 +114,18 @@ function App() {
           );
         }
       }
+      if (isValidHttpUrl(eventMessageFromChromeURL) === false) {
+        FloatingModule.hideFloatingDisMoiBubble().then(() =>
+          console.log('Hide Floating Bubble')
+        );
+        FloatingModule.hideFloatingDisMoiMessage().then(() =>
+          console.log('Hide Floating Bubble')
+        );
+      }
     }
 
     manipulateFloatingModule();
-  }, [eventMessageFromChromeURL, eventMessageFromLeavingChromeApp]);
+  }, [eventMessageFromChromeURL]);
 
   return (
     <View style={styles.centerScreen}>
