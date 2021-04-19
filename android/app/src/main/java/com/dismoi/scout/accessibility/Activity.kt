@@ -77,13 +77,13 @@ class Activity : AccessibilityService() {
         return
       }
       if (chromeAppIsOnFocusScreen(applicationLabelName) == false) {
-        //sendLeavingChromeAppEventToReactNative("true")
+        // sendLeavingChromeAppEventToReactNative("true")
 
         sendChromeUrlEventToReactNative("")
       }
       if (chromeAppIsOnFocusScreen(applicationLabelName) == true) {
         val capturedUrl = captureUrl(parentNodeInfo) ?: return
-        //sendLeavingChromeAppEventToReactNative("false")
+        // sendLeavingChromeAppEventToReactNative("false")
         sendChromeUrlEventToReactNative(capturedUrl)
       }
     }
