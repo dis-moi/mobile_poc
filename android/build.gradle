@@ -9,8 +9,8 @@ buildscript {
   }
   repositories {
     maven { url "https://plugins.gradle.org/m2/" }
-      maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
-      mavenCentral()
+    maven { url 'https://dl.bintray.com/kotlin/kotlin-eap' }
+    mavenCentral()
   }
   repositories {
     google()
@@ -24,7 +24,8 @@ buildscript {
     // NOTE: Do not place your application dependencies here; they belong
     // in the individual module build.gradle files
     classpath "gradle.plugin.com.github.konifar.gradle:plugin:0.3.3"
-      classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    classpath "org.jlleitschuh.gradle:ktlint-gradle:10.0.0"
   }
 }
 
@@ -47,4 +48,14 @@ allprojects {
     jcenter()
     maven { url 'https://www.jitpack.io' }
   }
+
+  afterEvaluate {
+    ktlint {
+      android = true
+    }
+  }
+
+  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all { kotlinOptions.allWarningsAsErrors = false }
+
+  apply plugin: "org.jlleitschuh.gradle.ktlint"
 }

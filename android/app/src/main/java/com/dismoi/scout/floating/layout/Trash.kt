@@ -1,4 +1,4 @@
-package com.dismoi.scout.Floating.Layout
+package com.dismoi.scout.floating.layout
 
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
@@ -14,7 +14,9 @@ class Trash : Layout {
 
   constructor(context: Context?) : super(context) {}
   constructor(context: Context?, attrs: AttributeSet?) : super(context, attrs) {}
-  constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {}
+  constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    context, attrs, defStyleAttr
+  ) {}
 
   override fun onAttachedToWindow() {
     super.onAttachedToWindow()
@@ -65,7 +67,7 @@ class Trash : Layout {
   private fun playAnimation(animationResourceId: Int) {
     if (!isInEditMode) {
       val animator = AnimatorInflater
-              .loadAnimator(context, animationResourceId) as AnimatorSet
+        .loadAnimator(context, animationResourceId) as AnimatorSet
       animator.setTarget(getChildAt(0))
       animator.start()
     }

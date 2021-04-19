@@ -1,22 +1,23 @@
-package com.dismoi.scout.Floating.Layout
+package com.dismoi.scout.floating.layout
 
 import android.view.View
 import android.view.WindowManager
-import com.dismoi.scout.Floating.FloatingService
+import com.dismoi.scout.floating.FloatingService
 
 class Coordinator private constructor() {
-  private var trashView: Trash? = null
+  private var _trashView: Trash? = null
   private var windowManager: WindowManager? = null
   private var bubblesService: FloatingService? = null
+
   fun notifyBubblePositionChanged(bubble: Bubble, x: Int, y: Int) {
-    if (trashView != null) {
-      trashView!!.visibility = View.VISIBLE
+    if (_trashView != null) {
+      _trashView!!.visibility = View.VISIBLE
       if (checkIfBubbleIsOverTrash(bubble)) {
-        trashView!!.applyMagnetism()
-        trashView!!.vibrate()
+        _trashView!!.applyMagnetism()
+        _trashView!!.vibrate()
         applyTrashMagnetismToBubble(bubble)
       } else {
-        trashView!!.releaseMagnetism()
+        _trashView!!.releaseMagnetism()
       }
     }
   }
@@ -34,7 +35,7 @@ class Coordinator private constructor() {
 
   private fun checkIfBubbleIsOverTrash(bubble: Bubble): Boolean {
     var result = false
-    if (trashView!!.visibility == View.VISIBLE) {
+    if (_trashView!!.visibility == View.VISIBLE) {
       val trashContentView = trashContent
       val trashWidth = trashContentView.measuredWidth
       val trashHeight = trashContentView.measuredHeight
@@ -58,18 +59,18 @@ class Coordinator private constructor() {
   }
 
   fun notifyBubbleRelease(bubble: Bubble) {
-    if (trashView != null) {
+    if (_trashView != null) {
       if (checkIfBubbleIsOverTrash(bubble)) {
         bubblesService!!.removeBubble(bubble)
       }
-      trashView!!.visibility = View.GONE
+      _trashView!!.visibility = View.GONE
     }
   }
 
   class Builder(service: FloatingService?) {
     private val layoutCoordinator: Coordinator?
     fun setTrashView(trashView: Trash?): Builder {
-      layoutCoordinator!!.trashView = trashView
+      layoutCoordinator!!._trashView = trashView
       return this
     }
 
@@ -89,7 +90,7 @@ class Coordinator private constructor() {
   }
 
   private val trashContent: View
-    private get() = trashView!!.getChildAt(0)
+    private get() = _trashView!!.getChildAt(0)
 
   companion object {
     private var INSTANCE: Coordinator? = null

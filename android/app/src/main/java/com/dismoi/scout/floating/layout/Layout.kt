@@ -1,4 +1,4 @@
-package com.dismoi.scout.Floating.Layout
+package com.dismoi.scout.floating.layout
 
 import android.content.Context
 import android.util.AttributeSet
@@ -9,7 +9,11 @@ open class Layout : FrameLayout {
   var windowManager: WindowManager? = null
   var viewParams: WindowManager.LayoutParams? = null
   var layoutCoordinator: Coordinator? = null
-  fun create(getWindowManager: WindowManager?, layoutParams: WindowManager.LayoutParams?, layoutCoordinator: Coordinator?) {
+  fun create(
+    getWindowManager: WindowManager?,
+    layoutParams: WindowManager.LayoutParams?,
+    layoutCoordinator: Coordinator?
+  ) {
     windowManager = getWindowManager
     viewParams = layoutParams
     this.layoutCoordinator = layoutCoordinator
@@ -17,5 +21,7 @@ open class Layout : FrameLayout {
 
   constructor(context: Context?) : super(context!!) {}
   constructor(context: Context?, attrs: AttributeSet?) : super(context!!, attrs) {}
-  constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(context!!, attrs, defStyleAttr) {}
+  constructor(context: Context?, attrs: AttributeSet?, defStyleAttr: Int) : super(
+    context!!, attrs, defStyleAttr
+  ) {}
 }

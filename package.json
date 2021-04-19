@@ -5,13 +5,14 @@
   "scripts": {
     "android": "react-native run-android",
     "start": "react-native start",
+    "applyKtlintRulesToAndroidStudio": "cd android && ./gradlew ktlintApplyToIdea",
     "lintJavascript": "eslint '**/*.js'",
-    "lintJava": "cd android && ./gradlew removeUnusedResources && ./gradlew lintDebug",
+    "lintKotlin": "cd android && ./gradlew removeUnusedResources && ./gradlew ktlintFormat && ./gradlew ktlintCheck && ./gradlew app:compileDebugKotlin",
     "prettier": "prettier --write '**/*.js'"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged && yarn lintJava"
+      "pre-commit": "lint-staged && yarn lintKotlin"
     }
   },
   "lint-staged": {

@@ -1,15 +1,22 @@
-package com.dismoi.scout.Floating
+package com.dismoi.scout.floating
 
 import android.app.Service
 import android.content.Intent
 import android.graphics.PixelFormat
-import android.os.*
+import android.os.Binder
+import android.os.Build
+import android.os.Handler
+import android.os.IBinder
+import android.os.Looper
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
-import com.dismoi.scout.Floating.Layout.*
-import com.dismoi.scout.Floating.Layout.Message
+import com.dismoi.scout.floating.layout.Bubble
+import com.dismoi.scout.floating.layout.Coordinator
+import com.dismoi.scout.floating.layout.Layout
+import com.dismoi.scout.floating.layout.Message
+import com.dismoi.scout.floating.layout.Trash
 
 class FloatingService : Service() {
   private val binder = FloatingServiceBinder()
@@ -92,9 +99,9 @@ class FloatingService : Service() {
 
   private fun initializeLayoutCoordinator() {
     layoutCoordinator = Coordinator.Builder(this)
-            .setWindowManager(getWindowManager())
-            .setTrashView(bubblesTrash)
-            .build()
+      .setWindowManager(getWindowManager())
+      .setTrashView(bubblesTrash)
+      .build()
   }
 
   private fun addViewToWindow(view: Layout) {
@@ -109,11 +116,12 @@ class FloatingService : Service() {
     var params: WindowManager.LayoutParams? = null
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       params = WindowManager.LayoutParams(
-              WindowManager.LayoutParams.WRAP_CONTENT,
-              WindowManager.LayoutParams.WRAP_CONTENT,
-              WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-              WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-              PixelFormat.TRANSPARENT)
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+        PixelFormat.TRANSPARENT
+      )
     }
     params!!.gravity = Gravity.TOP or Gravity.START
     params.x = x
@@ -125,11 +133,12 @@ class FloatingService : Service() {
     var params: WindowManager.LayoutParams? = null
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       params = WindowManager.LayoutParams(
-              WindowManager.LayoutParams.MATCH_PARENT,
-              WindowManager.LayoutParams.WRAP_CONTENT,
-              WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-              WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-              PixelFormat.TRANSPARENT)
+        WindowManager.LayoutParams.MATCH_PARENT,
+        WindowManager.LayoutParams.WRAP_CONTENT,
+        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+        PixelFormat.TRANSPARENT
+      )
     }
     params!!.gravity = Gravity.TOP or Gravity.START
     params.x = x
@@ -143,11 +152,12 @@ class FloatingService : Service() {
     var params: WindowManager.LayoutParams? = null
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
       params = WindowManager.LayoutParams(
-              WindowManager.LayoutParams.MATCH_PARENT,
-              WindowManager.LayoutParams.MATCH_PARENT,
-              WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-              WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-              PixelFormat.TRANSPARENT)
+        WindowManager.LayoutParams.MATCH_PARENT,
+        WindowManager.LayoutParams.MATCH_PARENT,
+        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+        PixelFormat.TRANSPARENT
+      )
     }
     params!!.x = x
     params.y = y

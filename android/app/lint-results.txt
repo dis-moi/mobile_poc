@@ -1,5 +1,0 @@
-/home/felix/Desktop/dismoi/mobile_poc/android/app/lint-baseline.xml: Information: 1 errors/warnings were listed in the baseline file (lint-baseline.xml) but not found in the project; perhaps they have been fixed? Another possible explanation is that lint recently stopped analyzing (and including results from) dependent projects by default. You can turn this back on with android.lintOptions.checkDependencies=true. Unmatched issue types: LintError [LintBaseline]
-/home/felix/Desktop/dismoi/mobile_poc/android/app/lint-baseline.xml: Information: 3 errors and 2 warnings were filtered out because they are listed in the baseline file, lint-baseline.xml
- [LintBaseline]
-/home/felix/Desktop/dismoi/mobile_poc/android/app/build.gradle:170: Error: Unknown issue id "InlineApi" [LintError]
-1 errors, 0 warnings (3 errors, 2 warnings filtered by baseline lint-baseline.xml)

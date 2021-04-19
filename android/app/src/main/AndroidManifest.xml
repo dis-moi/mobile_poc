@@ -27,7 +27,7 @@
         </intent-filter>
       </activity>
 
-      <service android:name=".AccessibilityService.Activity"
+      <service android:name=".accessibility.Activity"
         android:label="@string/accessibility_service_label"
         android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
         <intent-filter>
@@ -39,9 +39,11 @@
         />
       </service>
 
-      <service android:name=".Floating.FloatingService"
+      <service android:name=".floating.FloatingService"
         android:enabled="true"
-        android:exported="false" />
+        android:exported="false">
+
+        </service>
 
       <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" />
     </application>
