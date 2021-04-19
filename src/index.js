@@ -41,6 +41,8 @@ function App() {
 
   React.useEffect(() => {
     DeviceEventEmitter.addListener('floating-dismoi-bubble-press', (e) => {
+      console.log('.................');
+
       return FloatingModule.showFloatingDisMoiMessage(10, 1500).then(() => {
         // What to do when user press on the bubble
         console.log('Bubble press');
@@ -66,6 +68,21 @@ function App() {
   }, []);
 
   React.useEffect(() => {
+    console.log('event message from chrome url');
+    console.log(eventMessageFromChromeURL);
+
+    function getNoticeIds(matchingContexts) {
+      return matchingContexts
+        .map((res) => {
+          const addWWWForBuildingURL = `www.${eventMessageFromChromeURL}`;
+
+          if (addWWWForBuildingURL.match(new RegExp(res.urlRegex, 'g'))) {
+            return res.noticeId;
+          }
+        })
+        .filter(Boolean);
+    }
+
     async function manipulateFloatingModule() {
       if (eventMessageFromLeavingChromeApp === 'true') {
         await FloatingModule.hideFloatingDisMoiBubble();
@@ -76,11 +93,38 @@ function App() {
         eventMessageFromChromeURL &&
         isValidHttpUrl(eventMessageFromChromeURL)
       ) {
-        if (eventMessageFromChromeURL === 'backmarket.fr') {
-          FloatingModule.showFloatingDisMoiBubble(10, 1500).then(() =>
-            console.log('Floating Bubble Added')
-          );
-        } else {
+        const matchingContexts = await fetch(
+          'https://notices.bulles.fr/api/v3/matching-contexts'
+        ).then((response) => response.json());
+
+        const noticeIds = getNoticeIds(matchingContexts);
+
+        const notices = await Promise.all(
+          noticeIds.map((noticeId) =>
+            fetch(
+              `https://notices.bulles.fr/api/v3/notices/${noticeId}`
+            ).then((response) => response.json())
+          )
+        );
+
+        if (notices.length > 0) {
+          const numberOfNotice = notices.length;
+          console.log('notices');
+          console.log(notices);
+          console.log('event message from chrome url');
+          console.log(eventMessageFromChromeURL);
+
+          FloatingModule.showFloatingDisMoiBubble(
+            10,
+            1500,
+            numberOfNotice,
+            notices,
+            eventMessageFromChromeURL
+          ).then(() => {
+            console.log('show floating dis moi bubble');
+          });
+        }
+        if (notices.length === 0) {
           FloatingModule.hideFloatingDisMoiBubble().then(() =>
             console.log('Hide Floating Bubble')
           );

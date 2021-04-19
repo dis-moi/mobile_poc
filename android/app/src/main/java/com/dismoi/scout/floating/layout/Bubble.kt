@@ -1,4 +1,4 @@
-package com.dismoi.scout.Floating.Layout
+package com.dismoi.scout.floating.layout
 
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
@@ -14,31 +14,32 @@ import android.view.WindowManager
 import com.dismoi.scout.R
 
 class Bubble(context: Context, attrs: AttributeSet?) : Layout(context, attrs) {
-  private var initialTouchX = 0f
-  private var initialTouchY = 0f
-  private var initialX = 0
-  private var initialY = 0
-  private var onBubbleRemoveListener: OnBubbleRemoveListener? = null
-  private var onBubbleClickListener: OnBubbleClickListener? = null
-  private var lastTouchDown: Long = 0
-  private val animator: MoveAnimator
-  private var screenWidth = 0
-  private var shouldStickToWall = true
+  private var _initialTouchX = 0f
+  private var _initialTouchY = 0f
+  private var _initialX = 0
+  private var _initialY = 0
+  private var _onBubbleRemoveListener: OnBubbleRemoveListener? = null
+  private var _onBubbleClickListener: OnBubbleClickListener? = null
+  private var _lastTouchDown: Long = 0
+  private val _animator: MoveAnimator
+  private var _screenWidth = 0
+  private var _shouldStickToWall = true
+
   fun setOnBubbleRemoveListener(listener: OnBubbleRemoveListener?) {
-    onBubbleRemoveListener = listener
+    _onBubbleRemoveListener = listener
   }
 
   fun setOnBubbleClickListener(listener: OnBubbleClickListener?) {
-    onBubbleClickListener = listener
+    _onBubbleClickListener = listener
   }
 
   fun setShouldStickToWall(shouldStick: Boolean) {
-    shouldStickToWall = shouldStick
+    _shouldStickToWall = shouldStick
   }
 
   fun notifyBubbleRemoved() {
-    if (onBubbleRemoveListener != null) {
-      onBubbleRemoveListener!!.onBubbleRemoved(this)
+    if (_onBubbleRemoveListener != null) {
+      _onBubbleRemoveListener!!.onBubbleRemoved(this)
     }
   }
 
@@ -56,18 +57,18 @@ class Bubble(context: Context, attrs: AttributeSet?) : Layout(context, attrs) {
     if (event != null) {
       when (event.action) {
         MotionEvent.ACTION_DOWN -> {
-          initialX = viewParams!!.x
-          initialY = viewParams!!.y
-          initialTouchX = event.rawX
-          initialTouchY = event.rawY
+          _initialX = viewParams!!.x
+          _initialY = viewParams!!.y
+          _initialTouchX = event.rawX
+          _initialTouchY = event.rawY
           playAnimationClickDown()
-          lastTouchDown = System.currentTimeMillis()
+          _lastTouchDown = System.currentTimeMillis()
           updateSize()
-          animator.stop()
+          _animator.stop()
         }
         MotionEvent.ACTION_MOVE -> {
-          val x = initialX + (event.rawX - initialTouchX).toInt()
-          val y = initialY + (event.rawY - initialTouchY).toInt()
+          val x = _initialX + (event.rawX - _initialTouchX).toInt()
+          val y = _initialY + (event.rawY - _initialTouchY).toInt()
           viewParams!!.x = x
           viewParams!!.y = y
           windowManager!!.updateViewLayout(this, viewParams)
@@ -81,9 +82,9 @@ class Bubble(context: Context, attrs: AttributeSet?) : Layout(context, attrs) {
             layoutCoordinator!!.notifyBubbleRelease(this)
             playAnimationClickUp()
           }
-          if (System.currentTimeMillis() - lastTouchDown < TOUCH_TIME_THRESHOLD) {
-            if (onBubbleClickListener != null) {
-              onBubbleClickListener!!.onBubbleClick(this)
+          if (System.currentTimeMillis() - _lastTouchDown < TOUCH_TIME_THRESHOLD) {
+            if (_onBubbleClickListener != null) {
+              _onBubbleClickListener!!.onBubbleClick(this)
             }
           }
         }
@@ -95,7 +96,7 @@ class Bubble(context: Context, attrs: AttributeSet?) : Layout(context, attrs) {
   private fun playAnimation() {
     if (!isInEditMode) {
       val animator = AnimatorInflater
-              .loadAnimator(context, R.animator.bubble_shown_animator) as AnimatorSet
+        .loadAnimator(context, R.animator.bubble_shown_animator) as AnimatorSet
       animator.setTarget(this)
       animator.start()
     }
@@ -104,7 +105,7 @@ class Bubble(context: Context, attrs: AttributeSet?) : Layout(context, attrs) {
   private fun playAnimationClickDown() {
     if (!isInEditMode) {
       val animator = AnimatorInflater
-              .loadAnimator(context, R.animator.bubble_down_click_animator) as AnimatorSet
+        .loadAnimator(context, R.animator.bubble_down_click_animator) as AnimatorSet
       animator.setTarget(this)
       animator.start()
     }
@@ -113,7 +114,7 @@ class Bubble(context: Context, attrs: AttributeSet?) : Layout(context, attrs) {
   private fun playAnimationClickUp() {
     if (!isInEditMode) {
       val animator = AnimatorInflater
-              .loadAnimator(context, R.animator.bubble_up_click_animator) as AnimatorSet
+        .loadAnimator(context, R.animator.bubble_up_click_animator) as AnimatorSet
       animator.setTarget(this)
       animator.start()
     }
@@ -125,7 +126,7 @@ class Bubble(context: Context, attrs: AttributeSet?) : Layout(context, attrs) {
     val display = windowManager!!.defaultDisplay
     val size = Point()
     display.getSize(size)
-    screenWidth = size.x - getWidth()
+    _screenWidth = size.x - getWidth()
   }
 
   interface OnBubbleRemoveListener {
@@ -137,10 +138,10 @@ class Bubble(context: Context, attrs: AttributeSet?) : Layout(context, attrs) {
   }
 
   fun goToWall() {
-    if (shouldStickToWall) {
-      val middle = screenWidth / 2
-      val nearestXWall = if (viewParams!!.x >= middle) screenWidth.toFloat() else 0.toFloat()
-      animator.start(nearestXWall, viewParams!!.y.toFloat())
+    if (_shouldStickToWall) {
+      val middle = _screenWidth / 2
+      val nearestXWall = if (viewParams!!.x >= middle) _screenWidth.toFloat() else 0.toFloat()
+      _animator.start(nearestXWall, viewParams!!.y.toFloat())
     }
   }
 
@@ -184,7 +185,7 @@ class Bubble(context: Context, attrs: AttributeSet?) : Layout(context, attrs) {
   }
 
   init {
-    animator = MoveAnimator()
+    _animator = MoveAnimator()
     windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
     initializeView()
   }

@@ -2,9 +2,13 @@ package com.dismoi.scout
 
 import android.app.Application
 import android.content.Context
-import com.dismoi.scout.AccessibilityService.AccessibilityServicePackage
-import com.dismoi.scout.Floating.FloatingLayoutPackage
-import com.facebook.react.*
+import com.dismoi.scout.accessibility.AccessibilityServicePackage
+import com.dismoi.scout.floating.FloatingLayoutPackage
+import com.facebook.react.PackageList
+import com.facebook.react.ReactApplication
+import com.facebook.react.ReactInstanceManager
+import com.facebook.react.ReactNativeHost
+import com.facebook.react.ReactPackage
 import com.facebook.soloader.SoLoader
 import java.lang.reflect.InvocationTargetException
 
@@ -34,7 +38,7 @@ class MainApplication : Application(), ReactApplication {
 
   override fun onCreate() {
     super.onCreate()
-    SoLoader.init(this,  /* native exopackage */false)
+    SoLoader.init(this, /* native exopackage */false)
     initializeFlipper(this, reactNativeHost.reactInstanceManager)
   }
 
@@ -47,7 +51,9 @@ class MainApplication : Application(), ReactApplication {
      * @param reactInstanceManager
      */
     private fun initializeFlipper(
-            context: Context, reactInstanceManager: ReactInstanceManager) {
+      context: Context,
+      reactInstanceManager: ReactInstanceManager
+    ) {
       if (BuildConfig.DEBUG) {
         try {
           /*
@@ -56,8 +62,8 @@ class MainApplication : Application(), ReactApplication {
         */
           val aClass = Class.forName("com.dismoi.ReactNativeFlipper")
           aClass
-                  .getMethod("initializeFlipper", Context::class.java, ReactInstanceManager::class.java)
-                  .invoke(null, context, reactInstanceManager)
+            .getMethod("initializeFlipper", Context::class.java, ReactInstanceManager::class.java)
+            .invoke(null, context, reactInstanceManager)
         } catch (e: ClassNotFoundException) {
           e.printStackTrace()
         } catch (e: NoSuchMethodException) {

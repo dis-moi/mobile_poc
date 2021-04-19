@@ -1,4 +1,4 @@
-package com.dismoi.scout.Floating
+package com.dismoi.scout.floating
 
 interface OnCallback {
   fun onInitialized()

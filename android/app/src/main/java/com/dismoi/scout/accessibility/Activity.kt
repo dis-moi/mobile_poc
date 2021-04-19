@@ -1,16 +1,14 @@
-package com.dismoi.scout.AccessibilityService
+package com.dismoi.scout.accessibility
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.pm.ApplicationInfo
-import android.content.pm.PackageManager
 import android.os.Build
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import androidx.annotation.RequiresApi
-import com.dismoi.scout.AccessibilityService.AccessibilityServiceModule.Companion.sendChromeUrlEventToReactNative
-import com.dismoi.scout.AccessibilityService.AccessibilityServiceModule.Companion.sendEventFromAccessibilityServicePermission
-import com.dismoi.scout.AccessibilityService.AccessibilityServiceModule.Companion.sendLeavingChromeAppEventToReactNative
+import com.dismoi.scout.accessibility.AccessibilityServiceModule.Companion.sendChromeUrlEventToReactNative
+import com.dismoi.scout.accessibility.AccessibilityServiceModule.Companion.sendEventFromAccessibilityServicePermission
+import com.dismoi.scout.accessibility.AccessibilityServiceModule.Companion.sendLeavingChromeAppEventToReactNative
 
 class Activity : AccessibilityService() {
   override fun onServiceConnected() {

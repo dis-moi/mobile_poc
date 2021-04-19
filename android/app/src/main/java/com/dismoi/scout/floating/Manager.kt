@@ -1,13 +1,13 @@
-package com.dismoi.scout.Floating
+package com.dismoi.scout.floating
 
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
 import android.os.IBinder
-import com.dismoi.scout.Floating.FloatingService.FloatingServiceBinder
-import com.dismoi.scout.Floating.Layout.Bubble
-import com.dismoi.scout.Floating.Layout.Message
+import com.dismoi.scout.floating.FloatingService.FloatingServiceBinder
+import com.dismoi.scout.floating.layout.Bubble
+import com.dismoi.scout.floating.layout.Message
 
 class Manager private constructor(private val context: Context) {
   private var bounded = false
@@ -35,9 +35,11 @@ class Manager private constructor(private val context: Context) {
   }
 
   fun initialize() {
-    context.bindService(Intent(context, FloatingService::class.java),
-            disMoiServiceConnection,
-            Context.BIND_AUTO_CREATE)
+    context.bindService(
+      Intent(context, FloatingService::class.java),
+      disMoiServiceConnection,
+      Context.BIND_AUTO_CREATE
+    )
   }
 
   fun recycle() {
