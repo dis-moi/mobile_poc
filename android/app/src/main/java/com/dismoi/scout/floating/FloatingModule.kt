@@ -41,7 +41,6 @@ class FloatingModule(
   private var messagesManager: Manager? = null
   private var bubbleDisMoiView: Bubble? = null
   private var messageDisMoiView: Message? = null
-  private var disMoiMessage: String? = null
   private var _size: Int = 0
   private lateinit var _notices: ReadableArray
 
