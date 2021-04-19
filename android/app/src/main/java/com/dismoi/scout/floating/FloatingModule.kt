@@ -157,6 +157,16 @@ class FloatingModule(
     movementMethod = LinkMovementMethod.getInstance()
   }
 
+  fun String.toSpanned(): Spanned {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      return Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)
+    } else {
+      @Suppress("DEPRECATION")
+      return Html.fromHtml(this)
+    }
+  }
+
+
   private fun addNewFloatingDisMoiMessageDetail(x: Int, y: Int, message: String?) {
     removeDisMoiBubble()
     removeDisMoiMessage()
@@ -167,11 +177,7 @@ class FloatingModule(
 
     var textView: TextView? = messageDisMoiView!!.findViewById(R.id.link)
 
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      textView!!.text = Html.fromHtml(message, Html.FROM_HTML_MODE_COMPACT)
-    } else {
-      textView!!.text = Html.fromHtml(message)
-    }
+    textView!!.text = message!!.toSpanned();
 
     textView.handleUrlClicks { url ->
       val sharingIntent = Intent(Intent.ACTION_VIEW)
@@ -195,7 +201,7 @@ class FloatingModule(
       for (i in 0 until size) {
         val message: ReadableMap? = notices.getMap(i)
         var disMoiMessage: String? = message!!.getString("message")
-        var disMoiContributorNameMap: ReadableMap? = message!!.getMap("contributor")
+        var disMoiContributorNameMap: ReadableMap? = message.getMap("contributor")
         var disMoiContributorName: String? = disMoiContributorNameMap!!.getString("name")
         var cutText = disMoiMessage!!.substring(0, 90)
 

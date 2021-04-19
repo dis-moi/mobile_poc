@@ -6,10 +6,10 @@ import com.dismoi.scout.floating.FloatingService
 
 class Coordinator private constructor() {
   private var _trashView: Trash? = null
-  private var windowManager: WindowManager? = null
-  private var bubblesService: FloatingService? = null
+  private var _windowManager: WindowManager? = null
+  private var _bubblesService: FloatingService? = null
 
-  fun notifyBubblePositionChanged(bubble: Bubble, x: Int, y: Int) {
+  fun notifyBubblePositionChanged(bubble: Bubble) {
     if (_trashView != null) {
       _trashView!!.visibility = View.VISIBLE
       if (checkIfBubbleIsOverTrash(bubble)) {
@@ -30,7 +30,7 @@ class Coordinator private constructor() {
     val y = trashCenterY - bubble.measuredHeight / 2
     bubble.viewParams!!.x = x
     bubble.viewParams!!.y = y
-    windowManager!!.updateViewLayout(bubble, bubble.viewParams)
+    _windowManager!!.updateViewLayout(bubble, bubble.viewParams)
   }
 
   private fun checkIfBubbleIsOverTrash(bubble: Bubble): Boolean {
@@ -61,7 +61,7 @@ class Coordinator private constructor() {
   fun notifyBubbleRelease(bubble: Bubble) {
     if (_trashView != null) {
       if (checkIfBubbleIsOverTrash(bubble)) {
-        bubblesService!!.removeBubble(bubble)
+        _bubblesService!!.removeBubble(bubble)
       }
       _trashView!!.visibility = View.GONE
     }
@@ -75,7 +75,7 @@ class Coordinator private constructor() {
     }
 
     fun setWindowManager(windowManager: WindowManager?): Builder {
-      layoutCoordinator!!.windowManager = windowManager
+      layoutCoordinator!!._windowManager = windowManager
       return this
     }
 
@@ -85,17 +85,17 @@ class Coordinator private constructor() {
 
     init {
       layoutCoordinator = instance
-      layoutCoordinator!!.bubblesService = service
+      layoutCoordinator!!._bubblesService = service
     }
   }
 
   private val trashContent: View
-    private get() = _trashView!!.getChildAt(0)
+  get() = _trashView!!.getChildAt(0)
 
   companion object {
     private var INSTANCE: Coordinator? = null
     private val instance: Coordinator?
-      private get() {
+      get() {
         if (INSTANCE == null) {
           INSTANCE = Coordinator()
         }

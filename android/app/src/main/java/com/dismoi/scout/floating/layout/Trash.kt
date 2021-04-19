@@ -3,6 +3,8 @@ package com.dismoi.scout.floating.layout
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.content.Context
+import android.os.Build
+import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.AttributeSet
 import com.dismoi.scout.R
@@ -51,7 +53,12 @@ class Trash : Layout {
   fun vibrate() {
     if (!isVibrateInThisSession) {
       val vibrator = context.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-      vibrator.vibrate(VIBRATION_DURATION_IN_MS.toLong())
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        vibrator.vibrate(VibrationEffect.createOneShot(200, VibrationEffect.DEFAULT_AMPLITUDE))
+      } else {
+        @Suppress("DEPRECATION")
+        vibrator.vibrate(200)
+      }
       isVibrateInThisSession = true
     }
   }

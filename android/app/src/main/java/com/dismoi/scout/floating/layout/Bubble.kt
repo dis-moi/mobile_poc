@@ -54,38 +54,37 @@ class Bubble(context: Context, attrs: AttributeSet?) : Layout(context, attrs) {
 
   @SuppressLint("ClickableViewAccessibility")
   override fun onTouchEvent(event: MotionEvent): Boolean {
-    if (event != null) {
-      when (event.action) {
-        MotionEvent.ACTION_DOWN -> {
-          _initialX = viewParams!!.x
-          _initialY = viewParams!!.y
-          _initialTouchX = event.rawX
-          _initialTouchY = event.rawY
-          playAnimationClickDown()
-          _lastTouchDown = System.currentTimeMillis()
-          updateSize()
-          _animator.stop()
+
+    when (event.action) {
+      MotionEvent.ACTION_DOWN -> {
+        _initialX = viewParams!!.x
+        _initialY = viewParams!!.y
+        _initialTouchX = event.rawX
+        _initialTouchY = event.rawY
+        playAnimationClickDown()
+        _lastTouchDown = System.currentTimeMillis()
+        updateSize()
+        _animator.stop()
+      }
+      MotionEvent.ACTION_MOVE -> {
+        val x = _initialX + (event.rawX - _initialTouchX).toInt()
+        val y = _initialY + (event.rawY - _initialTouchY).toInt()
+        viewParams!!.x = x
+        viewParams!!.y = y
+        windowManager!!.updateViewLayout(this, viewParams)
+        if (layoutCoordinator != null) {
+          layoutCoordinator!!.notifyBubblePositionChanged(this)
         }
-        MotionEvent.ACTION_MOVE -> {
-          val x = _initialX + (event.rawX - _initialTouchX).toInt()
-          val y = _initialY + (event.rawY - _initialTouchY).toInt()
-          viewParams!!.x = x
-          viewParams!!.y = y
-          windowManager!!.updateViewLayout(this, viewParams)
-          if (layoutCoordinator != null) {
-            layoutCoordinator!!.notifyBubblePositionChanged(this, x, y)
-          }
+      }
+      MotionEvent.ACTION_UP -> {
+        goToWall()
+        if (layoutCoordinator != null) {
+          layoutCoordinator!!.notifyBubbleRelease(this)
+          playAnimationClickUp()
         }
-        MotionEvent.ACTION_UP -> {
-          goToWall()
-          if (layoutCoordinator != null) {
-            layoutCoordinator!!.notifyBubbleRelease(this)
-            playAnimationClickUp()
-          }
-          if (System.currentTimeMillis() - _lastTouchDown < TOUCH_TIME_THRESHOLD) {
-            if (_onBubbleClickListener != null) {
-              _onBubbleClickListener!!.onBubbleClick(this)
-            }
+        if (System.currentTimeMillis() - _lastTouchDown < TOUCH_TIME_THRESHOLD) {
+          if (_onBubbleClickListener != null) {
+            _onBubbleClickListener!!.onBubbleClick(this)
           }
         }
       }

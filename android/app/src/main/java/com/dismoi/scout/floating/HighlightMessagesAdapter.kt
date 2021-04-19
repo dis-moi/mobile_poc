@@ -24,7 +24,7 @@ class HighlightMessagesAdapter(
     }
 
     override fun onClick(p0: View?) {
-      val position: Int = adapterPosition
+      val position: Int = bindingAdapterPosition
       if (position != RecyclerView.NO_POSITION) {
         listener.onItemClick(position)
       }
@@ -32,8 +32,6 @@ class HighlightMessagesAdapter(
   }
 
   override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HighlightMessageViewHolder {
-    Log.d("Notifications", "__________ on create view holder _______________")
-
     val itemView = LayoutInflater.from(parent.context).inflate(
       R.layout.highlight_message, parent, false
     )
