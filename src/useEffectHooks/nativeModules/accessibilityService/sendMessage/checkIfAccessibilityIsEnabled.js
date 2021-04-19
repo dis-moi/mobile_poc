@@ -1,5 +1,5 @@
 import React from 'react';
-import { AccessibilityServiceModule } from '../../nativeModules/get';
+import { AccessibilityServiceModule } from '../../../../nativeModules/get';
 
 function useFloatingBubbleRequestPermissionEffect(
   eventMessageFromAccessibilityServicePermission

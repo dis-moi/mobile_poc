@@ -1,6 +1,5 @@
-/* eslint-disable no-console */
 import React from 'react';
-import { FloatingModule } from '../../nativeModules/get';
+import { FloatingModule } from '../../../../nativeModules/get';
 
 function useFloatingBubbleRequestPermissionEffect() {
   React.useEffect(() => {
