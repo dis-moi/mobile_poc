@@ -90,7 +90,7 @@ class Coordinator private constructor() {
   }
 
   private val trashContent: View
-  get() = _trashView!!.getChildAt(0)
+    get() = _trashView!!.getChildAt(0)
 
   companion object {
     private var INSTANCE: Coordinator? = null

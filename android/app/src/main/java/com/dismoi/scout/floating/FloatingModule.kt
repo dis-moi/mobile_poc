@@ -41,10 +41,9 @@ class FloatingModule(
   private var messagesManager: Manager? = null
   private var bubbleDisMoiView: Bubble? = null
   private var messageDisMoiView: Message? = null
-  private var _size: Int = 0
+  private var _size = 0
   private lateinit var _notices: ReadableArray
-
-  private var _url: String = ""
+  private var _url = ""
 
   var verticalLayout: LinearLayout? = null
 
@@ -166,7 +165,6 @@ class FloatingModule(
     }
   }
 
-
   private fun addNewFloatingDisMoiMessageDetail(x: Int, y: Int, message: String?) {
     removeDisMoiBubble()
     removeDisMoiMessage()
@@ -177,7 +175,7 @@ class FloatingModule(
 
     var textView: TextView? = messageDisMoiView!!.findViewById(R.id.link)
 
-    textView!!.text = message!!.toSpanned();
+    textView!!.text = message!!.toSpanned()
 
     textView.handleUrlClicks { url ->
       val sharingIntent = Intent(Intent.ACTION_VIEW)

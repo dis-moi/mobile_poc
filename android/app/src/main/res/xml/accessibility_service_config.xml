@@ -1,9 +1,16 @@
-<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- <accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
   android:description="@string/accessibility_service_description"
-  android:accessibilityEventTypes="typeAllMask"
-  android:accessibilityFlags="flagDefault|flagIncludeNotImportantViews|flagRequestTouchExplorationMode|flagRequestEnhancedWebAccessibility|flagReportViewIds|flagRetrieveInteractiveWindows"
+  android:accessibilityEventTypes="typeAllMask|typeContextClicked|typeViewClicked"
+  android:accessibilityFlags="flagRequestFilterKeyEvents|flagDefault|flagIncludeNotImportantViews|flagRequestTouchExplorationMode|flagRequestEnhancedWebAccessibility|flagReportViewIds|flagRetrieveInteractiveWindows"
   android:accessibilityFeedbackType="feedbackAllMask"
-  android:notificationTimeout="100"
+  android:notificationTimeout="50"
   android:canRetrieveWindowContent="true"
+  android:canRequestFilterKeyEvents="true"
   android:settingsActivity="com.example.android.accessibility.ServiceSettingsActivity"
-/>
+/> -->
+
+<accessibility-service
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:description="@string/accessibility_service_description"
+  android:canRetrieveWindowContent="true"
+  android:settingsActivity=".ServiceSettingsActivity" />
