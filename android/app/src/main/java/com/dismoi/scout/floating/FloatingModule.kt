@@ -201,11 +201,14 @@ class FloatingModule(
         var disMoiMessage: String? = message!!.getString("message")
         var disMoiContributorNameMap: ReadableMap? = message.getMap("contributor")
         var disMoiContributorName: String? = disMoiContributorNameMap!!.getString("name")
-        var cutText = disMoiMessage!!.substring(0, 90)
+        
+        var htmlToText = Jsoup.parse(disMoiMessage).text()
 
-        var htmlToText = Jsoup.parse(cutText).text()
+        var cutText = htmlToText!!.substring(0, 90)
+        var cutToLastSpace = cutText.dropLastWhile { !it.isLetter() }
 
-        val item = HighlightMessage(disMoiContributorName, htmlToText, i.toString())
+
+        val item = HighlightMessage(disMoiContributorName, cutToLastSpace + "...", i.toString())
         list += item
       }
       return list

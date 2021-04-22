@@ -3,6 +3,7 @@ package com.dismoi.scout.accessibility
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.os.Build
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.RequiresApi
@@ -86,10 +87,12 @@ class Activity : AccessibilityService() {
 
       val className = event.className
 
-      if (className == "android.widget.EditText") {
-        sendChromeUrlEventToReactNative(capturedUrl)
-      } else {
+      Log.d("Notifications", className.toString())
+
+      if (className == "android.widget.FrameLayout") {
         sendChromeUrlEventToReactNative("")
+      } else {
+        sendChromeUrlEventToReactNative(capturedUrl)
       }
     }
   }
