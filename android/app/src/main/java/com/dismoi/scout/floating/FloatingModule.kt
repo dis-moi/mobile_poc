@@ -70,13 +70,14 @@ class FloatingModule(
     url: String,
     promise: Promise
   ) {
-    if (_url != url) {
-      _url = url
-      _notices = notices
-      _size = numberOfNotice
-
-      addNewFloatingDisMoiBubble(x, y, numberOfNotice.toString())
+    if (bubbleDisMoiView != null) {
+      removeDisMoiBubble()
     }
+
+    _url = url
+    _notices = notices
+    _size = numberOfNotice
+    addNewFloatingDisMoiBubble(x, y, numberOfNotice.toString())
     promise.resolve("")
   }
 
@@ -201,12 +202,11 @@ class FloatingModule(
         var disMoiMessage: String? = message!!.getString("message")
         var disMoiContributorNameMap: ReadableMap? = message.getMap("contributor")
         var disMoiContributorName: String? = disMoiContributorNameMap!!.getString("name")
-        
+
         var htmlToText = Jsoup.parse(disMoiMessage).text()
 
         var cutText = htmlToText!!.substring(0, 90)
         var cutToLastSpace = cutText.dropLastWhile { !it.isLetter() }
-
 
         val item = HighlightMessage(disMoiContributorName, cutToLastSpace + "...", i.toString())
         list += item

@@ -1,5 +1,5 @@
 import { NativeModules } from 'react-native';
 
-const { AccessibilityServiceModule, FloatingModule } = NativeModules;
+const { Background, FloatingModule } = NativeModules;
 
-export { AccessibilityServiceModule, FloatingModule };
+export { Background, FloatingModule };

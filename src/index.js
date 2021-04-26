@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View, Button } from 'react-native';
 import useNativeModuleEffects from './useNativeModuleEffects';
 import {
   List,
@@ -10,13 +10,14 @@ import {
   Right,
   Container,
   Content,
-  Button,
   Header,
   Title,
 } from 'native-base';
 import factCheck from './images/factcheck.png';
 import imdb from './images/imdb.png';
 import wirecutter from './images/wirecutter.png';
+import { Background } from './nativeModules/get';
+import AllowPermissionButton from './components/allowPermissionButton';
 
 function App() {
   useNativeModuleEffects();
@@ -36,11 +37,24 @@ function App() {
           flex: 1,
         }}
       >
-        {/* <Text>Welcome to DisMoi POC!</Text>
-      <Text>1. Allow accessibility service for dismoi</Text>
-      <Text>2. Allow overlap for dismoi</Text>
-      <Text>3. Go to chrome app</Text> */}
-        <Text style={{ fontSize: 20 }}>Your subscriptions</Text>
+        <View style={{ margin: 5 }}>
+          <Button
+            style={{ margin: 5 }}
+            title="Start dismoi in background"
+            onPress={() => Background.startService()}
+          />
+        </View>
+        <View style={{ margin: 5 }}>
+          <Button
+            title="Stop dismoi in background"
+            onPress={() => Background.stopService()}
+          />
+        </View>
+        <View style={{ margin: 5 }}>
+          <AllowPermissionButton />
+        </View>
+
+        {/* <Text style={{ fontSize: 20 }}>Your subscriptions</Text>
         <List
           style={{
             justifyContent: 'center',
@@ -101,7 +115,7 @@ function App() {
               </Button>
             </Right>
           </ListItem>
-        </List>
+        </List> */}
       </Content>
     </Container>
   );
@@ -109,6 +123,16 @@ function App() {
 
 const styles = {
   centerScreen: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  view: {
+    flex: 0.5,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  button: {
+    backgroundColor: 'gray',
+    padding: 10,
+    margin: 10,
+  },
 };
 
 export default App;

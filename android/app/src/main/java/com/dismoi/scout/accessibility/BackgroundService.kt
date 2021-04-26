@@ -2,16 +2,38 @@ package com.dismoi.scout.accessibility
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Intent
 import android.os.Build
-import android.util.Log
+import android.os.Bundle
+import android.os.Handler
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.RequiresApi
-import com.dismoi.scout.accessibility.AccessibilityServiceModule.Companion.sendChromeUrlEventToReactNative
-import com.dismoi.scout.accessibility.AccessibilityServiceModule.Companion.sendEventFromAccessibilityServicePermission
-import com.dismoi.scout.accessibility.AccessibilityServiceModule.Companion.sendLeavingChromeAppEventToReactNative
+import androidx.core.app.NotificationCompat
+import com.dismoi.scout.MainActivity
+import com.dismoi.scout.R
+import com.facebook.react.HeadlessJsTaskService
 
-class Activity : AccessibilityService() {
+class BackgroundService : AccessibilityService() {
+  private var _url: String? = "this should be url"
+  private val handler = Handler()
+  private val runnableCode: Runnable = object : Runnable {
+    override fun run() {
+      val context = applicationContext
+      val myIntent = Intent(context, BackgroundEventService::class.java)
+      val bundle = Bundle()
+
+      bundle.putString("url", _url)
+
+      myIntent.putExtras(bundle)
+
+      context.startService(myIntent)
+      HeadlessJsTaskService.acquireWakeLockNow(context)
+    }
+  }
 
   private val previousUrlDetections: HashMap<String, Long> = HashMap()
 
@@ -27,15 +49,12 @@ class Activity : AccessibilityService() {
       AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
     this.serviceInfo = info
 
-    sendEventFromAccessibilityServicePermission("true")
-  }
+    val startActivity: Intent? = applicationContext.getPackageManager().getLaunchIntentForPackage(
+      applicationContext.getPackageName()
+    )
+    startActivity!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
 
-  override fun onDestroy() {
-    sendEventFromAccessibilityServicePermission("false")
-  }
-
-  override fun onInterrupt() {
-    sendLeavingChromeAppEventToReactNative("true")
+    startActivity(startActivity)
   }
 
   @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -55,6 +74,7 @@ class Activity : AccessibilityService() {
 
   @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
   override fun onAccessibilityEvent(event: AccessibilityEvent) {
+
     val parentNodeInfo = event.source ?: return
     val packageName = event.packageName.toString()
     var browserConfig: SupportedBrowserConfig? = null
@@ -87,14 +107,17 @@ class Activity : AccessibilityService() {
 
       val className = event.className
 
-      Log.d("Notifications", className.toString())
-
       if (className == "android.widget.FrameLayout") {
-        sendChromeUrlEventToReactNative("")
+        handler.post(runnableCode)
       } else {
-        sendChromeUrlEventToReactNative(capturedUrl)
+        _url = capturedUrl
+        handler.post(runnableCode)
       }
     }
+  }
+
+  override fun onInterrupt() {
+    TODO("Not yet implemented")
   }
 
   private fun packageNames(): Array<String> {
@@ -114,5 +137,51 @@ class Activity : AccessibilityService() {
     val browsers: MutableList<SupportedBrowserConfig> = ArrayList()
     browsers.add(SupportedBrowserConfig("com.android.chrome", "com.android.chrome:id/url_bar"))
     return browsers
+  }
+
+  private fun createNotificationChannel() {
+    // Create the NotificationChannel, but only on API 26+ because
+    // the NotificationChannel class is new and not in the support library
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      val importance = NotificationManager.IMPORTANCE_DEFAULT
+      val channel = NotificationChannel(CHANNEL_ID, "BACKGROUND", importance)
+      channel.description = "CHANEL DESCRIPTION"
+      val notificationManager = getSystemService(NotificationManager::class.java)
+      notificationManager.createNotificationChannel(channel)
+    }
+  }
+
+  override fun onCreate() {
+    super.onCreate()
+  }
+
+  override fun onDestroy() {
+    super.onDestroy()
+    handler.removeCallbacks(runnableCode)
+  }
+
+  override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    createNotificationChannel()
+    val notificationIntent = Intent(this, MainActivity::class.java)
+    val contentIntent = PendingIntent.getActivity(
+      this,
+      0,
+      notificationIntent,
+      PendingIntent.FLAG_CANCEL_CURRENT
+    )
+    val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+      .setContentTitle("DisMoi")
+      .setContentText("DisMoi is running in background...")
+      .setSmallIcon(R.mipmap.ic_launcher)
+      .setContentIntent(contentIntent)
+      .setOngoing(true)
+      .build()
+    startForeground(SERVICE_NOTIFICATION_ID, notification)
+    return START_STICKY
+  }
+
+  companion object {
+    private const val SERVICE_NOTIFICATION_ID = 12345
+    private const val CHANNEL_ID = "BACKGROUND"
   }
 }
