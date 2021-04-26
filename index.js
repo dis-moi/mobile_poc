@@ -19,20 +19,12 @@ function getNoticeIds(matchingContexts, eventMessageFromChromeURL) {
 const HeadlessTask = async (taskData) => {
   const eventMessageFromChromeURL = taskData.url;
   if (eventMessageFromChromeURL && isValidHttpUrl(eventMessageFromChromeURL)) {
-    console.log('FETCH MATCHING CONTEXT');
     const matchingContexts = await fetch(
       'https://notices.bulles.fr/api/v3/matching-contexts'
     ).then((response) => {
-      console.log('response of matching context');
       return response.json();
     });
-    console.log('END FETCH MATCHING CONTEXT');
-
-    console.log('GET NOTICE IDS');
     const noticeIds = getNoticeIds(matchingContexts, eventMessageFromChromeURL);
-    console.log('END GET NOTICE IDS');
-
-    console.log('MAP NOTICE ID');
     const notices = await Promise.all(
       noticeIds.map((noticeId) =>
         fetch(
@@ -40,7 +32,6 @@ const HeadlessTask = async (taskData) => {
         ).then((response) => response.json())
       )
     );
-    console.log('END MAP NOTICE ID');
 
     if (notices.length > 0) {
       const numberOfNotice = notices.length;
