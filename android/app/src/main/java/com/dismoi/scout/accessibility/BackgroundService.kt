@@ -142,13 +142,15 @@ class BackgroundService : AccessibilityService() {
   private fun createNotificationChannel() {
     // Create the NotificationChannel, but only on API 26+ because
     // the NotificationChannel class is new and not in the support library
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      val importance = NotificationManager.IMPORTANCE_DEFAULT
-      val channel = NotificationChannel(CHANNEL_ID, "BACKGROUND", importance)
-      channel.description = "CHANEL DESCRIPTION"
-      val notificationManager = getSystemService(NotificationManager::class.java)
-      notificationManager.createNotificationChannel(channel)
+    val importance = NotificationManager.IMPORTANCE_DEFAULT
+    val channel = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+      NotificationChannel(CHANNEL_ID, "BACKGROUND", importance)
+    } else {
+      TODO("VERSION.SDK_INT < O")
     }
+    channel.description = "CHANEL DESCRIPTION"
+    val notificationManager = getSystemService(NotificationManager::class.java)
+    notificationManager.createNotificationChannel(channel)
   }
 
   override fun onCreate() {
