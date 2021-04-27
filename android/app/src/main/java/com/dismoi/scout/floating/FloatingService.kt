@@ -25,8 +25,7 @@ class FloatingService : Service() {
   private var bubblesTrash: Trash? = null
   private var windowManager: WindowManager? = null
   private var layoutCoordinator: Coordinator? = null
-  private val bubble: Bubble? = null
-  private val message: Message? = null
+
   override fun onBind(intent: Intent): IBinder? {
     return binder
   }

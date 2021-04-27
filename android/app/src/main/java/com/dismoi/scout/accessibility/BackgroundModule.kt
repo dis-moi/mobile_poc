@@ -8,12 +8,26 @@ import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
+import com.facebook.react.modules.core.DeviceEventManagerModule
+import javax.annotation.Nonnull
 
-class AccessibilityServiceModule(reactContext: ReactApplicationContext?) :
+class BackgroundModule(@Nonnull reactContext: ReactApplicationContext) :
   ReactContextBaseJavaModule(reactContext) {
+  private var reactContext: ReactApplicationContext = reactContext
+
+  @Nonnull
   override fun getName(): String {
-    return "AccessibilityServiceModule"
+    return "Background"
+  }
+
+  @ReactMethod
+  fun startService() {
+    reactContext.startService(Intent(reactContext, BackgroundService::class.java))
+  }
+
+  @ReactMethod
+  fun stopService() {
+    reactContext.stopService(Intent(reactContext, BackgroundService::class.java))
   }
 
   private fun isAccessibilitySettingsOn(mContext: Context): Boolean {
@@ -27,7 +41,7 @@ class AccessibilityServiceModule(reactContext: ReactApplicationContext?) :
         Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
       )
       if (settingValue != null) {
-        if (settingValue.indexOf(string = reactContext!!.packageName) > -1) {
+        if (settingValue.indexOf(string = BackgroundModule.reactContext.packageName) > -1) {
           return true
         }
       }
@@ -37,13 +51,13 @@ class AccessibilityServiceModule(reactContext: ReactApplicationContext?) :
 
   @ReactMethod
   fun isAccessibilityEnabled(callback: Callback) {
-    if (!isAccessibilitySettingsOn(reactContext!!.applicationContext)) {
+    if (!isAccessibilitySettingsOn(BackgroundModule.reactContext.applicationContext)) {
       callback.invoke("0", null)
     } else {
       callback.invoke("1", null)
       val currentActivity = currentActivity
-      val startActivity = reactContext!!.packageManager
-        .getLaunchIntentForPackage(reactContext!!.packageName)
+      val startActivity = BackgroundModule.reactContext.packageManager
+        .getLaunchIntentForPackage(BackgroundModule.reactContext.packageName)
       startActivity!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
       currentActivity!!.startActivity(startActivity)
     }
@@ -56,7 +70,8 @@ class AccessibilityServiceModule(reactContext: ReactApplicationContext?) :
   }
 
   companion object {
-    private var reactContext: ReactApplicationContext? = null
+    private lateinit var reactContext: ReactApplicationContext
+
     private fun sendEventToReactNative(
       reactContext: ReactContext?,
       eventName: String,
@@ -66,13 +81,9 @@ class AccessibilityServiceModule(reactContext: ReactApplicationContext?) :
         return
       }
       reactContext
-        .getJSModule<RCTDeviceEventEmitter>(RCTDeviceEventEmitter::class.java)
-        .emit(eventName, params)
-    }
-
-    @JvmStatic
-    fun sendChromeUrlEventToReactNative(params: String?) {
-      sendEventToReactNative(reactContext, "EventFromChromeURL", params)
+        .getJSModule<DeviceEventManagerModule.RCTDeviceEventEmitter>(
+          DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+        ).emit(eventName, params)
     }
 
     @JvmStatic
@@ -84,9 +95,5 @@ class AccessibilityServiceModule(reactContext: ReactApplicationContext?) :
     fun sendLeavingChromeAppEventToReactNative(params: String?) {
       sendEventToReactNative(reactContext, "EventFromLeavingChromeApp", params)
     }
-  }
-
-  init {
-    Companion.reactContext = reactContext
   }
 }

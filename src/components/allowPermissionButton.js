@@ -1,10 +1,10 @@
 import React from 'react';
 import { Button } from 'react-native';
-import { AccessibilityServiceModule } from '../nativeModules/get';
+import { Background } from '../nativeModules/get';
 
 const NewModuleButton = () => {
   const onPress = () => {
-    AccessibilityServiceModule.redirectToAppAccessibilitySettings();
+    Background.redirectToAppAccessibilitySettings();
   };
 
   return (
