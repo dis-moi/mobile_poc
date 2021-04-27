@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Button, TouchableOpacity } from 'react-native';
+import { Text, View, Button, TouchableOpacity, Linking } from 'react-native';
 import useNativeModuleEffects from './useNativeModuleEffects';
 import { Container, Content } from 'native-base';
 
@@ -33,7 +33,11 @@ function App() {
             Gratuit, sans publicité, respecte votre vie privée et ne ralentit
             pas votre mobile {'\n'}
           </Text>
-          <TouchableOpacity>
+          <TouchableOpacity
+            onPress={() => {
+              Linking.openURL('https://www.dismoi.io/cgu/');
+            }}
+          >
             <Text style={{ textAlign: 'center' }}>CGU?</Text>
           </TouchableOpacity>
         </View>
