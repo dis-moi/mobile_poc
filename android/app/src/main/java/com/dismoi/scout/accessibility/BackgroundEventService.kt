@@ -10,7 +10,9 @@ class BackgroundEventService : HeadlessJsTaskService() {
     val extras = intent.extras
     return HeadlessJsTaskConfig(
       "Background",
-      if (extras != null) Arguments.fromBundle(extras) else Arguments.createMap(),
+      if (extras != null) {
+        Arguments.fromBundle(extras)
+      } else Arguments.createMap(),
       5000,
       true
     )

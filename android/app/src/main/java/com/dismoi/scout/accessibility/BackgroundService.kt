@@ -18,7 +18,7 @@ import com.dismoi.scout.R
 import com.facebook.react.HeadlessJsTaskService
 
 class BackgroundService : AccessibilityService() {
-  private var _url: String? = "this should be url"
+  private var _url: String? = "this should be an url"
   private val handler = Handler()
   private val runnableCode: Runnable = object : Runnable {
     override fun run() {
@@ -48,13 +48,6 @@ class BackgroundService : AccessibilityService() {
     info.flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
       AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
     this.serviceInfo = info
-
-    val startActivity: Intent? = applicationContext.getPackageManager().getLaunchIntentForPackage(
-      applicationContext.getPackageName()
-    )
-    startActivity!!.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-
-    startActivity(startActivity)
   }
 
   @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -74,7 +67,6 @@ class BackgroundService : AccessibilityService() {
 
   @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
   override fun onAccessibilityEvent(event: AccessibilityEvent) {
-
     val parentNodeInfo = event.source ?: return
     val packageName = event.packageName.toString()
     var browserConfig: SupportedBrowserConfig? = null
@@ -91,7 +83,7 @@ class BackgroundService : AccessibilityService() {
     val capturedUrl = captureUrl(parentNodeInfo, browserConfig)
     parentNodeInfo.recycle()
 
-    // we can't find a url. Browser either was updated or opened page without url text field
+    // we can't find an url. Browser either was updated or opened page without url text field
     if (capturedUrl == null) {
       return
     }
@@ -100,7 +92,9 @@ class BackgroundService : AccessibilityService() {
     val lastRecordedTime =
       if (previousUrlDetections.containsKey(detectionId)) {
         previousUrlDetections[detectionId]!!
-      } else 0.toLong()
+      } else {
+        0.toLong()
+      }
     // some kind of redirect throttling
     if (eventTime - lastRecordedTime > 2000) {
       previousUrlDetections[detectionId] = eventTime
@@ -139,14 +133,13 @@ class BackgroundService : AccessibilityService() {
     return browsers
   }
 
+  @RequiresApi(Build.VERSION_CODES.O)
   private fun createNotificationChannel() {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-      val importance = NotificationManager.IMPORTANCE_DEFAULT
-      val channel = NotificationChannel(CHANNEL_ID, "BACKGROUND", importance)
-      channel.description = "CHANEL DESCRIPTION"
-      val notificationManager = getSystemService(NotificationManager::class.java)
-      notificationManager.createNotificationChannel(channel)
-    }
+    val importance = NotificationManager.IMPORTANCE_DEFAULT
+    val channel = NotificationChannel(CHANNEL_ID, "BACKGROUND", importance)
+    channel.description = "CHANEL DESCRIPTION"
+    val notificationManager = getSystemService(NotificationManager::class.java)
+    notificationManager.createNotificationChannel(channel)
   }
 
   override fun onCreate() {
@@ -158,6 +151,7 @@ class BackgroundService : AccessibilityService() {
     handler.removeCallbacks(runnableCode)
   }
 
+  @RequiresApi(Build.VERSION_CODES.O)
   override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
     createNotificationChannel()
     val notificationIntent = Intent(this, MainActivity::class.java)
