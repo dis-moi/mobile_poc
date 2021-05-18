@@ -137,9 +137,7 @@ function App() {
     <View style={{ flex: 1, flexDirection: 'column' }}>
       <TouchableOpacity
         onPress={() => {
-          Linking.openURL(
-            'https://www.amazon.com/Steelcase-442A40-5S25-Gesture-Graphite/dp/B016OIF2JU/ref=sr_1[…]wX2F0ZiZhY3Rpb249Y2xpY2tSZWRpcmVjdCZkb05vdExvZ0NsaWNrPXRydWU='
-          );
+          Linking.openURL('https://www.google.com');
         }}
       >
         <Image source={require('./images/demo.png')} />
