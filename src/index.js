@@ -1,6 +1,12 @@
 /* eslint-disable no-console */
 import React from 'react';
-import { Text, View, DeviceEventEmitter } from 'react-native';
+import {
+  TouchableOpacity,
+  View,
+  DeviceEventEmitter,
+  Image,
+  Linking,
+} from 'react-native';
 
 import { FloatingModule } from './nativeModules/get';
 
@@ -128,12 +134,16 @@ function App() {
   }, [eventMessageFromChromeURL]);
 
   return (
-    <View style={styles.centerScreen}>
-      <Text>Welcome to DisMoi POC!</Text>
-      <Permission
-        isAccessibilityServiceEnabled={accessibilityServiceIsEnabled}
-      />
-      <AllowPermissionButton />
+    <View style={{ flex: 1, flexDirection: 'column' }}>
+      <TouchableOpacity
+        onPress={() => {
+          Linking.openURL(
+            'https://www.amazon.com/Steelcase-442A40-5S25-Gesture-Graphite/dp/B016OIF2JU/ref=sr_1[…]wX2F0ZiZhY3Rpb249Y2xpY2tSZWRpcmVjdCZkb05vdExvZ0NsaWNrPXRydWU='
+          );
+        }}
+      >
+        <Image source={require('./images/demo.png')} />
+      </TouchableOpacity>
     </View>
   );
 }
