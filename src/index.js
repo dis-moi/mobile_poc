@@ -1,28 +1,26 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import {
-  createStackNavigator,
-  TransitionPresets,
-} from '@react-navigation/stack';
+import useNativeModuleEffects from './useNativeModuleEffects';
+import { TouchableOpacity, View, Image, Linking, Button } from 'react-native';
 
-import Welcome from './screens/welcome';
-import Tuto1 from './screens/tuto1';
-
-const Stack = createStackNavigator();
-
-const TransitionScreenOptions = {
-  ...TransitionPresets.SlideFromRightIOS, // This is where the transition happens
-};
+import { Background } from './nativeModules/get';
 
 function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={TransitionScreenOptions}>
-        <Stack.Screen name="Welcome" component={Welcome} />
-        <Stack.Screen name="Tuto1" component={Tuto1} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+    <View style={{ flex: 1, flexDirection: 'column' }}>
+      <Button
+        style={{ margin: 5 }}
+        title="Start dismoi in background"
+        onPress={() => Background.startService()}
+      />
+      <TouchableOpacity
+        onPress={() => {
+          Linking.openURL('https://www.google.com');
+        }}
+      >
+        <Image source={require('./images/demo.png')} />
+      </TouchableOpacity>
+    </View>
+  )
 }
 
 export default App;
