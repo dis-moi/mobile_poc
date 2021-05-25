@@ -185,6 +185,10 @@ class FloatingModule(
       sharingIntent.setPackage("com.android.chrome")
 
       val bundle = Bundle()
+
+      removeDisMoiMessage()
+      removeDisMoiBubble()
+      sendEventToReactNative("floating-dismoi-message-press")
       reactContext.startActivityForResult(sharingIntent, 0, bundle)
     }
 

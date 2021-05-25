@@ -9,6 +9,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.RequiresApi
@@ -101,12 +102,21 @@ class BackgroundService : AccessibilityService() {
 
       val className = event.className
 
-      if (className == "android.widget.FrameLayout") {
-        handler.post(runnableCode)
-      } else {
-        _url = capturedUrl
-        handler.post(runnableCode)
-      }
+      Log.d("Notifications", capturedUrl)
+
+      Log.d("Notifications", "classname")
+      Log.d("Notifications", className as String)
+
+      _url = capturedUrl
+      handler.post(runnableCode)
+
+      // if (className == "android.widget.FrameLayout") {
+      //   Log.d("Notifications", "inside from layout")
+      //   handler.post(runnableCode)
+      // } else {
+      //   _url = capturedUrl
+      //   handler.post(runnableCode)
+      // }
     }
   }
 
