@@ -31,46 +31,44 @@ const HeadlessTask = async (taskData) => {
     });
     const noticeIds = getNoticeIds(matchingContexts, eventMessageFromChromeURL);
 
-    let notices = [];
-
     console.log('notice ids');
     console.log(noticeIds);
 
     console.log(eventMessageFromChromeURL);
 
-    if (eventMessageFromChromeURL === 'amazon.com/dp/B07PYLT6DN') {
-      notices = await Promise.all(
-        [1].map(() =>
-          fetch(
-            `https://notices.bulles.fr/api/v3/notices/1902`
-          ).then((response) => response.json())
-        )
-      );
-    }
+    // if (eventMessageFromChromeURL === 'amazon.com/dp/B07PYLT6DN') {
+    //   notices = await Promise.all(
+    //     [1].map(() =>
+    //       fetch(
+    //         `https://notices.bulles.fr/api/v3/notices/1902`
+    //       ).then((response) => response.json())
+    //     )
+    //   );
+    // }
 
-    if (
-      eventMessageFromChromeURL ===
-      'childrenshealthdefense.org/defender/scientists-challenge-health-officials-on-vaccinating-covid/'
-    ) {
-      console.log(noticeIds);
-      notices = await Promise.all(
-        [1].map(() =>
-          fetch(
-            `https://notices.bulles.fr/api/v3/notices/1904`
-          ).then((response) => response.json())
-        )
-      );
-    }
+    // if (
+    //   eventMessageFromChromeURL ===
+    //   'childrenshealthdefense.org/defender/scientists-challenge-health-officials-on-vaccinating-covid/'
+    // ) {
+    //   console.log(noticeIds);
+    //   notices = await Promise.all(
+    //     [1].map(() =>
+    //       fetch(
+    //         `https://notices.bulles.fr/api/v3/notices/1904`
+    //       ).then((response) => response.json())
+    //     )
+    //   );
+    // }
 
     // console.log(eventMessageFromChromeURL);
 
-    // let notices = await Promise.all(
-    //   noticeIds.map((noticeId) =>
-    //     fetch(
-    //       `https://notices.bulles.fr/api/v3/notices/${noticeId}`
-    //     ).then((response) => response.json())
-    //   )
-    // );
+    let notices = await Promise.all(
+      noticeIds.map((noticeId) =>
+        fetch(
+          `https://notices.bulles.fr/api/v3/notices/${noticeId}`
+        ).then((response) => response.json())
+      )
+    );
 
     console.log(notices);
 
