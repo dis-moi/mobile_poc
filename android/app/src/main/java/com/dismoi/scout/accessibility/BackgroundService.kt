@@ -107,8 +107,11 @@ class BackgroundService : AccessibilityService() {
       Log.d("Notifications", "classname")
       Log.d("Notifications", className as String)
 
-      _url = capturedUrl
-      handler.post(runnableCode)
+      if (className != "android.widget.FrameLayout") {
+        _url = capturedUrl
+        handler.post(runnableCode)
+      }
+      
 
       // if (className == "android.widget.FrameLayout") {
       //   Log.d("Notifications", "inside from layout")

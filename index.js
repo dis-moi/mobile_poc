@@ -14,6 +14,9 @@ function getNoticeIds(matchingContexts, eventMessageFromChromeURL) {
       if (addWWWForBuildingURL.match(new RegExp(res.urlRegex, 'g'))) {
         // console.log(res.urlRegex);
 
+        console.log('notice id');
+        console.log(res.noticeId);
+
         return res.noticeId;
       }
     })
@@ -24,19 +27,16 @@ const HeadlessTask = async (taskData) => {
   const eventMessageFromChromeURL = taskData.url;
 
   if (eventMessageFromChromeURL && isValidHttpUrl(eventMessageFromChromeURL)) {
-    const matchingContexts = await fetch(
-      'https://notices.bulles.fr/api/v3/matching-contexts'
-    ).then((response) => {
-      return response.json();
-    });
-    const noticeIds = getNoticeIds(matchingContexts, eventMessageFromChromeURL);
+    // const matchingContexts = await fetch(
+    //   'https://notices.bulles.fr/api/v3/matching-contexts'
+    // ).then((response) => {
+    //   return response.json();
+    // });
 
+    // const noticeIds = getNoticeIds(matchingContexts, eventMessageFromChromeURL);
+
+    // console.log(noticeIds);
     let notices = [];
-
-    console.log('notice ids');
-    console.log(noticeIds);
-
-    console.log(eventMessageFromChromeURL);
 
     if (eventMessageFromChromeURL === 'amazon.com/dp/B07PYLT6DN') {
       notices = await Promise.all(
@@ -52,7 +52,6 @@ const HeadlessTask = async (taskData) => {
       eventMessageFromChromeURL ===
       'childrenshealthdefense.org/defender/scientists-challenge-health-officials-on-vaccinating-covid/'
     ) {
-      console.log(noticeIds);
       notices = await Promise.all(
         [1].map(() =>
           fetch(
@@ -72,7 +71,7 @@ const HeadlessTask = async (taskData) => {
     //   )
     // );
 
-    console.log(notices);
+    // console.log(notices);
 
     if (notices.length > 0) {
       const numberOfNotice = notices.length;

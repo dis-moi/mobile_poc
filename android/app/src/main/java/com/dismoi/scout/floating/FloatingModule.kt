@@ -85,6 +85,7 @@ class FloatingModule(
   fun showFloatingDisMoiMessage(x: Int, y: Int, promise: Promise) {
     if (messageDisMoiView == null) {
       try {
+        removeDisMoiBubble()
         addNewFloatingDisMoiMessage(x, y)
         promise.resolve("")
       } catch (e: Exception) {
@@ -108,6 +109,7 @@ class FloatingModule(
   @ReactMethod
   fun hideFloatingDisMoiMessage(promise: Promise) {
     removeDisMoiMessage()
+    removeDisMoiBubble()
     messageDisMoiView = null
     promise.resolve("")
   }
@@ -247,6 +249,7 @@ class FloatingModule(
 
     val imageButton = messageDisMoiView!!.findViewById<View>(R.id.close) as ImageButton
     imageButton.setOnClickListener {
+      bubbleDisMoiView = null
       sendEventToReactNative("floating-dismoi-message-press")
     }
 
