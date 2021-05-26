@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "android": "react-native run-android",
+    "clean": "./scripts/clean.sh",
     "start": "react-native start",
     "applyKtlintRulesToAndroidStudio": "cd android && ./gradlew ktlintApplyToIdea",
     "lintJavascript": "eslint '**/*.js'",
