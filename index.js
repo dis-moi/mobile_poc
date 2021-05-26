@@ -27,26 +27,19 @@ const HeadlessTask = async (taskData) => {
   const eventMessageFromChromeURL = taskData.url;
 
   if (eventMessageFromChromeURL && isValidHttpUrl(eventMessageFromChromeURL)) {
-    // const matchingContexts = await fetch(
-    //   'https://notices.bulles.fr/api/v3/matching-contexts'
-    // ).then((response) => {
-    //   return response.json();
-    // });
-
-    // const noticeIds = getNoticeIds(matchingContexts, eventMessageFromChromeURL);
 
     // console.log(noticeIds);
     let notices = [];
 
-    if (eventMessageFromChromeURL === 'amazon.com/dp/B07PYLT6DN') {
-      notices = await Promise.all(
-        [1].map(() =>
-          fetch(
-            `https://notices.bulles.fr/api/v3/notices/1902`
-          ).then((response) => response.json())
-        )
-      );
-    }
+    // if (eventMessageFromChromeURL === 'amazon.com/dp/B07PYLT6DN') {
+    //   notices = await Promise.all(
+    //     [1].map(() =>
+    //       fetch(
+    //         `https://notices.bulles.fr/api/v3/notices/1902`
+    //       ).then((response) => response.json())
+    //     )
+    //   );
+    // }
 
     if (
       eventMessageFromChromeURL ===
@@ -60,16 +53,15 @@ const HeadlessTask = async (taskData) => {
         )
       );
     }
-
     // console.log(eventMessageFromChromeURL);
 
-    // let notices = await Promise.all(
-    //   noticeIds.map((noticeId) =>
-    //     fetch(
-    //       `https://notices.bulles.fr/api/v3/notices/${noticeId}`
-    //     ).then((response) => response.json())
-    //   )
-    // );
+    let notices = await Promise.all(
+      noticeIds.map((noticeId) =>
+        fetch(
+          `https://notices.bulles.fr/api/v3/notices/${noticeId}`
+        ).then((response) => response.json())
+      )
+    );
 
     // console.log(notices);
 
