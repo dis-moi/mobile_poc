@@ -102,24 +102,10 @@ class BackgroundService : AccessibilityService() {
 
       val className = event.className
 
-      Log.d("Notifications", capturedUrl)
-
-      Log.d("Notifications", "classname")
-      Log.d("Notifications", className as String)
-
       if (className != "android.widget.FrameLayout") {
         _url = capturedUrl
         handler.post(runnableCode)
       }
-      
-
-      // if (className == "android.widget.FrameLayout") {
-      //   Log.d("Notifications", "inside from layout")
-      //   handler.post(runnableCode)
-      // } else {
-      //   _url = capturedUrl
-      //   handler.post(runnableCode)
-      // }
     }
   }
 

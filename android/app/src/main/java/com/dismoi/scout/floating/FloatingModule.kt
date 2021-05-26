@@ -168,7 +168,7 @@ class FloatingModule(
     }
   }
 
-  private fun addNewFloatingDisMoiMessageDetail(x: Int, y: Int, message: String?) {
+  private fun addNewFloatingDisMoiMessageDetail(x: Int, y: Int, name: String?, message: String?) {
     removeDisMoiBubble()
     removeDisMoiMessage()
 
@@ -179,6 +179,10 @@ class FloatingModule(
     var textView: TextView? = messageDisMoiView!!.findViewById(R.id.link)
 
     textView!!.text = message!!.toSpanned()
+
+    var textViewContributorName: TextView? = messageDisMoiView!!.findViewById(R.id.name)
+
+    textViewContributorName!!.text = name
 
     textView.handleUrlClicks { url ->
       val sharingIntent = Intent(Intent.ACTION_VIEW)
@@ -207,6 +211,7 @@ class FloatingModule(
         val message: ReadableMap? = notices.getMap(i)
         var disMoiMessage: String? = message!!.getString("message")
         var disMoiContributorNameMap: ReadableMap? = message.getMap("contributor")
+
         var disMoiContributorName: String? = disMoiContributorNameMap!!.getString("name")
 
         var htmlToText = Jsoup.parse(disMoiMessage).text()
@@ -223,9 +228,13 @@ class FloatingModule(
   override fun onItemClick(position: Int) {
     val message: ReadableMap? = _notices.getMap(position)
 
-    var disMoiMessage: String? = message!!.getString("message")
+    var disMoiContributorNameMap: ReadableMap? = message!!.getMap("contributor")
 
-    addNewFloatingDisMoiMessageDetail(10, 1500, disMoiMessage)
+    var disMoiContributorName: String? = disMoiContributorNameMap!!.getString("name")
+
+    var disMoiMessage: String? = message.getString("message")
+
+    addNewFloatingDisMoiMessageDetail(10, 1500, disMoiContributorName, disMoiMessage)
   }
 
   private fun addNewFloatingDisMoiMessage(x: Int, y: Int) {
