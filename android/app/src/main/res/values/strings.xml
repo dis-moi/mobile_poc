@@ -21,6 +21,5 @@ Each Dismoi user can also ask a question about the web page they are visiting, t
   <string name="dis_moi_logo">DisMoi logo</string>
   <string name="trash">Trash the icon</string>
   <string name="close_dis_moi_content_message_button">Close button</string>
-    <string name="scout_name"></string>
     <string name="dismoi_logo_description">dismoi logo</string>
 </resources>

@@ -1,0 +1,15 @@
+[
+  {
+    "id": 4638,
+    "noticeId": 1902,
+    "noticeUrl": "https://notices.bulles.fr/api/v3/notices/1902",
+    "urlRegex": "(amazon\\.fr|www\\.amazon\\.com|www\\.amazon\\.fr)(?=.*apple)(?=.*airpods)(?=.*pro)"
+  },
+  {
+    "id": 4735,
+    "noticeId": 1902,
+    "noticeUrl": "https://notices.bulles.fr/api/v3/notices/1902",
+    "urlRegex": "(amazon\\.fr|www\\.amazon\\.com|www\\.amazon\\.fr)*.",
+    "xpath": "//span[@id='productTitle'][contains(.,'AirPods')]"
+  }
+]

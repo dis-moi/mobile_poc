@@ -40,14 +40,18 @@ class BackgroundService : AccessibilityService() {
 
   override fun onServiceConnected() {
     val info = serviceInfo
-    info.eventTypes = AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
-    info.packageNames = packageNames()
-    info.feedbackType = AccessibilityServiceInfo.FEEDBACK_VISUAL
+
+    info.flags = AccessibilityServiceInfo.DEFAULT
+    info.eventTypes = AccessibilityEvent.TYPES_ALL_MASK
+    info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
+    // info.eventTypes = AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
+    // info.packageNames = packageNames()
+    // info.feedbackType = AccessibilityServiceInfo.FEEDBACK_VISUAL
     // throttling of accessibility event notification
-    info.notificationTimeout = 300
+    info.notificationTimeout = 5000
     // support ids interception
-    info.flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
-      AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
+    // info.flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
+    //   AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
     this.serviceInfo = info
   }
 
@@ -66,45 +70,91 @@ class BackgroundService : AccessibilityService() {
     return url
   }
 
+  private fun getEventType(event: AccessibilityEvent): String? {
+    when (event.eventType) {
+      AccessibilityEvent.TYPE_NOTIFICATION_STATE_CHANGED -> return "TYPE_NOTIFICATION_STATE_CHANGED"
+      AccessibilityEvent.TYPE_VIEW_CLICKED -> return "TYPE_VIEW_CLICKED"
+      AccessibilityEvent.TYPE_VIEW_FOCUSED -> return "TYPE_VIEW_FOCUSED"
+      AccessibilityEvent.TYPE_VIEW_LONG_CLICKED -> return "TYPE_VIEW_LONG_CLICKED"
+      AccessibilityEvent.TYPE_VIEW_SELECTED -> return "TYPE_VIEW_SELECTED"
+      AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> return "TYPE_WINDOW_STATE_CHANGED"
+      AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> return "TYPE_VIEW_TEXT_CHANGED"
+    }
+    return "default"
+  }
+
+  private fun getEventText(event: AccessibilityEvent): String? {
+    val sb = StringBuilder()
+    for (s in event.text) {
+      sb.append(s)
+    }
+    return sb.toString()
+  }
+
   @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
   override fun onAccessibilityEvent(event: AccessibilityEvent) {
-    val parentNodeInfo = event.source ?: return
-    val packageName = event.packageName.toString()
-    var browserConfig: SupportedBrowserConfig? = null
-    for (supportedConfig in getSupportedBrowsers()) {
-      if (supportedConfig.packageName == packageName) {
-        browserConfig = supportedConfig
-      }
-    }
-
-    // this is not supported browser, so exit
-    if (browserConfig == null) {
+    if (getEventType(event) === "TYPE_VIEW_CLICKED" && 
+    event.getClassName() === "android.widget.FrameLayout") {
+      Log.d(
+        "Notifications",
+        String.format(
+          "TYPE VIEW CLICKED: [type] %s [class] %s [package] %s [time] %s [text] %s",
+          getEventType(event), event.getClassName(), event.getPackageName(),
+          event.getEventTime(), getEventText(event)
+        )
+      )
+      _url = "hide"
+      handler.post(runnableCode)
       return
     }
-    val capturedUrl = captureUrl(parentNodeInfo, browserConfig)
-    parentNodeInfo.recycle()
 
-    // we can't find an url. Browser either was updated or opened page without url text field
-    if (capturedUrl == null) {
+    if (getEventType(event) === "TYPE_VIEW_CLICKED" && 
+    event.getPackageName() == "com.android.systemui") {
+      _url = "hide"
+      handler.post(runnableCode)
       return
     }
-    val eventTime = event.eventTime
-    val detectionId = "$packageName, and url $capturedUrl"
-    val lastRecordedTime =
-      if (previousUrlDetections.containsKey(detectionId)) {
-        previousUrlDetections[detectionId]!!
-      } else {
-        0.toLong()
+
+    if (event.getPackageName() != "com.android.systemui") {
+      val parentNodeInfo = event.source ?: return
+      val packageName = event.packageName.toString()
+      var browserConfig: SupportedBrowserConfig? = null
+      for (supportedConfig in getSupportedBrowsers()) {
+        if (supportedConfig.packageName == packageName) {
+          browserConfig = supportedConfig
+        }
       }
-    // some kind of redirect throttling
-    if (eventTime - lastRecordedTime > 2000) {
-      previousUrlDetections[detectionId] = eventTime
 
-      val className = event.className
+      // this is not supported browser, so exit
+      if (browserConfig == null) {
+        return
+      }
+      val capturedUrl = captureUrl(parentNodeInfo, browserConfig)
+      parentNodeInfo.recycle()
 
-      if (className != "android.widget.FrameLayout") {
-        _url = capturedUrl
-        handler.post(runnableCode)
+      // we can't find an url. Browser either was updated or opened page without url text field
+      if (capturedUrl == null) {
+        return
+      }
+      val eventTime = event.eventTime
+      val detectionId = "$packageName, and url $capturedUrl"
+      val lastRecordedTime =
+        if (previousUrlDetections.containsKey(detectionId)) {
+          previousUrlDetections[detectionId]!!
+        } else {
+          0.toLong()
+        }
+      // some kind of redirect throttling
+      if (eventTime - lastRecordedTime > 10000) {
+        previousUrlDetections[detectionId] = eventTime
+
+        if (getEventText(event) != null) {
+          _url = capturedUrl
+          handler.post(runnableCode)
+        } else {
+          _url = "hide"
+          handler.post(runnableCode)
+        }
       }
     }
   }

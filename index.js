@@ -4,12 +4,22 @@ import { name as appName } from './app.json';
 import { isValidHttpUrl } from './src/libraries';
 import { FloatingModule } from './src/nativeModules/get';
 
+let previousURL = '';
+
 function getNoticeIds(matchingContexts, eventMessageFromChromeURL) {
   return matchingContexts
     .map((res) => {
       const addWWWForBuildingURL = `www.${eventMessageFromChromeURL}`;
 
       // console.log(eventMessageFromChromeURL);
+      if (res.noticeId === 1902) {
+        console.log(res);
+        if (addWWWForBuildingURL.match(new RegExp(res.urlRegex, 'g'))) {
+          console.log('inside');
+          console.log(addWWWForBuildingURL);
+          console.log(res);
+        }
+      }
 
       if (addWWWForBuildingURL.match(new RegExp(res.urlRegex, 'g'))) {
         // console.log(res.urlRegex);
@@ -26,7 +36,23 @@ function getNoticeIds(matchingContexts, eventMessageFromChromeURL) {
 const HeadlessTask = async (taskData) => {
   const eventMessageFromChromeURL = taskData.url;
 
+  console.log(eventMessageFromChromeURL);
+
+  if (eventMessageFromChromeURL === 'hide') {
+    FloatingModule.hideFloatingDisMoiBubble().then(() =>
+      console.log('Hide Floating Bubble')
+    );
+    FloatingModule.hideFloatingDisMoiMessage().then(() =>
+      console.log('Hide Floating Bubble')
+    );
+  }
+
   if (eventMessageFromChromeURL && isValidHttpUrl(eventMessageFromChromeURL)) {
+    // if (previousURL === eventMessageFromChromeURL) {
+    //   console.log('INSIDE');
+    //   return;
+    // }
+    // previousURL = eventMessageFromChromeURL;
     // const matchingContexts = await fetch(
     //   'https://notices.bulles.fr/api/v3/matching-contexts'
     // ).then((response) => {
@@ -36,6 +62,11 @@ const HeadlessTask = async (taskData) => {
     // const noticeIds = getNoticeIds(matchingContexts, eventMessageFromChromeURL);
 
     // console.log(noticeIds);
+    console.log('is valid');
+    console.log(eventMessageFromChromeURL);
+    console.log('previous url');
+    console.log(previousURL);
+
     let notices = [];
 
     if (eventMessageFromChromeURL === 'amazon.com/dp/B07PYLT6DN') {
@@ -76,7 +107,6 @@ const HeadlessTask = async (taskData) => {
     if (notices.length > 0) {
       const numberOfNotice = notices.length;
 
-      //   console.log('notices');
       //   console.log(notices.map((res) => res.contributor.name));
 
       //   // const filteredNotices = notices.filter(
@@ -110,6 +140,7 @@ const HeadlessTask = async (taskData) => {
     //   });
     // }
   }
+
   if (isValidHttpUrl(eventMessageFromChromeURL) === false) {
     FloatingModule.hideFloatingDisMoiBubble().then(() =>
       console.log('Hide Floating Bubble')

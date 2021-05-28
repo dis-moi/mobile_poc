@@ -70,15 +70,14 @@ class FloatingModule(
     url: String,
     promise: Promise
   ) {
-    if (bubbleDisMoiView != null) {
-      removeDisMoiBubble()
-    }
 
-    _url = url
-    _notices = notices
-    _size = numberOfNotice
-    addNewFloatingDisMoiBubble(x, y, numberOfNotice.toString())
-    promise.resolve("")
+    if (bubbleDisMoiView == null && messageDisMoiView == null) {
+      _url = url
+      _notices = notices
+      _size = numberOfNotice
+      addNewFloatingDisMoiBubble(x, y, numberOfNotice.toString())
+      promise.resolve("")
+    }
   }
 
   @ReactMethod
