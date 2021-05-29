@@ -79,6 +79,7 @@ class BackgroundService : AccessibilityService() {
       AccessibilityEvent.TYPE_VIEW_SELECTED -> return "TYPE_VIEW_SELECTED"
       AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED -> return "TYPE_WINDOW_STATE_CHANGED"
       AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> return "TYPE_VIEW_TEXT_CHANGED"
+      AccessibilityEvent.TYPE_VIEW_TEXT_SELECTION_CHANGED -> return "TYPE_VIEW_TEXT_SELECTION_CHANGED"
     }
     return "default"
   }
@@ -96,6 +97,7 @@ class BackgroundService : AccessibilityService() {
     if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
       event.getClassName() === "android.widget.FrameLayout"
     ) {
+      Log.d("Notifications", "TYPE_VIEW_CLICKED + android.widget.FrameLayout")
       _url = "hide"
       handler.post(runnableCode)
       return
@@ -104,6 +106,34 @@ class BackgroundService : AccessibilityService() {
     if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
       event.getPackageName() == "com.android.systemui"
     ) {
+      Log.d("Notifications", "TYPE_VIEW_CLICKED + com.android.systemui")
+      _url = "hide"
+      handler.post(runnableCode)
+      return
+    }
+
+    // if (getEventType(event) === "TYPE_VIEW_TEXT_CHANGED" &&
+    //   event.getPackageName() == "com.android.chrome"
+    // ) {
+    //   Log.d("Notifications", "TYPE_VIEW_TEXT_CHANGED")
+    //   _url = "hide"
+    //   handler.post(runnableCode)
+    //   return
+    // }
+
+    if (getEventType(event) === "TYPE_VIEW_TEXT_SELECTION_CHANGED" &&
+      event.getPackageName() == "com.android.chrome"
+    ) {
+      Log.d("Notifications", "TYPE_VIEW_TEXT_SELECTION_CHANGED")
+      _url = "hide"
+      handler.post(runnableCode)
+      return
+    }
+
+    if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
+      event.getPackageName() == "com.android.chrome"
+    ) {
+      Log.d("Notifications", "TYPE_VIEW_CLICKED")
       _url = "hide"
       handler.post(runnableCode)
       return
@@ -130,33 +160,24 @@ class BackgroundService : AccessibilityService() {
       if (capturedUrl == null) {
         return
       }
-      val eventTime = event.eventTime
-      val detectionId = "$packageName, and url $capturedUrl"
-      val lastRecordedTime =
-        if (previousUrlDetections.containsKey(detectionId)) {
-          previousUrlDetections[detectionId]!!
-        } else {
-          0.toLong()
-        }
-      // some kind of redirect throttling
-      if (eventTime - lastRecordedTime > 10000) {
-        previousUrlDetections[detectionId] = eventTime
 
-        if (getEventText(event) != null) {
+      if (getEventText(event) != null) {
+        if (getEventType(event) == "default" && event.getClassName() == "android.widget.EditText") {
           Log.d(
             "Notifications",
             String.format(
-              "TYPE VIEW CLICKED: [type] %s [class] %s [package] %s [time] %s [text] %s",
+              "[type] %s [class] %s [package] %s [time] %s [text] %s",
               getEventType(event), event.getClassName(), event.getPackageName(),
               event.getEventTime(), getEventText(event)
             )
           )
           _url = capturedUrl
           handler.post(runnableCode)
-        } else {
-          _url = "hide"
-          handler.post(runnableCode)
         }
+      } else {
+        Log.d("Notifications", "Hide")
+        // _url = "hide"
+        // handler.post(runnableCode)
       }
     }
   }
