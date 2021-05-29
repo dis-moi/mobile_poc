@@ -221,7 +221,7 @@ class FloatingModule(
         var htmlToText = Jsoup.parse(disMoiMessage).text()
 
         var cutText = htmlToText!!.substring(0, 90)
-        var cutToLastSpace = cutText.dropLastWhile { !it.isLetter() }
+        var cutToLastSpace = cutText.substringBeforeLast(" ")
 
         val item = HighlightMessage(disMoiContributorName, cutToLastSpace + "...", i.toString())
         list += item
