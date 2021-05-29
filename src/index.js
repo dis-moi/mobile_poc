@@ -7,13 +7,15 @@ import { Background } from './nativeModules/get';
 function App() {
   useNativeModuleEffects();
 
+  React.useEffect(() => {
+    function startDisMoiAppInBackground() {
+      Background.startService();
+    }
+    startDisMoiAppInBackground();
+  }, []);
+
   return (
     <View style={{ flex: 1, flexDirection: 'column' }}>
-      <Button
-        style={{ margin: 5 }}
-        title="Start dismoi in background"
-        onPress={() => Background.startService()}
-      />
       <TouchableOpacity
         onPress={() => {
           Linking.openURL('https://www.google.com');
