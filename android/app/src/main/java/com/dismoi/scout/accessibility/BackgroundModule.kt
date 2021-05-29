@@ -23,6 +23,12 @@ class BackgroundModule(@Nonnull reactContext: ReactApplicationContext) :
   @ReactMethod
   fun startService() {
     reactContext.startService(Intent(reactContext, BackgroundService::class.java))
+    val launchIntent = reactContext.packageManager.getLaunchIntentForPackage(
+      reactContext.packageName
+    )
+    if (launchIntent != null) {
+      reactContext.startActivity(launchIntent)
+    }
   }
 
   @ReactMethod

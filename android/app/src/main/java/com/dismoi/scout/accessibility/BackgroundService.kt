@@ -93,23 +93,17 @@ class BackgroundService : AccessibilityService() {
 
   @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
   override fun onAccessibilityEvent(event: AccessibilityEvent) {
-    if (getEventType(event) === "TYPE_VIEW_CLICKED" && 
-    event.getClassName() === "android.widget.FrameLayout") {
-      Log.d(
-        "Notifications",
-        String.format(
-          "TYPE VIEW CLICKED: [type] %s [class] %s [package] %s [time] %s [text] %s",
-          getEventType(event), event.getClassName(), event.getPackageName(),
-          event.getEventTime(), getEventText(event)
-        )
-      )
+    if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
+      event.getClassName() === "android.widget.FrameLayout"
+    ) {
       _url = "hide"
       handler.post(runnableCode)
       return
     }
 
-    if (getEventType(event) === "TYPE_VIEW_CLICKED" && 
-    event.getPackageName() == "com.android.systemui") {
+    if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
+      event.getPackageName() == "com.android.systemui"
+    ) {
       _url = "hide"
       handler.post(runnableCode)
       return
@@ -149,6 +143,14 @@ class BackgroundService : AccessibilityService() {
         previousUrlDetections[detectionId] = eventTime
 
         if (getEventText(event) != null) {
+          Log.d(
+            "Notifications",
+            String.format(
+              "TYPE VIEW CLICKED: [type] %s [class] %s [package] %s [time] %s [text] %s",
+              getEventType(event), event.getClassName(), event.getPackageName(),
+              event.getEventTime(), getEventText(event)
+            )
+          )
           _url = capturedUrl
           handler.post(runnableCode)
         } else {

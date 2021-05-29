@@ -3,6 +3,7 @@ import App from './src/';
 import { name as appName } from './app.json';
 import { isValidHttpUrl } from './src/libraries';
 import { FloatingModule } from './src/nativeModules/get';
+import { DeviceEventEmitter } from 'react-native';
 
 let previousURL = '';
 
@@ -34,6 +35,36 @@ function getNoticeIds(matchingContexts, eventMessageFromChromeURL) {
 }
 
 const HeadlessTask = async (taskData) => {
+  console.log('headless task');
+
+  function callActionListeners() {
+    DeviceEventEmitter.addListener('floating-dismoi-bubble-press', (e) => {
+      return FloatingModule.showFloatingDisMoiMessage(10, 1500).then(() => {
+        // What to do when user press on the bubble
+        console.log('Bubble press');
+      });
+    });
+
+    DeviceEventEmitter.addListener('floating-dismoi-bubble-remove', (e) => {
+      // What to do when user removes the bubble
+      return console.log('Remove Bubble');
+    });
+
+    DeviceEventEmitter.addListener('floating-dismoi-message-remove', (e) => {
+      // What to do when user removes the message
+      return console.log('DisMoi message remove');
+    });
+
+    DeviceEventEmitter.addListener('floating-dismoi-message-press', (e) => {
+      // What to do when user press on the message
+      return FloatingModule.hideFloatingDisMoiMessage().then(() =>
+        console.log('Hide Floating DisMoiMessage')
+      );
+    });
+  }
+
+  callActionListeners();
+
   const eventMessageFromChromeURL = taskData.url;
 
   console.log(eventMessageFromChromeURL);
@@ -53,13 +84,13 @@ const HeadlessTask = async (taskData) => {
     //   return;
     // }
     // previousURL = eventMessageFromChromeURL;
-    // const matchingContexts = await fetch(
-    //   'https://notices.bulles.fr/api/v3/matching-contexts'
-    // ).then((response) => {
-    //   return response.json();
-    // });
+    const matchingContexts = await fetch(
+      'https://notices.bulles.fr/api/v3/matching-contexts'
+    ).then((response) => {
+      return response.json();
+    });
 
-    // const noticeIds = getNoticeIds(matchingContexts, eventMessageFromChromeURL);
+    const noticeIds = getNoticeIds(matchingContexts, eventMessageFromChromeURL);
 
     // console.log(noticeIds);
     console.log('is valid');
@@ -67,42 +98,40 @@ const HeadlessTask = async (taskData) => {
     console.log('previous url');
     console.log(previousURL);
 
-    let notices = [];
+    // if (eventMessageFromChromeURL === 'amazon.com/dp/B07PYLT6DN') {
+    //   notices = await Promise.all(
+    //     [1].map(() =>
+    //       fetch(
+    //         `https://notices.bulles.fr/api/v3/notices/1902`
+    //       ).then((response) => response.json())
+    //     )
+    //   );
+    // }
 
-    if (eventMessageFromChromeURL === 'amazon.com/dp/B07PYLT6DN') {
-      notices = await Promise.all(
-        [1].map(() =>
-          fetch(
-            `https://notices.bulles.fr/api/v3/notices/1902`
-          ).then((response) => response.json())
-        )
-      );
-    }
-
-    if (
-      eventMessageFromChromeURL ===
-      'childrenshealthdefense.org/defender/scientists-challenge-health-officials-on-vaccinating-covid/'
-    ) {
-      notices = await Promise.all(
-        [1].map(() =>
-          fetch(
-            `https://notices.bulles.fr/api/v3/notices/1904`
-          ).then((response) => response.json())
-        )
-      );
-    }
+    // if (
+    //   eventMessageFromChromeURL ===
+    //   'childrenshealthdefense.org/defender/scientists-challenge-health-officials-on-vaccinating-covid/'
+    // ) {
+    //   notices = await Promise.all(
+    //     [1].map(() =>
+    //       fetch(
+    //         `https://notices.bulles.fr/api/v3/notices/1904`
+    //       ).then((response) => response.json())
+    //     )
+    //   );
+    // }
 
     // console.log(eventMessageFromChromeURL);
 
-    // let notices = await Promise.all(
-    //   noticeIds.map((noticeId) =>
-    //     fetch(
-    //       `https://notices.bulles.fr/api/v3/notices/${noticeId}`
-    //     ).then((response) => response.json())
-    //   )
-    // );
+    let notices = await Promise.all(
+      noticeIds.map((noticeId) =>
+        fetch(
+          `https://notices.bulles.fr/api/v3/notices/${noticeId}`
+        ).then((response) => response.json())
+      )
+    );
 
-    // console.log(notices);
+    console.log(notices);
 
     if (notices.length > 0) {
       const numberOfNotice = notices.length;

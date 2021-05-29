@@ -25,18 +25,4 @@ function App() {
   );
 }
 
-const styles = {
-  centerScreen: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  view: {
-    flex: 0.5,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  button: {
-    backgroundColor: 'gray',
-    padding: 10,
-    margin: 10,
-  },
-};
-
 export default App;

@@ -11,6 +11,7 @@ import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.URLSpan
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
@@ -23,13 +24,13 @@ import com.dismoi.scout.floating.layout.Bubble
 import com.dismoi.scout.floating.layout.Bubble.OnBubbleClickListener
 import com.dismoi.scout.floating.layout.Bubble.OnBubbleRemoveListener
 import com.dismoi.scout.floating.layout.Message
-import com.facebook.react.bridge.Arguments
-import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableArray
+import com.facebook.react.bridge.ReactMethod
 import com.facebook.react.bridge.ReadableMap
+import com.facebook.react.bridge.Promise
+import com.facebook.react.bridge.Arguments
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import org.jsoup.Jsoup
 
@@ -37,8 +38,18 @@ class FloatingModule(
   private val reactContext: ReactApplicationContext
 ) : ReactContextBaseJavaModule(reactContext),
   HighlightMessagesAdapter.onItemClickListener {
-  private var bubblesManager: Manager? = null
-  private var messagesManager: Manager? = null
+  private var bubblesManager: Manager? = Manager.Builder(reactContext).setTrashLayout(
+    R.layout.bubble_trash
+  ).setInitializationCallback(object : OnCallback {
+    override fun onInitialized() {}
+  }).build()
+
+  private var messagesManager: Manager? = Manager.Builder(reactContext).setTrashLayout(
+    R.layout.bubble_trash
+  ).setInitializationCallback(object : OnCallback {
+    override fun onInitialized() {}
+  }).build()
+
   private var bubbleDisMoiView: Bubble? = null
   private var messageDisMoiView: Message? = null
   private var _size = 0
@@ -70,8 +81,11 @@ class FloatingModule(
     url: String,
     promise: Promise
   ) {
+    Log.d("Notifications", "show floating dis moi module")
+    bubblesManager!!.initialize()
 
     if (bubbleDisMoiView == null && messageDisMoiView == null) {
+      Log.d("Notifications", "INSIDE BUBBLE DISMOI VIEW")
       _url = url
       _notices = notices
       _size = numberOfNotice
@@ -82,6 +96,8 @@ class FloatingModule(
 
   @ReactMethod
   fun showFloatingDisMoiMessage(x: Int, y: Int, promise: Promise) {
+    messagesManager!!.initialize()
+
     if (messageDisMoiView == null) {
       try {
         removeDisMoiBubble()
@@ -121,13 +137,6 @@ class FloatingModule(
   @ReactMethod
   fun checkPermission(promise: Promise) {
     promise.resolve(hasPermission())
-  }
-
-  @ReactMethod
-  fun initialize(promise: Promise) {
-    initializeBubblesManager()
-    initializeDisMoiMessageManager()
-    promise.resolve("")
   }
 
 /**
@@ -326,24 +335,6 @@ class FloatingModule(
     } else {
       promise.reject("0", "")
     }
-  }
-
-  private fun initializeDisMoiMessageManager() {
-    messagesManager = Manager.Builder(reactContext).setTrashLayout(
-      R.layout.bubble_trash
-    ).setInitializationCallback(object : OnCallback {
-      override fun onInitialized() {}
-    }).build()
-    messagesManager!!.initialize()
-  }
-
-  private fun initializeBubblesManager() {
-    bubblesManager = Manager.Builder(reactContext).setTrashLayout(
-      R.layout.bubble_trash
-    ).setInitializationCallback(object : OnCallback {
-      override fun onInitialized() {}
-    }).build()
-    bubblesManager!!.initialize()
   }
 
   private fun sendEventToReactNative(eventName: String) {
