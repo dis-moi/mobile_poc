@@ -8,7 +8,7 @@
     "start": "react-native start",
     "applyKtlintRulesToAndroidStudio": "cd android && ./gradlew ktlintApplyToIdea",
     "lintJavascript": "eslint '**/*.js'",
-    "lintKotlin": "cd android && ./gradlew removeUnusedResources && ./gradlew ktlintFormat && ./gradlew ktlintCheck && ./gradlew app:compileDebugKotlin",
+    "lintKotlin": "cd android && ./gradlew removeUnusedResources",
     "prettier": "prettier --write '**/*.js'"
   },
   "husky": {

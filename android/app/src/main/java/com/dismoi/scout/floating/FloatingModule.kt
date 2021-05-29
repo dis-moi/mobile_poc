@@ -17,6 +17,7 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dismoi.scout.R
@@ -24,13 +25,7 @@ import com.dismoi.scout.floating.layout.Bubble
 import com.dismoi.scout.floating.layout.Bubble.OnBubbleClickListener
 import com.dismoi.scout.floating.layout.Bubble.OnBubbleRemoveListener
 import com.dismoi.scout.floating.layout.Message
-import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReadableArray
-import com.facebook.react.bridge.ReactMethod
-import com.facebook.react.bridge.ReadableMap
-import com.facebook.react.bridge.Promise
-import com.facebook.react.bridge.Arguments
+import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import org.jsoup.Jsoup
 
@@ -84,8 +79,9 @@ class FloatingModule(
     Log.d("Notifications", "show floating dis moi module")
     bubblesManager!!.initialize()
 
-    if (bubbleDisMoiView == null && messageDisMoiView == null) {
+    if (bubbleDisMoiView == null) {
       Log.d("Notifications", "INSIDE BUBBLE DISMOI VIEW")
+      removeDisMoiMessage()
       _url = url
       _notices = notices
       _size = numberOfNotice
