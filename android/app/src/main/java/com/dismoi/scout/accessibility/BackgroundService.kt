@@ -2,6 +2,7 @@ package com.dismoi.scout.accessibility
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -207,9 +208,11 @@ class BackgroundService : AccessibilityService() {
 
   @RequiresApi(Build.VERSION_CODES.O)
   private fun createNotificationChannel() {
-    val importance = NotificationManager.IMPORTANCE_DEFAULT
+    val importance = NotificationManager.IMPORTANCE_LOW
     val channel = NotificationChannel(CHANNEL_ID, "BACKGROUND", importance)
     channel.description = "CHANEL DESCRIPTION"
+    channel.enableVibration(false)
+
     val notificationManager = getSystemService(NotificationManager::class.java)
     notificationManager.createNotificationChannel(channel)
   }
@@ -239,7 +242,9 @@ class BackgroundService : AccessibilityService() {
       .setSmallIcon(R.mipmap.ic_launcher)
       .setContentIntent(contentIntent)
       .setOngoing(true)
+      .setVibrate(null)
       .build()
+    
     startForeground(SERVICE_NOTIFICATION_ID, notification)
     return START_STICKY
   }
