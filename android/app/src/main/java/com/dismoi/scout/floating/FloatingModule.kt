@@ -26,6 +26,7 @@ import com.dismoi.scout.floating.layout.Bubble.OnBubbleClickListener
 import com.dismoi.scout.floating.layout.Bubble.OnBubbleRemoveListener
 import com.dismoi.scout.floating.layout.Message
 import com.facebook.react.bridge.*
+import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import org.jsoup.Jsoup
 
@@ -189,17 +190,13 @@ class FloatingModule(
     textViewContributorName!!.text = name
 
     textView.handleUrlClicks { url ->
-      val sharingIntent = Intent(Intent.ACTION_VIEW)
-      sharingIntent.data = Uri.parse(url)
-      sharingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-      sharingIntent.setPackage("com.android.chrome")
-
-      val bundle = Bundle()
-
       removeDisMoiMessage()
       removeDisMoiBubble()
-      sendEventToReactNative("floating-dismoi-message-press")
-      reactContext.startActivityForResult(sharingIntent, 0, bundle)
+
+      reactContext
+        .getJSModule<DeviceEventManagerModule.RCTDeviceEventEmitter>(
+          DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
+        ).emit("URL_CLICK_LINK", Uri.parse(url).toString())
     }
 
     val imageButton = messageDisMoiView!!.findViewById<View>(R.id.close) as ImageButton

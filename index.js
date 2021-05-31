@@ -4,6 +4,7 @@ import { name as appName } from './app.json';
 import { isValidHttpUrl } from './src/libraries';
 import { FloatingModule } from './src/nativeModules/get';
 import { DeviceEventEmitter } from 'react-native';
+import { Linking } from 'react-native';
 
 let previousURL = '';
 
@@ -45,21 +46,15 @@ const HeadlessTask = async (taskData) => {
       });
     });
 
-    DeviceEventEmitter.addListener('floating-dismoi-bubble-remove', (e) => {
-      // What to do when user removes the bubble
-      return console.log('Remove Bubble');
-    });
-
-    DeviceEventEmitter.addListener('floating-dismoi-message-remove', (e) => {
-      // What to do when user removes the message
-      return console.log('DisMoi message remove');
-    });
-
     DeviceEventEmitter.addListener('floating-dismoi-message-press', (e) => {
       // What to do when user press on the message
       return FloatingModule.hideFloatingDisMoiMessage().then(() =>
         console.log('Hide Floating DisMoiMessage')
       );
+    });
+
+    DeviceEventEmitter.addListener('URL_CLICK_LINK', (event) => {
+      Linking.openURL(event);
     });
   }
 
