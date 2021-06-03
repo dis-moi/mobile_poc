@@ -5,7 +5,6 @@ import { isValidHttpUrl } from './src/libraries';
 import { FloatingModule } from './src/nativeModules/get';
 import { DeviceEventEmitter } from 'react-native';
 import { Linking } from 'react-native';
-import React from 'react';
 
 let previousURL = '';
 

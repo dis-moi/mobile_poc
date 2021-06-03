@@ -97,7 +97,6 @@ class BackgroundService : AccessibilityService() {
   override fun onAccessibilityEvent(event: AccessibilityEvent) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
         if (canDrawOverlays(applicationContext)) {
-          Log.d("Notifications", "INSIDE CAN DRAW OVERLAY")
           if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
             event.getClassName() === "android.widget.FrameLayout"
           ) {

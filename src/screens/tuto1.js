@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, View, Button, Dimensions } from 'react-native';
 import { Container, Content } from 'native-base';
 
-function Tuto1() {
+function Tuto1({ navigation }) {
   return (
     <Container>
       <Content
@@ -171,7 +171,12 @@ function Tuto1() {
               justifyContent: 'flex-end',
             }}
           >
-            <Button title="Suivant" onPress={() => {}} />
+            <Button
+              title="Suivant"
+              onPress={() => {
+                return navigation.navigate('Tuto2');
+              }}
+            />
           </View>
         </View>
       </Content>

@@ -6172,6 +6172,13 @@ react-is@^17.0.1:
   resolved "https://registry.yarnpkg.com/react-is/-/react-is-17.0.1.tgz#5b3531bd76a645a4c9fb6e693ed36419e3301339"
   integrity sha512-NAnt2iGDXohE5LI7uBnLnqvLQMtzhkiAOLXTmv+qnF9Ky7xAPcX8Up/xWIhxvLVGJvuLiNc4xQLtuqDRzb4fSA==
 
+react-native-balloon@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-balloon/-/react-native-balloon-1.0.0.tgz#369ebb508e5ae8dce81ddb9a6ae0ba890e88d269"
+  integrity sha512-EB0NIQWnxO2t4eoY8Vt6aGKMfofhqjVF30nFptZLuHOBx37+6qPMgKfBYHv0XSkTndJ09zBxoT9kX2/jAF/L8Q==
+  dependencies:
+    prop-types "^15.5.10"
+
 react-native-drawer@2.5.1:
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/react-native-drawer/-/react-native-drawer-2.5.1.tgz#08b9314184f48c724f1b467f8859797369798654"
