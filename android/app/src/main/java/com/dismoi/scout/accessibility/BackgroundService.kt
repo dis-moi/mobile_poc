@@ -2,7 +2,7 @@ package com.dismoi.scout.accessibility
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
-import android.app.Notification
+import android.provider.Settings.canDrawOverlays
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -95,92 +95,88 @@ class BackgroundService : AccessibilityService() {
 
   @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
   override fun onAccessibilityEvent(event: AccessibilityEvent) {
-    if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
-      event.getClassName() === "android.widget.FrameLayout"
-    ) {
-      Log.d("Notifications", "TYPE_VIEW_CLICKED + android.widget.FrameLayout")
-      _url = "hide"
-      handler.post(runnableCode)
-      return
-    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (canDrawOverlays(applicationContext)) {
+          Log.d("Notifications", "INSIDE CAN DRAW OVERLAY")
+          if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
+            event.getClassName() === "android.widget.FrameLayout"
+          ) {
+            Log.d("Notifications", "TYPE_VIEW_CLICKED + android.widget.FrameLayout")
+            _url = "hide"
+            handler.post(runnableCode)
+            return
+          }
 
-    if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
-      event.getPackageName() == "com.android.systemui"
-    ) {
-      Log.d("Notifications", "TYPE_VIEW_CLICKED + com.android.systemui")
-      _url = "hide"
-      handler.post(runnableCode)
-      return
-    }
+          if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
+            event.getPackageName() == "com.android.systemui"
+          ) {
+            Log.d("Notifications", "TYPE_VIEW_CLICKED + com.android.systemui")
+            _url = "hide"
+            handler.post(runnableCode)
+            return
+          }
 
-    // if (getEventType(event) === "TYPE_VIEW_TEXT_CHANGED" &&
-    //   event.getPackageName() == "com.android.chrome"
-    // ) {
-    //   Log.d("Notifications", "TYPE_VIEW_TEXT_CHANGED")
-    //   _url = "hide"
-    //   handler.post(runnableCode)
-    //   return
-    // }
+          if (getEventType(event) === "TYPE_VIEW_TEXT_SELECTION_CHANGED" &&
+            event.getPackageName() == "com.android.chrome"
+          ) {
+            Log.d("Notifications", "TYPE_VIEW_TEXT_SELECTION_CHANGED")
+            _url = "hide"
+            handler.post(runnableCode)
+            return
+          }
 
-    if (getEventType(event) === "TYPE_VIEW_TEXT_SELECTION_CHANGED" &&
-      event.getPackageName() == "com.android.chrome"
-    ) {
-      Log.d("Notifications", "TYPE_VIEW_TEXT_SELECTION_CHANGED")
-      _url = "hide"
-      handler.post(runnableCode)
-      return
-    }
+          if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
+            event.getPackageName() == "com.android.chrome"
+          ) {
+            Log.d("Notifications", "TYPE_VIEW_CLICKED")
+            _url = "hide"
+            handler.post(runnableCode)
+            return
+          }
 
-    if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
-      event.getPackageName() == "com.android.chrome"
-    ) {
-      Log.d("Notifications", "TYPE_VIEW_CLICKED")
-      _url = "hide"
-      handler.post(runnableCode)
-      return
-    }
+          if (event.getPackageName() != "com.android.systemui") {
+            val parentNodeInfo = event.source ?: return
+            val packageName = event.packageName.toString()
+            var browserConfig: SupportedBrowserConfig? = null
+            for (supportedConfig in getSupportedBrowsers()) {
+              if (supportedConfig.packageName == packageName) {
+                browserConfig = supportedConfig
+              }
+            }
 
-    if (event.getPackageName() != "com.android.systemui") {
-      val parentNodeInfo = event.source ?: return
-      val packageName = event.packageName.toString()
-      var browserConfig: SupportedBrowserConfig? = null
-      for (supportedConfig in getSupportedBrowsers()) {
-        if (supportedConfig.packageName == packageName) {
-          browserConfig = supportedConfig
+            // this is not supported browser, so exit
+            if (browserConfig == null) {
+              return
+            }
+            val capturedUrl = captureUrl(parentNodeInfo, browserConfig)
+            parentNodeInfo.recycle()
+
+            // we can't find an url. Browser either was updated or opened page without url text field
+            if (capturedUrl == null) {
+              return
+            }
+
+            if (getEventText(event) != null) {
+              if (getEventType(event) == "default" && event.getClassName() == "android.widget.EditText") {
+                Log.d(
+                  "Notifications",
+                  String.format(
+                    "[type] %s [class] %s [package] %s [time] %s [text] %s",
+                    getEventType(event), event.getClassName(), event.getPackageName(),
+                    event.getEventTime(), getEventText(event)
+                  )
+                )
+                _url = capturedUrl
+                handler.post(runnableCode)
+              }
+            } else {
+              Log.d("Notifications", "Hide")
+              // _url = "hide"
+              // handler.post(runnableCode)
+            }
+          }
         }
       }
-
-      // this is not supported browser, so exit
-      if (browserConfig == null) {
-        return
-      }
-      val capturedUrl = captureUrl(parentNodeInfo, browserConfig)
-      parentNodeInfo.recycle()
-
-      // we can't find an url. Browser either was updated or opened page without url text field
-      if (capturedUrl == null) {
-        return
-      }
-
-      if (getEventText(event) != null) {
-        if (getEventType(event) == "default" && event.getClassName() == "android.widget.EditText") {
-          Log.d(
-            "Notifications",
-            String.format(
-              "[type] %s [class] %s [package] %s [time] %s [text] %s",
-              getEventType(event), event.getClassName(), event.getPackageName(),
-              event.getEventTime(), getEventText(event)
-            )
-          )
-          _url = capturedUrl
-          handler.post(runnableCode)
-        }
-      } else {
-        Log.d("Notifications", "Hide")
-        // _url = "hide"
-        // handler.post(runnableCode)
-      }
-    }
   }
 
   override fun onInterrupt() {
@@ -229,6 +225,7 @@ class BackgroundService : AccessibilityService() {
   @RequiresApi(Build.VERSION_CODES.O)
   override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
     createNotificationChannel()
+
     val notificationIntent = Intent(this, MainActivity::class.java)
     val contentIntent = PendingIntent.getActivity(
       this,

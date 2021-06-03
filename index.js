@@ -5,6 +5,7 @@ import { isValidHttpUrl } from './src/libraries';
 import { FloatingModule } from './src/nativeModules/get';
 import { DeviceEventEmitter } from 'react-native';
 import { Linking } from 'react-native';
+import React from 'react';
 
 let previousURL = '';
 
@@ -35,6 +36,8 @@ function getNoticeIds(matchingContexts, eventMessageFromChromeURL) {
     .filter(Boolean);
 }
 
+let i = 0;
+
 const HeadlessTask = async (taskData) => {
   console.log('headless task');
 
@@ -45,20 +48,21 @@ const HeadlessTask = async (taskData) => {
         console.log('Bubble press');
       });
     });
-
     DeviceEventEmitter.addListener('floating-dismoi-message-press', (e) => {
       // What to do when user press on the message
       return FloatingModule.hideFloatingDisMoiMessage().then(() =>
         console.log('Hide Floating DisMoiMessage')
       );
     });
-
     DeviceEventEmitter.addListener('URL_CLICK_LINK', (event) => {
       Linking.openURL(event);
     });
   }
 
-  callActionListeners();
+  if (i === 0) {
+    callActionListeners();
+    i++;
+  }
 
   const eventMessageFromChromeURL = taskData.url;
 
