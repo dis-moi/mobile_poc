@@ -1,9 +1,22 @@
 import React from 'react';
 import useNativeModuleEffects from './useNativeModuleEffects';
-import { Container, Content } from 'native-base';
-import { TouchableOpacity, View, Linking, Button, Text } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import {
+  createStackNavigator,
+  TransitionPresets,
+} from '@react-navigation/stack';
+
+import Welcome from './screens/welcome';
+import Tuto1 from './screens/tuto1';
+
+const Stack = createStackNavigator();
 
 import { Background } from './nativeModules/get';
+
+const TransitionScreenOptions = {
+  ...TransitionPresets.SlideFromRightIOS, // This is where the transition happens
+  headerShown: false,
+};
 
 function App() {
   useNativeModuleEffects();
@@ -16,50 +29,12 @@ function App() {
   }, []);
 
   return (
-    <Container>
-      <Content
-        padder
-        contentContainerStyle={{
-          flex: 1,
-        }}
-      >
-        <Text style={{ textAlign: 'center' }}>DISMOI</Text>
-        <View
-          style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}
-        >
-          <Text style={{ textAlign: 'center' }}>
-            Merci d'avoir téléchargé l'application DisMoi. {'\n'}
-          </Text>
-          <Text style={{ textAlign: 'center' }}>
-            Conseils et entraide directement sur les pages web que vous visitez.
-            {'\n'}
-          </Text>
-          <Text style={{ textAlign: 'center' }}>
-            S'il existe une meilleure alternative, une info éclairante, vous le
-            saurez! {'\n'}
-          </Text>
-          <Text style={{ textAlign: 'center' }}>
-            Gratuit, sans publicité, respecte votre vie privée et ne ralentit
-            pas votre mobile {'\n'}
-          </Text>
-          <TouchableOpacity
-            onPress={() => {
-              Linking.openURL('https://www.dismoi.io/cgu/');
-            }}
-          >
-            <Text style={{ textAlign: 'center' }}>CGU?</Text>
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            flexDirection: 'column',
-            justifyContent: 'flex-end',
-          }}
-        >
-          <Button title="Suivant" />
-        </View>
-      </Content>
-    </Container>
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={TransitionScreenOptions}>
+        <Stack.Screen name="Welcome" component={Welcome} />
+        <Stack.Screen name="Tuto1" component={Tuto1} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
