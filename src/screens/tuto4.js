@@ -14,7 +14,7 @@ function Tuto2({ navigation }) {
     <View style={styles.container}>
       <Text style={{ textAlign: 'center' }}>DISMOI</Text>
       <Text style={{ textAlign: 'center' }}>
-        Consultez les éclairages {'\n'}
+        Revenir à votre navigateur {'\n'}
       </Text>
       <View style={styles.container}>
         <ImageBackground
@@ -39,11 +39,11 @@ function Tuto2({ navigation }) {
               containerStyle={{ right: 10 }}
               onPress={() => console.log('press')}
             >
-              <Text>Cliquez pour voir le détail!</Text>
+              <Text>Fermer</Text>
             </Balloon>
             <TouchableOpacity
               onPress={() => {
-                return navigation.navigate('Tuto4');
+                return navigation.navigate('Authorizations');
               }}
             >
               <Image
@@ -53,7 +53,6 @@ function Tuto2({ navigation }) {
             </TouchableOpacity>
           </View>
         </ImageBackground>
-        {/* <ImageBackground source={require('../images/webpageSnapshot.png')} /> */}
       </View>
     </View>
   );

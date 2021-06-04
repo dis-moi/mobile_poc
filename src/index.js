@@ -1,5 +1,4 @@
 import React from 'react';
-import useNativeModuleEffects from './useNativeModuleEffects';
 import { NavigationContainer } from '@react-navigation/native';
 import {
   createStackNavigator,
@@ -10,6 +9,10 @@ import Welcome from './screens/welcome';
 import Tuto1 from './screens/tuto1';
 import Tuto2 from './screens/tuto2';
 import Tuto3 from './screens/tuto3';
+import Tuto4 from './screens/tuto4';
+import Finished from './screens/finished';
+
+import Authorizations from './screens/authorizations';
 
 const Stack = createStackNavigator();
 
@@ -21,8 +24,6 @@ const TransitionScreenOptions = {
 };
 
 function App() {
-  useNativeModuleEffects();
-
   React.useEffect(() => {
     function startDisMoiAppInBackground() {
       Background.startService();
@@ -38,6 +39,9 @@ function App() {
 
         <Stack.Screen name="Tuto2" component={Tuto2} />
         <Stack.Screen name="Tuto3" component={Tuto3} />
+        <Stack.Screen name="Tuto4" component={Tuto4} />
+        <Stack.Screen name="Authorizations" component={Authorizations} />
+        <Stack.Screen name="Finished" component={Finished} />
       </Stack.Navigator>
     </NavigationContainer>
   );

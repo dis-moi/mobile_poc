@@ -47,10 +47,7 @@
           android:resource="@xml/accessibility_service_config"
         />
         </service>
-        <service
-            android:name="com.dismoi.scout.accessibility.BackgroundEventService"
-              
-          >
+        <service android:name="com.dismoi.scout.accessibility.BackgroundEventService">
         </service>
          <service
             android:name=".floating.FloatingService"

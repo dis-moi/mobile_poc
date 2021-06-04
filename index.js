@@ -13,16 +13,6 @@ function getNoticeIds(matchingContexts, eventMessageFromChromeURL) {
     .map((res) => {
       const addWWWForBuildingURL = `www.${eventMessageFromChromeURL}`;
 
-      // console.log(eventMessageFromChromeURL);
-      if (res.noticeId === 1902) {
-        console.log(res);
-        if (addWWWForBuildingURL.match(new RegExp(res.urlRegex, 'g'))) {
-          console.log('inside');
-          console.log(addWWWForBuildingURL);
-          console.log(res);
-        }
-      }
-
       if (addWWWForBuildingURL.match(new RegExp(res.urlRegex, 'g'))) {
         // console.log(res.urlRegex);
 

@@ -1,9 +1,7 @@
 import React from 'react';
-import { AccessibilityServiceModule } from '../../../../nativeModules/get';
+import { Background } from '../../../../nativeModules/get';
 
-function useFloatingBubbleRequestPermissionEffect(
-  eventMessageFromAccessibilityServicePermission
-) {
+function useFloatingBubbleRequestPermissionEffect(appState) {
   const [
     isAccessibilityServiceEnabled,
     setIsAccessibilityServiceEnabled,
@@ -11,7 +9,7 @@ function useFloatingBubbleRequestPermissionEffect(
 
   React.useEffect(() => {
     function callIsAccessibilityEnabledMethod() {
-      AccessibilityServiceModule.isAccessibilityEnabled((result) => {
+      Background.isAccessibilityEnabled((result) => {
         if (result === '1') {
           setIsAccessibilityServiceEnabled(true);
         }
@@ -22,7 +20,7 @@ function useFloatingBubbleRequestPermissionEffect(
     }
 
     callIsAccessibilityEnabledMethod();
-  }, [eventMessageFromAccessibilityServicePermission]);
+  }, [appState]);
 
   return isAccessibilityServiceEnabled;
 }

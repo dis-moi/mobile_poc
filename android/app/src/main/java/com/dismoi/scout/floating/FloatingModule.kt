@@ -126,16 +126,6 @@ class FloatingModule(
     promise.resolve("")
   }
 
-  @ReactMethod
-  fun requestPermission(promise: Promise) {
-    requestPermissionAction(promise)
-  }
-
-  @ReactMethod
-  fun checkPermission(promise: Promise) {
-    promise.resolve(hasPermission())
-  }
-
 /**
    * Searches for all URLSpans in current text replaces them with our own ClickableSpans
    * forwards clicks to provided function.
@@ -291,12 +281,6 @@ class FloatingModule(
     bubblesManager!!.addDisMoiBubble(bubbleDisMoiView, x, y)
   }
 
-  private fun hasPermission(): Boolean {
-    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-      Settings.canDrawOverlays(reactContext)
-    } else true
-  }
-
   private fun removeDisMoiBubble() {
     if (bubbleDisMoiView != null) {
       bubblesManager!!.removeBubble(bubbleDisMoiView)
@@ -306,27 +290,6 @@ class FloatingModule(
   private fun removeDisMoiMessage() {
     if (messageDisMoiView != null) {
       messagesManager!!.removeDisMoiMessage(messageDisMoiView)
-    }
-  }
-
-  fun requestPermissionAction(promise: Promise) {
-    if (!hasPermission()) {
-      var intent: Intent? = null
-      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-        intent = Intent(
-          Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
-          Uri.parse(
-            "package:" + reactContext.packageName
-          )
-        )
-      }
-      val bundle = Bundle()
-      reactContext.startActivityForResult(intent, 0, bundle)
-    }
-    if (hasPermission()) {
-      promise.resolve("")
-    } else {
-      promise.reject("0", "")
     }
   }
 
