@@ -1,8 +1,16 @@
 import React from 'react';
 import { Text, View, Button, Linking } from 'react-native';
 import { Container, Content } from 'native-base';
+import { Background } from '../nativeModules/get';
 
 function Finished({ navigation }) {
+  React.useEffect(() => {
+    function startDisMoiAppInBackground() {
+      Background.startService();
+    }
+    startDisMoiAppInBackground();
+  }, []);
+
   return (
     <Container>
       <Content

@@ -16,21 +16,12 @@ import Authorizations from './screens/authorizations';
 
 const Stack = createStackNavigator();
 
-import { Background } from './nativeModules/get';
-
 const TransitionScreenOptions = {
   ...TransitionPresets.SlideFromRightIOS, // This is where the transition happens
   headerShown: false,
 };
 
 function App() {
-  React.useEffect(() => {
-    function startDisMoiAppInBackground() {
-      Background.startService();
-    }
-    startDisMoiAppInBackground();
-  }, []);
-
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={TransitionScreenOptions}>
