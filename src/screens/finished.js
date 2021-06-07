@@ -2,6 +2,7 @@ import React from 'react';
 import { Text, View, Button, Linking, TouchableOpacity } from 'react-native';
 import { Container, Content } from 'native-base';
 import { Background } from '../nativeModules/get';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Finished({ navigation }) {
   React.useEffect(() => {
@@ -9,6 +10,14 @@ function Finished({ navigation }) {
       Background.startService();
     }
     startDisMoiAppInBackground();
+  }, []);
+
+  React.useEffect(() => {
+    AsyncStorage.getItem('alreadyLaunched').then((value) => {
+      if (value == null) {
+        AsyncStorage.setItem('alreadyLaunched', 'true'); // No need to wait for `setItem` to finish, although you might want to handle errors
+      }
+    });
   }, []);
 
   return (
