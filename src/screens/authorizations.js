@@ -108,7 +108,7 @@ function Authorizations({ navigation }) {
               <Right>
                 <Switch
                   style={{ transform: [{ scaleX: 1.6 }, { scaleY: 1.5 }] }}
-                  onValueChange={(value) => {
+                  onValueChange={() => {
                     Background.redirectToAppAccessibilitySettings().then(
                       () => {}
                     );
