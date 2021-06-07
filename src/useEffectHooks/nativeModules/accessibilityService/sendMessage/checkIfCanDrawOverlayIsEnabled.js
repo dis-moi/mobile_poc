@@ -8,7 +8,7 @@ function CheckIfCanDrawOverlayIsEnabledEffect(appState) {
   ] = React.useState(false);
 
   React.useEffect(() => {
-    function callIsAccessibilityEnabledMethod() {
+    function callCheckIfOverlayEnabledMethod() {
       Background.canDrawOverlay((result) => {
         if (result === '1') {
           setCanDrawOverlayServiceEnabled(true);
@@ -19,7 +19,7 @@ function CheckIfCanDrawOverlayIsEnabledEffect(appState) {
       });
     }
 
-    callIsAccessibilityEnabledMethod();
+    callCheckIfOverlayEnabledMethod();
   }, [appState]);
 
   return canDrawOverlayServiceEnabled;

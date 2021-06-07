@@ -5,7 +5,7 @@ import useCheckIfCanDrawOverlayIsEnabledEffect from './useEffectHooks/nativeModu
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import StartOnboarding from './navigations/onboarding';
-import Authorizations from './navigations/authorizations';
+import AuthorizationsMustBeEnabled from './navigations/authorizations';
 import EverythingIsReady from './navigations/finished';
 
 function App() {
@@ -53,7 +53,7 @@ function App() {
     ) {
       return <EverythingIsReady />;
     } else {
-      return <Authorizations />;
+      return <AuthorizationsMustBeEnabled />;
     }
   }
 }

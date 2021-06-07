@@ -22,9 +22,6 @@ function useFloatingBubbleRequestPermissionEffect(appState) {
     callIsAccessibilityEnabledMethod();
   }, [appState]);
 
-  console.log('is accessibility enable');
-  console.log(isAccessibilityServiceEnabled);
-
   return isAccessibilityServiceEnabled;
 }
 

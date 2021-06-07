@@ -15,7 +15,7 @@ const TransitionScreenOptions = {
   ...TransitionPresets.SlideFromRightIOS, // This is where the transition happens
 };
 
-function StartOnboarding() {
+function AuthorizationsMustBeEnabled() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={TransitionScreenOptions}>
@@ -34,4 +34,4 @@ function StartOnboarding() {
   );
 }
 
-export default StartOnboarding;
+export default AuthorizationsMustBeEnabled;

@@ -6,7 +6,7 @@ import stackScreenOptions from './stackScreenOptions';
 
 const Stack = createStackNavigator();
 
-function StartOnboarding() {
+function EverythingIsReady() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -20,4 +20,4 @@ function StartOnboarding() {
   );
 }
 
-export default StartOnboarding;
+export default EverythingIsReady;
