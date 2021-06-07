@@ -18,21 +18,125 @@ const Stack = createStackNavigator();
 
 const TransitionScreenOptions = {
   ...TransitionPresets.SlideFromRightIOS, // This is where the transition happens
-  headerShown: false,
+  // headerShown: false,
 };
 
 function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={TransitionScreenOptions}>
-        <Stack.Screen name="Welcome" component={Welcome} />
-        <Stack.Screen name="Tuto1" component={Tuto1} />
+        <Stack.Screen
+          name="Welcome"
+          component={Welcome}
+          options={{
+            title: 'Dismoi',
+            headerStyle: {
+              backgroundColor: '#1e52b4',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              alignSelf: 'center',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Tuto1"
+          component={Tuto1}
+          options={{
+            title: 'Dismoi',
+            headerLeft: () => null,
+            headerStyle: {
+              backgroundColor: '#1e52b4',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              alignSelf: 'center',
+            },
+          }}
+        />
 
-        <Stack.Screen name="Tuto2" component={Tuto2} />
-        <Stack.Screen name="Tuto3" component={Tuto3} />
-        <Stack.Screen name="Tuto4" component={Tuto4} />
-        <Stack.Screen name="Authorizations" component={Authorizations} />
-        <Stack.Screen name="Finished" component={Finished} />
+        <Stack.Screen
+          name="Tuto2"
+          component={Tuto2}
+          options={{
+            title: 'Dismoi',
+            headerLeft: () => null,
+            headerStyle: {
+              backgroundColor: '#1e52b4',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              alignSelf: 'center',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Tuto3"
+          component={Tuto3}
+          options={{
+            title: 'Dismoi',
+            headerLeft: () => null,
+            headerStyle: {
+              backgroundColor: '#1e52b4',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              alignSelf: 'center',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Tuto4"
+          component={Tuto4}
+          options={{
+            title: 'Dismoi',
+            headerLeft: () => null,
+            headerStyle: {
+              backgroundColor: '#1e52b4',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              alignSelf: 'center',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Authorizations"
+          component={Authorizations}
+          options={{
+            title: 'Dismoi',
+            headerLeft: () => null,
+            headerStyle: {
+              backgroundColor: '#1e52b4',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              alignSelf: 'center',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Finished"
+          component={Finished}
+          options={{
+            title: 'Dismoi',
+            headerLeft: () => null,
+            headerStyle: {
+              backgroundColor: '#1e52b4',
+            },
+            headerTintColor: '#fff',
+            headerTitleStyle: {
+              fontWeight: 'bold',
+              alignSelf: 'center',
+            },
+          }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );

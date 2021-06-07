@@ -15,9 +15,6 @@ function useAccessibilityServiveEventToListenFromNativeModuleEffect(
       eventListener.current = eventEmitter.addListener(
         eventToListenFromNativeModule,
         (event) => {
-          console.log('event');
-          console.log(event);
-
           setEventMessage(event);
         }
       );

@@ -18,7 +18,7 @@ function Tuto2({ navigation }) {
       </Text>
       <View style={styles.container}>
         <ImageBackground
-          source={require('../images/webpageSnapshot.png')}
+          source={require('../assets/images/webpageSnapshot.png')}
           style={styles.image}
         >
           <View
@@ -48,7 +48,7 @@ function Tuto2({ navigation }) {
             >
               <Image
                 style={{ bottom: 0 }}
-                source={require('../images/dismoi_round.png')}
+                source={require('../assets/images/dismoi_round.png')}
               />
             </TouchableOpacity>
           </View>
