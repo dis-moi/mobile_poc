@@ -4,7 +4,7 @@ import { Container, Content } from 'native-base';
 import { Background } from '../nativeModules/get';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-function Finished({ navigation }) {
+function Finished() {
   React.useEffect(() => {
     function startDisMoiAppInBackground() {
       Background.startService();
