@@ -3,7 +3,7 @@ export default function stackScreenOptions() {
     title: 'Dismoi',
     headerLeft: () => null,
     headerStyle: {
-      backgroundColor: '#1e52b4',
+      backgroundColor: '#2855a2',
     },
     headerTintColor: '#fff',
     headerTitleStyle: {

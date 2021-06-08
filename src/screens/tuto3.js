@@ -12,9 +12,17 @@ import Balloon from 'react-native-balloon';
 function Tuto2({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text style={{ textAlign: 'center' }}>DISMOI</Text>
-      <Text style={{ textAlign: 'center' }}>
-        Consultez les éclairages {'\n'}
+      <Text
+        style={{
+          letterSpacing: 0.9,
+          textAlign: 'center',
+          fontFamily: 'Helvetica',
+          color: '#000000',
+          fontSize: 18,
+          margin: 9,
+        }}
+      >
+        Consultez la contribution, puis revenez à votre navigation.
       </Text>
       <View style={styles.container}>
         <ImageBackground
@@ -53,7 +61,6 @@ function Tuto2({ navigation }) {
             </TouchableOpacity>
           </View>
         </ImageBackground>
-        {/* <ImageBackground source={require('../images/webpageSnapshot.png')} /> */}
       </View>
     </View>
   );

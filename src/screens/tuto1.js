@@ -190,7 +190,7 @@ function Tuto1({ navigation }) {
           <TouchableOpacity
             style={{
               height: 70,
-              backgroundColor: '#1e52b4',
+              backgroundColor: '#2855a2',
               borderRadius: 10,
               justifyContent: 'center',
             }}

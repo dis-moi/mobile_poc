@@ -12,9 +12,17 @@ import Balloon from 'react-native-balloon';
 function Tuto2({ navigation }) {
   return (
     <View style={styles.container}>
-      <Text style={{ textAlign: 'center' }}>DISMOI</Text>
-      <Text style={{ textAlign: 'center' }}>
-        Surfez avec votre navigateur chrome {'\n'}
+      <Text
+        style={{
+          letterSpacing: 0.9,
+          textAlign: 'center',
+          fontFamily: 'Helvetica',
+          color: '#000000',
+          fontSize: 18,
+          margin: 9,
+        }}
+      >
+        Dismoi apparaît sur votre navigateur.
       </Text>
       <View style={styles.container}>
         <ImageBackground
@@ -29,17 +37,27 @@ function Tuto2({ navigation }) {
             }}
           >
             <Balloon
-              borderColor="#2E86C1"
-              backgroundColor="#D6EAF8"
-              borderWidth={2}
+              borderColor="#2855a2"
+              backgroundColor="white"
+              borderWidth={5}
               triangleOffset={'7%'}
-              borderRadius={20}
+              borderRadius={10}
               triangleSize={15}
               triangleDirection={'bottom'}
               containerStyle={{ right: 10 }}
               onPress={() => console.log('press')}
             >
-              <Text>Tapez sur la bulle pour ouvrir!</Text>
+              <Text
+                style={{
+                  letterSpacing: 0.9,
+                  textAlign: 'center',
+                  color: '#2855a2',
+                  fontFamily: 'Helvetica-Bold',
+                  fontSize: 18,
+                }}
+              >
+                Ouvrir
+              </Text>
             </Balloon>
             <TouchableOpacity
               onPress={() => {

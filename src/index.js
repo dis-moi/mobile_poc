@@ -1,5 +1,5 @@
 import React from 'react';
-import listenToAppStateUseEffect from './useEffectHooks/nativeModules/accessibilityService/listenMessage/appState';
+import listenToAppStateUseEffect from './useEffectHooks/appState';
 import useCheckIfAccessibilityIsEnabledEffect from './useEffectHooks/nativeModules/accessibilityService/sendMessage/checkIfAccessibilityIsEnabled';
 import useCheckIfCanDrawOverlayIsEnabledEffect from './useEffectHooks/nativeModules/accessibilityService/sendMessage/checkIfCanDrawOverlayIsEnabled';
 

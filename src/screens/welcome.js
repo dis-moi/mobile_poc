@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Button, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
 import { Container, Content } from 'native-base';
 
 function Welcome({ navigation }) {
@@ -77,7 +77,7 @@ function Welcome({ navigation }) {
           <TouchableOpacity
             style={{
               height: 70,
-              backgroundColor: '#1e52b4',
+              backgroundColor: '#2855a2',
               borderRadius: 10,
               justifyContent: 'center',
             }}
