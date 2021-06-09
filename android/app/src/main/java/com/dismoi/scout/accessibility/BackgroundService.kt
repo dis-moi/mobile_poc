@@ -239,6 +239,9 @@ class BackgroundService : AccessibilityService() {
       .build()
     
     startForeground(SERVICE_NOTIFICATION_ID, notification)
+
+    _url = "hide"
+    handler.post(runnableCode)
     return START_STICKY
   }
 
