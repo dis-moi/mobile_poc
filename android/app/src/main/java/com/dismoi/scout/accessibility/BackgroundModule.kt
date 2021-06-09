@@ -6,7 +6,6 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.provider.Settings.canDrawOverlays
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
@@ -27,7 +26,8 @@ class BackgroundModule(@Nonnull reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun startService() {
-    reactContext.startService(Intent(reactContext, BackgroundService::class.java))
+    val serviceToStart = Intent(reactContext, BackgroundService::class.java)
+    reactContext.startService(serviceToStart)
     val launchIntent = reactContext.packageManager.getLaunchIntentForPackage(
       reactContext.packageName
     )
@@ -60,7 +60,7 @@ class BackgroundModule(@Nonnull reactContext: ReactApplicationContext) :
     return false
   }
 
-  private fun hasPermission(): Boolean {
+  private fun overlayHasPermission(): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       Settings.canDrawOverlays(reactContext)
     } else true
@@ -68,19 +68,20 @@ class BackgroundModule(@Nonnull reactContext: ReactApplicationContext) :
 
   @ReactMethod
   fun isAccessibilityEnabled(callback: Callback) {
-    if (!isAccessibilitySettingsOn(reactContext)) {
+    if (isAccessibilitySettingsOn(reactContext) == false) {
       callback.invoke("0", null)
-    } else {
+    }
+    if (isAccessibilitySettingsOn(reactContext) == true) {
       callback.invoke("1", null)
     }
   }
 
   @ReactMethod
   fun canDrawOverlay(callback: Callback) {
-    if (hasPermission()) {
+    if (overlayHasPermission() == true) {
       callback.invoke("1", null)
-
-    } else {
+    }
+    if (overlayHasPermission() == false) {
       callback.invoke("0", null)
     }
   }
@@ -109,8 +110,6 @@ class BackgroundModule(@Nonnull reactContext: ReactApplicationContext) :
   @ReactMethod
   fun redirectToAppAdvancedSettings(promise: Promise) {
     requestPermissionAction()
-    // val currentActivity = currentActivity
-    // startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, data: "package:" + "com.dismoi.scout"))
     promise.resolve("")
   }
 

@@ -1,7 +1,12 @@
 import React from 'react';
-import { Text, View, AppState, TouchableOpacity } from 'react-native';
-import { Container, Content, Switch, ListItem, Body, Right } from 'native-base';
+import { Text, View, AppState } from 'react-native';
+import { Switch, ListItem, Body, Right } from 'native-base';
 import { Background } from '../nativeModules/get';
+import Screen from '../components/screen';
+import Button from '../components/button';
+import Title from '../components/title';
+import Paragraph from '../components/paragraph';
+import Italic from '../components/italic';
 
 function Authorizations({ navigation }) {
   const [switchValueForOverlay, setSwitchValueForOverlay] = React.useState(
@@ -54,142 +59,101 @@ function Authorizations({ navigation }) {
   }, [appState]);
 
   return (
-    <Container>
-      <Content
-        padder
-        contentContainerStyle={{
+    <Screen>
+      <View
+        style={{
           flex: 1,
+          flexDirection: 'column',
+          justifyContent: 'space-around',
         }}
       >
-        <View
-          style={{
-            flex: 1,
-            flexDirection: 'column',
-            justifyContent: 'space-around',
-          }}
-        >
-          <Text
-            style={{
-              textAlign: 'center',
-              fontFamily: 'Helvetica-Bold',
-              fontSize: 28,
-              letterSpacing: 0.73,
-              color: '#000000',
-            }}
-          >
-            DisMoi est bien installé.
-          </Text>
-          <Text
-            style={{
-              letterSpacing: 0.9,
-              textAlign: 'center',
-              fontFamily: 'Helvetica',
-              color: '#000000',
-              fontSize: 18,
-            }}
-          >
-            Pour fonctionner, il nécessite encore les autorisations d'interagir
-            avec votre navigateur.
-          </Text>
-          <View>
-            <ListItem icon>
-              <Body>
-                <Text
-                  style={{
-                    letterSpacing: 0.9,
-                    fontFamily: 'Helvetica',
-                    color: '#000000',
-                    fontSize: 18,
-                  }}
-                >
-                  Paramètres d'accessibilité
-                </Text>
-              </Body>
-              <Right>
-                <Switch
-                  style={{ transform: [{ scaleX: 1.6 }, { scaleY: 1.5 }] }}
-                  onValueChange={() => {
-                    Background.redirectToAppAccessibilitySettings().then(
-                      () => {}
-                    );
-                  }}
-                  trackColor={{ false: '#ffffff', true: '#2855a2' }}
-                  thumbColor={'#ffffff'}
-                  value={accessibilityServiceIsEnabled}
-                />
-              </Right>
-            </ListItem>
-            <ListItem icon>
-              <Body>
-                <Text
-                  style={{
-                    letterSpacing: 0.9,
-                    fontFamily: 'Helvetica',
-                    color: '#000000',
-                    fontSize: 18,
-                  }}
-                >
-                  Superposition
-                </Text>
-              </Body>
-              <Right>
-                <Switch
-                  onValueChange={() => {
-                    Background.redirectToAppAdvancedSettings().then(() => {});
-                  }}
-                  style={{ transform: [{ scaleX: 1.6 }, { scaleY: 1.5 }] }}
-                  trackColor={{ false: '#ffffff', true: '#2855a2' }}
-                  thumbColor={'#ffffff'}
-                  value={switchValueForOverlay}
-                />
-              </Right>
-            </ListItem>
-          </View>
-          <Text
-            style={{
-              letterSpacing: 0.9,
-              textAlign: 'center',
-              fontFamily: 'Helvetica',
-              color: '#000000',
-              fontStyle: 'italic',
-            }}
-          >
-            Pour rappel, DisMoi n'exploite et ne revend aucune donnée
-            personnelle.
-          </Text>
+        <Title>Finaliser l'installation</Title>
+        <Paragraph>
+          Pour fonctionner, Dismoi nécessite encore les autorisations
+          d'interagir avec votre navigateur.
+        </Paragraph>
+        <View>
+          <ListItem icon style={{ marginBottom: 15 }}>
+            <Body>
+              <Text
+                style={{
+                  letterSpacing: 0.9,
+                  fontFamily: 'Helvetica',
+                  color: '#000000',
+                  fontSize: 14,
+                }}
+              >
+                Paramètres d'accessibilité
+              </Text>
+            </Body>
+            <Right>
+              <Switch
+                trackColor={{ false: '#767577', true: '#2855a2' }}
+                style={{ transform: [{ scaleX: 1.6 }, { scaleY: 1.5 }] }}
+                thumbColor={'#f4f3f4'}
+                onValueChange={() => {
+                  Background.redirectToAppAccessibilitySettings().then(
+                    () => {}
+                  );
+                }}
+                value={accessibilityServiceIsEnabled}
+              />
+            </Right>
+          </ListItem>
+          <ListItem icon style={{ marginTop: 15 }}>
+            <Body>
+              <Text
+                style={{
+                  letterSpacing: 0.9,
+                  fontFamily: 'Helvetica',
+                  color: '#000000',
+                  fontSize: 14,
+                }}
+              >
+                Superposition
+              </Text>
+            </Body>
+            <Right>
+              <Switch
+                onValueChange={() => {
+                  Background.redirectToAppAdvancedSettings().then(() => {});
+                }}
+                style={{ transform: [{ scaleX: 1.6 }, { scaleY: 1.5 }] }}
+                trackColor={{ false: '#767577', true: '#2855a2' }}
+                thumbColor={'#f4f3f4'}
+                value={switchValueForOverlay}
+              />
+            </Right>
+          </ListItem>
         </View>
-        <View
-          style={{
-            flexDirection: 'column',
-            justifyContent: 'flex-end',
+        <Italic>
+          Pour rappel, DisMoi n'exploite et ne revend aucune donnée personnelle.
+        </Italic>
+      </View>
+      <View
+        style={{
+          flexDirection: 'column',
+          justifyContent: 'flex-end',
+        }}
+      >
+        <Button
+          text={'Terminer'}
+          backgroundColor={
+            accessibilityServiceIsEnabled === false ||
+            switchValueForOverlay === false
+              ? '#a9a9a9'
+              : '#2855a2'
+          }
+          onPress={() => {
+            return navigation.navigate('Finished');
           }}
-        >
-          <TouchableOpacity
-            style={{
-              height: 70,
-              backgroundColor:
-                accessibilityServiceIsEnabled === false ||
-                switchValueForOverlay === false
-                  ? '#a9a9a9'
-                  : '#2855a2',
-              borderRadius: 10,
-              justifyContent: 'center',
-            }}
-            onPress={() => {
-              return navigation.navigate('Finished');
-            }}
-            disabled={
-              accessibilityServiceIsEnabled === false ||
-              switchValueForOverlay === false
-            }
-          >
-            <Text style={{ textAlign: 'center', color: 'white', fontSize: 28 }}>
-              Terminer
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </Content>
-    </Container>
+          disabled={
+            accessibilityServiceIsEnabled === false ||
+            switchValueForOverlay === false
+          }
+        />
+      </View>
+    </Screen>
   );
 }
 
