@@ -6,63 +6,69 @@ import {
   StyleSheet,
   TouchableOpacity,
   Image,
+  useWindowDimensions,
 } from 'react-native';
 import Balloon from 'react-native-balloon';
+import Paragraph from '../components/paragraph';
+import Screen from '../components/screen';
 
-function Tuto2({ navigation }) {
+function Tuto3({ navigation }) {
+  const window = useWindowDimensions();
   return (
-    <View style={styles.container}>
-      <Text
-        style={{
-          letterSpacing: 0.9,
-          textAlign: 'center',
-          fontFamily: 'Helvetica',
-          color: '#000000',
-          fontSize: 18,
-          margin: 9,
-        }}
-      >
+    <Screen>
+      <Paragraph>
         Consultez la contribution, puis revenez à votre navigation.
-      </Text>
+      </Paragraph>
       <View style={styles.container}>
         <ImageBackground
           source={require('../assets/images/webpageSnapshot.png')}
           style={styles.image}
         >
-          <View
+          <TouchableOpacity
+            onPress={() => {
+              return navigation.navigate('Authorizations');
+            }}
             style={{
               flex: 1,
               flexDirection: 'column',
               justifyContent: 'flex-end',
             }}
           >
-            <Balloon
-              borderColor="#2E86C1"
-              backgroundColor="#D6EAF8"
-              borderWidth={2}
-              triangleOffset={'7%'}
-              borderRadius={20}
-              triangleSize={15}
-              triangleDirection={'bottom'}
-              containerStyle={{ right: 10 }}
-              onPress={() => console.log('press')}
-            >
-              <Text>Cliquez pour voir le détail!</Text>
-            </Balloon>
-            <TouchableOpacity
-              onPress={() => {
-                return navigation.navigate('Tuto4');
-              }}
-            >
-              <Image
-                style={{ bottom: 0 }}
-                source={require('../assets/images/dismoi_round.png')}
-              />
-            </TouchableOpacity>
-          </View>
+            <View style={{ top: 160, zIndex: 1 }}>
+              <Balloon
+                borderColor="#2855a2"
+                backgroundColor="white"
+                borderWidth={5}
+                triangleOffset={'88%'}
+                borderRadius={10}
+                triangleSize={15}
+                triangleDirection={'bottom'}
+                width={200}
+                containerStyle={{ left: 90 }}
+              >
+                <Text
+                  style={{
+                    letterSpacing: 0.9,
+                    textAlign: 'center',
+                    color: '#2855a2',
+                    fontFamily: 'Helvetica-Bold',
+                    fontSize: 18,
+                  }}
+                >
+                  Cliquez ici
+                </Text>
+              </Balloon>
+            </View>
+
+            <Image
+              style={{ top: 70, width: window.width - 50 }}
+              source={require('../assets/images/selon-le-monde.png')}
+              resizeMode="contain"
+            />
+          </TouchableOpacity>
         </ImageBackground>
       </View>
-    </View>
+    </Screen>
   );
 }
 
@@ -84,4 +90,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Tuto2;
+export default Tuto3;

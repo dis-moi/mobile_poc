@@ -19,7 +19,6 @@ import com.dismoi.scout.MainActivity
 import com.dismoi.scout.R
 import com.facebook.react.HeadlessJsTaskService
 import com.dismoi.scout.accessibility.BackgroundModule.Companion.sendEventFromAccessibilityServicePermission
-import com.dismoi.scout.accessibility.BackgroundModule.Companion.sendEventFromOverlayPermission;
 
 class BackgroundService : AccessibilityService() {
   private var _url: String? = "this should be an url"
@@ -175,7 +174,6 @@ class BackgroundService : AccessibilityService() {
   }
 
   override fun onInterrupt() {
-    Log.d("Notifications", "On interrupt")
     sendEventFromAccessibilityServicePermission("false");
   }
 
@@ -216,7 +214,6 @@ class BackgroundService : AccessibilityService() {
   override fun onDestroy() {
     super.onDestroy()
 
-    Log.d("Notifications", "On destroy")
     sendEventFromAccessibilityServicePermission("false");
     handler.removeCallbacks(runnableCode)
   }

@@ -8,71 +8,63 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import Balloon from 'react-native-balloon';
+import Paragraph from '../components/paragraph';
+import Screen from '../components/screen';
 
 function Tuto2({ navigation }) {
   return (
-    <View style={styles.container}>
-      <Text
-        style={{
-          letterSpacing: 0.9,
-          textAlign: 'center',
-          fontFamily: 'Helvetica',
-          color: '#000000',
-          fontSize: 18,
-          margin: 9,
-        }}
-      >
-        Dismoi apparaît sur votre navigateur.
-      </Text>
+    <Screen>
       <View style={styles.container}>
-        <ImageBackground
-          source={require('../assets/images/webpageSnapshot.png')}
-          style={styles.image}
-        >
-          <View
-            style={{
-              flex: 1,
-              flexDirection: 'column',
-              justifyContent: 'flex-end',
-            }}
+        <Paragraph>Dismoi apparaît sur votre navigateur.</Paragraph>
+        <View style={styles.container}>
+          <ImageBackground
+            source={require('../assets/images/webpageSnapshot.png')}
+            style={styles.image}
           >
-            <Balloon
-              borderColor="#2855a2"
-              backgroundColor="white"
-              borderWidth={5}
-              triangleOffset={'7%'}
-              borderRadius={10}
-              triangleSize={15}
-              triangleDirection={'bottom'}
-              containerStyle={{ right: 10 }}
-              onPress={() => console.log('press')}
-            >
-              <Text
-                style={{
-                  letterSpacing: 0.9,
-                  textAlign: 'center',
-                  color: '#2855a2',
-                  fontFamily: 'Helvetica-Bold',
-                  fontSize: 18,
-                }}
-              >
-                Ouvrir
-              </Text>
-            </Balloon>
             <TouchableOpacity
               onPress={() => {
+                console.log('tuto 3');
                 return navigation.navigate('Tuto3');
               }}
+              style={{
+                flex: 1,
+                flexDirection: 'column',
+                justifyContent: 'flex-end',
+              }}
             >
+              <Balloon
+                borderColor="#2855a2"
+                backgroundColor="white"
+                borderWidth={5}
+                triangleOffset={'7%'}
+                borderRadius={10}
+                triangleSize={15}
+                triangleDirection={'bottom'}
+                containerStyle={{ right: 10 }}
+              >
+                <Text
+                  style={{
+                    letterSpacing: 0.9,
+                    textAlign: 'center',
+                    color: '#2855a2',
+                    fontFamily: 'Helvetica-Bold',
+                    fontSize: 18,
+                  }}
+                >
+                  Ouvrir
+                </Text>
+              </Balloon>
+
               <Image
-                style={{ bottom: 0 }}
-                source={require('../assets/images/dismoi_round.png')}
+                style={{ bottom: 0, height: 80, width: 80 }}
+                resizeMode="contain"
+                source={require('../assets/images/logo-and-notif.png')}
               />
             </TouchableOpacity>
-          </View>
-        </ImageBackground>
+          </ImageBackground>
+        </View>
       </View>
-    </View>
+    </Screen>
   );
 }
 
