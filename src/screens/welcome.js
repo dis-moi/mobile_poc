@@ -1,5 +1,5 @@
 import React from 'react';
-import { StatusBar, Text, View } from 'react-native';
+import { View } from 'react-native';
 import Title from '../components/title';
 import Paragraph from '../components/paragraph';
 import Italic from '../components/italic';

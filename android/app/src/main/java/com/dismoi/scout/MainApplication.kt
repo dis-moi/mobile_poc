@@ -11,6 +11,8 @@ import com.facebook.react.ReactNativeHost
 import com.facebook.react.ReactPackage
 import com.facebook.soloader.SoLoader
 import java.lang.reflect.InvocationTargetException
+import `in`.sriraman.sharedpreferences.RNSharedPreferencesReactPackage
+
 
 class MainApplication : Application(), ReactApplication {
   private val mReactNativeHost: ReactNativeHost = object : ReactNativeHost(this) {
@@ -24,6 +26,7 @@ class MainApplication : Application(), ReactApplication {
       // Packages that cannot be autolinked yet can be added manually here, for example:
       packages.add(BackgroundPackage())
       packages.add(FloatingLayoutPackage())
+
       return packages
     }
 

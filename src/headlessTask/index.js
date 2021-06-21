@@ -84,7 +84,6 @@ const HeadlessTask = async (taskData) => {
         notices,
         eventMessageFromChromeURL
       ).then(() => {
-        console.log('show floating dis moi bubble');
         notices = [];
       });
     }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View, Dimensions, Image } from 'react-native';
+import { Text, View, Image } from 'react-native';
 
 import Paragraph from '../components/paragraph';
 import Screen from '../components/screen';

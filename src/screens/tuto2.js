@@ -23,7 +23,6 @@ function Tuto2({ navigation }) {
           >
             <TouchableOpacity
               onPress={() => {
-                console.log('tuto 3');
                 return navigation.navigate('Tuto3');
               }}
               style={{

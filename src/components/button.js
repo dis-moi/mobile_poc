@@ -1,22 +1,50 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
-import Paragraph from './paragraph';
+import { TouchableOpacity, Dimensions, View, Text } from 'react-native';
+import { Icon } from 'native-base';
 
-function Button({ onPress, text, backgroundColor, disabled }) {
+function Button({
+  onPress,
+  text,
+  backgroundColor = '#2855a2',
+  disabled,
+  small,
+  border,
+  icon,
+  color = 'white',
+}) {
   return (
     <TouchableOpacity
       style={{
-        height: 50,
-        backgroundColor: backgroundColor || '#2855a2',
+        height: small ? 50 : 60,
+        backgroundColor: backgroundColor,
+        borderColor: border ? 'black' : backgroundColor,
+        borderWidth: 2,
         borderRadius: 10,
-        justifyContent: 'center',
+        justifyContent: 'space-around',
+        width: small ? 130 : Dimensions.get('window').width - 50,
+        flexDirection: 'row',
       }}
       onPress={onPress}
       disabled={disabled}
     >
-      <Paragraph bold color={'white'}>
-        {text}
-      </Paragraph>
+      {icon && (
+        <View style={{ justifyContent: 'center', paddingLeft: 5 }}>
+          <Icon type="Entypo" name="check" />
+        </View>
+      )}
+      <View style={{ justifyContent: 'center', paddingRight: icon ? 5 : 0 }}>
+        <Text
+          style={{
+            letterSpacing: 0.9,
+            fontFamily: 'Helvetica',
+            fontWeight: 'bold',
+            color: color,
+            fontSize: 17,
+          }}
+        >
+          {text}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 }

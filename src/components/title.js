@@ -1,13 +1,13 @@
 import React from 'react';
 import { Text } from 'react-native';
 
-function Title({ children }) {
+function Title({ children, left, fontSize }) {
   return (
     <Text
       style={{
-        textAlign: 'center',
+        textAlign: left ? 'left' : 'center',
         fontFamily: 'Helvetica-Bold',
-        fontSize: 25,
+        fontSize: fontSize || 25,
         letterSpacing: 0.73,
         color: '#000000',
       }}
