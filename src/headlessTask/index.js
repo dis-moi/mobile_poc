@@ -1,4 +1,3 @@
-import { isValidHttpUrl } from '../libraries';
 import { FloatingModule } from '../nativeModules/get';
 import { DeviceEventEmitter } from 'react-native';
 import { Linking } from 'react-native';
@@ -15,7 +14,7 @@ function getNoticeIds(matchingContexts, eventMessageFromChromeURL) {
     .filter(Boolean);
 }
 
-let i = 0;
+let matchingContexts = [];
 
 function callActionListeners() {
   DeviceEventEmitter.addListener('floating-dismoi-bubble-press', (e) => {
@@ -26,16 +25,21 @@ function callActionListeners() {
   });
   DeviceEventEmitter.addListener('floating-dismoi-message-press', (e) => {
     // What to do when user press on the message
-    return FloatingModule.hideFloatingDisMoiMessage().then(() =>
-      console.log('Hide Floating DisMoiMessage')
-    );
+    return FloatingModule.hideFloatingDisMoiMessage().then(() => {});
   });
+
+  DeviceEventEmitter.addListener('floating-dismoi-bubble-remove', (e) => {
+    console.log('FLOATING DISMOI BUBBLE REMOVE');
+    // What to do when user press on the message
+  });
+
   DeviceEventEmitter.addListener('URL_CLICK_LINK', (event) => {
+    FloatingModule.hideFloatingDisMoiBubble().then(() =>
+      FloatingModule.hideFloatingDisMoiMessage()
+    );
     Linking.openURL(event);
   });
 }
-
-let matchingContexts = [];
 
 async function callMatchingContext() {
   matchingContexts = await fetch(
@@ -46,24 +50,22 @@ async function callMatchingContext() {
 }
 
 const HeadlessTask = async (taskData) => {
-  if (i === 0) {
+  if (matchingContexts.length === 0) {
     callActionListeners();
     await callMatchingContext();
-    i++;
+  }
+
+  if (taskData.hide === 'true') {
+    FloatingModule.hideFloatingDisMoiBubble().then(() =>
+      FloatingModule.hideFloatingDisMoiMessage()
+    );
+
+    return;
   }
 
   const eventMessageFromChromeURL = taskData.url;
 
-  if (eventMessageFromChromeURL === 'hide') {
-    FloatingModule.hideFloatingDisMoiBubble().then(() =>
-      console.log('Hide Floating Bubble')
-    );
-    FloatingModule.hideFloatingDisMoiMessage().then(() =>
-      console.log('Hide Floating Bubble')
-    );
-  }
-
-  if (eventMessageFromChromeURL && isValidHttpUrl(eventMessageFromChromeURL)) {
+  if (eventMessageFromChromeURL) {
     const noticeIds = getNoticeIds(matchingContexts, eventMessageFromChromeURL);
 
     let notices = await Promise.all(
@@ -87,15 +89,6 @@ const HeadlessTask = async (taskData) => {
         notices = [];
       });
     }
-  }
-
-  if (isValidHttpUrl(eventMessageFromChromeURL) === false) {
-    FloatingModule.hideFloatingDisMoiBubble().then(() =>
-      console.log('Hide Floating Bubble')
-    );
-    FloatingModule.hideFloatingDisMoiMessage().then(() =>
-      console.log('Hide Floating Bubble')
-    );
   }
 };
 

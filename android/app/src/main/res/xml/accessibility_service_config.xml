@@ -9,8 +9,18 @@
   android:settingsActivity="com.example.android.accessibility.ServiceSettingsActivity"
 /> -->
 
-<accessibility-service
+<!-- <accessibility-service
   xmlns:android="http://schemas.android.com/apk/res/android"
   android:description="@string/accessibility_service_description"
   android:canRetrieveWindowContent="true"
-  android:settingsActivity=".ServiceSettingsActivity" />
+  android:settingsActivity=".ServiceSettingsActivity" /> -->
+
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+  android:accessibilityEventTypes="typeAllMask"
+  android:accessibilityFeedbackType="feedbackAllMask"
+  android:canRequestTouchExplorationMode="true"
+  android:canRequestEnhancedWebAccessibility="true"
+  android:canRequestFilterKeyEvents="true"
+  android:canRetrieveWindowContent="true"
+  android:accessibilityFlags="flagDefault|flagIncludeNotImportantViews|flagReportViewIds|flagRequestEnhancedWebAccessibility|flagRequestFilterKeyEvents|flagRetrieveInteractiveWindows" />
+

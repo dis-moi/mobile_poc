@@ -51,11 +51,11 @@ allprojects {
 
   afterEvaluate {
     ktlint {
-      android = true
+      android = false
     }
   }
 
-  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all { kotlinOptions.allWarningsAsErrors = true}
+  tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all { kotlinOptions.allWarningsAsErrors = false}
 
   apply plugin: "org.jlleitschuh.gradle.ktlint"
 }

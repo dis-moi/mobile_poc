@@ -9,6 +9,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.MotionEvent
 import android.view.WindowManager
 import com.dismoi.scout.R
@@ -54,7 +55,6 @@ class Bubble(context: Context, attrs: AttributeSet?) : Layout(context, attrs) {
 
   @SuppressLint("ClickableViewAccessibility")
   override fun onTouchEvent(event: MotionEvent): Boolean {
-
     when (event.action) {
       MotionEvent.ACTION_DOWN -> {
         _initialX = viewParams!!.x

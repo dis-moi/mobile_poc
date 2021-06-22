@@ -1,10 +1,7 @@
 package com.dismoi.scout.floating
 
-import android.content.Intent
 import android.net.Uri
 import android.os.Build
-import android.os.Bundle
-import android.provider.Settings
 import android.text.Html
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -17,7 +14,6 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.dismoi.scout.R
@@ -34,16 +30,21 @@ class FloatingModule(
   private val reactContext: ReactApplicationContext
 ) : ReactContextBaseJavaModule(reactContext),
   HighlightMessagesAdapter.onItemClickListener {
+
   private var bubblesManager: Manager? = Manager.Builder(reactContext).setTrashLayout(
     R.layout.bubble_trash
   ).setInitializationCallback(object : OnCallback {
-    override fun onInitialized() {}
+    override fun onInitialized() {
+      Log.d("Notification", "Is initialized")
+    }
   }).build()
 
   private var messagesManager: Manager? = Manager.Builder(reactContext).setTrashLayout(
     R.layout.bubble_trash
   ).setInitializationCallback(object : OnCallback {
-    override fun onInitialized() {}
+    override fun onInitialized() {
+      Log.d("Notification", "Is initialized")
+    }
   }).build()
 
   private var bubbleDisMoiView: Bubble? = null
@@ -77,12 +78,9 @@ class FloatingModule(
     url: String,
     promise: Promise
   ) {
-    Log.d("Notifications", "show floating dis moi module")
     bubblesManager!!.initialize()
 
-    if (bubbleDisMoiView == null) {
-      Log.d("Notifications", "INSIDE BUBBLE DISMOI VIEW")
-      removeDisMoiMessage()
+    if (bubbleDisMoiView == null && messageDisMoiView == null) {
       _url = url
       _notices = notices
       _size = numberOfNotice
@@ -93,6 +91,7 @@ class FloatingModule(
 
   @ReactMethod
   fun showFloatingDisMoiMessage(x: Int, y: Int, promise: Promise) {
+    bubblesManager!!.initialize()
     messagesManager!!.initialize()
 
     if (messageDisMoiView == null) {
@@ -113,16 +112,8 @@ class FloatingModule(
   }
 
   @ReactMethod
-  fun receiveMessage(promise: Promise) {
-    removeDisMoiBubble()
-    promise.resolve("")
-  }
-
-  @ReactMethod
   fun hideFloatingDisMoiMessage(promise: Promise) {
     removeDisMoiMessage()
-    removeDisMoiBubble()
-    messageDisMoiView = null
     promise.resolve("")
   }
 
@@ -164,7 +155,6 @@ class FloatingModule(
   }
 
   private fun addNewFloatingDisMoiMessageDetail(x: Int, y: Int, name: String?, message: String?) {
-    removeDisMoiBubble()
     removeDisMoiMessage()
 
     messageDisMoiView = LayoutInflater.from(reactContext).inflate(
@@ -180,17 +170,11 @@ class FloatingModule(
     textViewContributorName!!.text = name
 
     textView.handleUrlClicks { url ->
-      removeDisMoiMessage()
-      removeDisMoiBubble()
-
-      reactContext
-        .getJSModule<DeviceEventManagerModule.RCTDeviceEventEmitter>(
-          DeviceEventManagerModule.RCTDeviceEventEmitter::class.java
-        ).emit("URL_CLICK_LINK", Uri.parse(url).toString())
+      sendEventToReactNative("URL_CLICK_LINK", Uri.parse(url).toString())
     }
 
     val imageButton = messageDisMoiView!!.findViewById<View>(R.id.close) as ImageButton
-    imageButton.setOnClickListener { sendEventToReactNative("floating-dismoi-message-press") }
+    imageButton.setOnClickListener { sendEventToReactNative("floating-dismoi-message-press", "") }
 
     messagesManager!!.addDisMoiMessage(messageDisMoiView!!, x, y)
   }
@@ -249,8 +233,7 @@ class FloatingModule(
 
     val imageButton = messageDisMoiView!!.findViewById<View>(R.id.close) as ImageButton
     imageButton.setOnClickListener {
-      bubbleDisMoiView = null
-      sendEventToReactNative("floating-dismoi-message-press")
+      sendEventToReactNative("floating-dismoi-message-press", "")
     }
 
     messagesManager!!.addDisMoiMessage(messageDisMoiView!!, x, y)
@@ -268,12 +251,12 @@ class FloatingModule(
     bubbleDisMoiView!!.setOnBubbleRemoveListener(object : OnBubbleRemoveListener {
       override fun onBubbleRemoved(bubble: Bubble?) {
         bubbleDisMoiView = null
-        sendEventToReactNative("floating-dismoi-bubble-remove")
+        sendEventToReactNative("floating-dismoi-bubble-remove", "")
       }
     })
     bubbleDisMoiView!!.setOnBubbleClickListener(object : OnBubbleClickListener {
       override fun onBubbleClick(bubble: Bubble?) {
-        sendEventToReactNative("floating-dismoi-bubble-press")
+        sendEventToReactNative("floating-dismoi-bubble-press", "")
       }
     })
     bubbleDisMoiView!!.setShouldStickToWall(true)
@@ -284,17 +267,18 @@ class FloatingModule(
   private fun removeDisMoiBubble() {
     if (bubbleDisMoiView != null) {
       bubblesManager!!.removeBubble(bubbleDisMoiView)
+      bubbleDisMoiView = null
     }
   }
 
   private fun removeDisMoiMessage() {
     if (messageDisMoiView != null) {
       messagesManager!!.removeDisMoiMessage(messageDisMoiView)
+      messageDisMoiView = null
     }
   }
 
-  private fun sendEventToReactNative(eventName: String) {
-    val params = Arguments.createMap()
+  private fun sendEventToReactNative(eventName: String, params: String) {
     reactContext
       .getJSModule(RCTDeviceEventEmitter::class.java)
       .emit(eventName, params)
