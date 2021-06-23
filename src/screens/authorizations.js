@@ -1,62 +1,27 @@
 import React from 'react';
-import { Text, View, AppState } from 'react-native';
+import { Text, View } from 'react-native';
 import { Switch, ListItem, Body, Right } from 'native-base';
 import { Background } from '../nativeModules/get';
 import Screen from '../components/screen';
 import Button from '../components/button';
 import Title from '../components/title';
+import SimpleText from '../components/text';
 import Paragraph from '../components/paragraph';
 import Italic from '../components/italic';
+import listenToAppStateUseEffect from '../useEffectHooks/appState';
+import useCheckIfAccessibilityIsEnabledEffect from '../useEffectHooks/nativeModules/accessibilityService/sendMessage/checkIfAccessibilityIsEnabled';
+import useCheckIfCanDrawOverlayIsEnabledEffect from '../useEffectHooks/nativeModules/accessibilityService/sendMessage/checkIfCanDrawOverlayIsEnabled';
 
 function Authorizations({ navigation }) {
-  const [switchValueForOverlay, setSwitchValueForOverlay] = React.useState(
-    false
+  const appState = listenToAppStateUseEffect();
+
+  const accessibilityServiceIsEnabled = useCheckIfAccessibilityIsEnabledEffect(
+    appState
   );
 
-  const [
-    accessibilityServiceIsEnabled,
-    setAccessibilityServiceEnabled,
-  ] = React.useState(false);
-
-  const [appState, setAppState] = React.useState(false);
-
-  function handleAppStateChange(nextAppState) {
-    setAppState(nextAppState);
-  }
-
-  React.useEffect(() => {
-    AppState.addEventListener('change', handleAppStateChange);
-
-    return () => {
-      AppState.removeEventListener('change', handleAppStateChange);
-    };
-  }, []);
-
-  React.useEffect(() => {
-    Background.canDrawOverlay((result) => {
-      if (result === '1') {
-        setSwitchValueForOverlay(true);
-      }
-      if (result === '0') {
-        setSwitchValueForOverlay(false);
-      }
-    });
-  }, [appState]);
-
-  React.useEffect(() => {
-    function callIsAccessibilityEnabledMethod() {
-      Background.isAccessibilityEnabled((result) => {
-        if (result === '1') {
-          setAccessibilityServiceEnabled(true);
-        }
-        if (result === '0') {
-          setAccessibilityServiceEnabled(false);
-        }
-      });
-    }
-
-    callIsAccessibilityEnabledMethod();
-  }, [appState]);
+  const canDrawOverlayIsChecked = useCheckIfCanDrawOverlayIsEnabledEffect(
+    appState
+  );
 
   return (
     <Screen>
@@ -75,16 +40,9 @@ function Authorizations({ navigation }) {
         <View>
           <ListItem icon style={{ marginBottom: 15 }}>
             <Body>
-              <Text
-                style={{
-                  letterSpacing: 0.9,
-                  fontFamily: 'Helvetica',
-                  color: '#000000',
-                  fontSize: 14,
-                }}
-              >
+              <SimpleText left letterSpacing={0.9} fontSize={14}>
                 Paramètres d'accessibilité
-              </Text>
+              </SimpleText>
             </Body>
             <Right>
               <Switch
@@ -102,16 +60,9 @@ function Authorizations({ navigation }) {
           </ListItem>
           <ListItem icon style={{ marginTop: 15 }}>
             <Body>
-              <Text
-                style={{
-                  letterSpacing: 0.9,
-                  fontFamily: 'Helvetica',
-                  color: '#000000',
-                  fontSize: 14,
-                }}
-              >
+              <SimpleText left letterSpacing={0.9} fontSize={14}>
                 Superposition
-              </Text>
+              </SimpleText>
             </Body>
             <Right>
               <Switch
@@ -121,7 +72,7 @@ function Authorizations({ navigation }) {
                 style={{ transform: [{ scaleX: 1.6 }, { scaleY: 1.5 }] }}
                 trackColor={{ false: '#767577', true: '#2855a2' }}
                 thumbColor={'#f4f3f4'}
-                value={switchValueForOverlay}
+                value={canDrawOverlayIsChecked}
               />
             </Right>
           </ListItem>
@@ -140,7 +91,7 @@ function Authorizations({ navigation }) {
           text={'Terminer'}
           backgroundColor={
             accessibilityServiceIsEnabled === false ||
-            switchValueForOverlay === false
+            canDrawOverlayIsChecked === false
               ? '#a9a9a9'
               : '#2855a2'
           }
@@ -149,7 +100,7 @@ function Authorizations({ navigation }) {
           }}
           disabled={
             accessibilityServiceIsEnabled === false ||
-            switchValueForOverlay === false
+            canDrawOverlayIsChecked === false
           }
         />
       </View>

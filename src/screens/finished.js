@@ -1,129 +1,50 @@
 import React from 'react';
-import {
-  Text,
-  FlatList,
-  View,
-  TouchableOpacity,
-  Modal,
-  StyleSheet,
-} from 'react-native';
-import { Body, Left, Card, Thumbnail, CardItem, Icon } from 'native-base';
-import { Background } from '../nativeModules/get';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { FlatList, View, TouchableOpacity } from 'react-native';
+import { Body, Left, CardItem } from 'native-base';
 import Title from '../components/title';
 import Button from '../components/button';
-import RadioForm from 'react-native-simple-radio-button';
 import SharedPreferences from 'react-native-shared-preferences';
 import Paragraph from '../components/paragraph';
 import { Linking } from 'react-native';
+import useStartBackgroundServiceEffect from '../useEffectHooks/startBackgroundService';
+import useEverythingIsReadyEffect from '../useEffectHooks/everythingIsReady';
+import useHandleContributorsEffect from '../useEffectHooks/handleContributors';
+import PopUp from '../components/popUp';
+import ItemFromList from '../components/itemFromList';
+import ContributorLogo from '../components/contributorLogo';
+import SimpleText from '../components/text';
+import RadioButtons from '../components/radioButtons';
 
 function Finished() {
-  const [contributors, setContributors] = React.useState([]);
-  const [filteredContributors, setFilteredContributors] = React.useState([]);
-
   const [itemIds, setItemIds] = React.useState([]);
-
-  const [buttonValue, setButtonValue] = React.useState('ALL');
+  const [
+    radioButtonThatIsActivated,
+    setRadioButtonThatIsActivated,
+  ] = React.useState('ALL');
 
   const [modalVisible, setModalVisible] = React.useState(false);
 
   const [contributorForModal, setContributorForModal] = React.useState({});
 
-  let radioProps = [
-    { label: 'Tous', value: 'ALL' },
-    { label: 'Conso', value: 'CONSO' },
-    { label: 'Société', value: 'CULTURE' },
-    { label: 'Militant', value: 'MILITANT' },
-    { label: 'Divers', value: 'DIVERS' },
-  ];
+  useStartBackgroundServiceEffect();
 
-  function sortNumberOfPublishedNoticeFromHighestToLowest(contributors1) {
-    return contributors1.sort(function (a, b) {
-      return (
-        b.contribution.numberOfPublishedNotices -
-        a.contribution.numberOfPublishedNotices
-      );
-    });
-  }
+  useEverythingIsReadyEffect();
 
-  React.useEffect(() => {
-    function startDisMoiAppInBackground() {
-      Background.startService();
-    }
-    startDisMoiAppInBackground();
-  }, []);
+  const { contributors, filteredContributors } = useHandleContributorsEffect(
+    radioButtonThatIsActivated,
+    setItemIds,
+    itemIds
+  );
 
-  React.useEffect(() => {
-    AsyncStorage.getItem('alreadyLaunched').then((value) => {
-      if (value == null) {
-        AsyncStorage.setItem('alreadyLaunched', 'true');
-      }
-    });
-  }, []);
-
-  React.useEffect(() => {
-    async function getContributors() {
-      SharedPreferences.getAll(async function (values) {
-        const ids = [...new Set(values.map((res) => res[1]))];
-
-        const contributors1 = await fetch(
-          'https://notices.bulles.fr/api/v3/contributors'
-        ).then((response) => {
-          return response.json();
-        });
-        const contributorsSorted = sortNumberOfPublishedNoticeFromHighestToLowest(
-          contributors1.filter(
-            (contributor) => !ids.includes(String(contributor.id))
-          )
-        );
-        const contributorsFollowedSorted = sortNumberOfPublishedNoticeFromHighestToLowest(
-          contributors1.filter((contributor) =>
-            ids.includes(String(contributor.id))
-          )
-        );
-        setContributors([...contributorsFollowedSorted, ...contributorsSorted]);
-        setItemIds(ids);
-      });
-    }
-    getContributors();
-  }, [buttonValue]);
-
-  React.useEffect(() => {
-    if (buttonValue !== 'ALL') {
-      const filteredContributorsByCategories = contributors.filter((res) =>
-        res.categories.includes(buttonValue)
-      );
-
-      const contributorsSorted = sortNumberOfPublishedNoticeFromHighestToLowest(
-        filteredContributorsByCategories.filter(
-          (contributor) => !itemIds.includes(String(contributor.id))
-        )
-      );
-      const contributorsFollowedSorted = sortNumberOfPublishedNoticeFromHighestToLowest(
-        filteredContributorsByCategories.filter((contributor) =>
-          itemIds.includes(String(contributor.id))
-        )
-      );
-
-      setFilteredContributors([
-        ...contributorsFollowedSorted,
-        ...contributorsSorted,
-      ]);
-    }
-  }, [buttonValue, contributors, itemIds]);
-
-  function renderItem({ item }) {
+  function contributorItemFromList({ item }) {
     if (item.name && item?.avatar?.normal?.url) {
       return (
-        <Card style={{ borderRadius: 15 }}>
+        <ItemFromList borderRadius={15}>
           <CardItem
             style={{ borderTopLeftRadius: 15, borderTopRightRadius: 15 }}
           >
             <Left>
-              <Thumbnail
-                style={{ width: 80, height: 80, borderRadius: 80 / 2 }}
-                source={{ uri: item?.avatar?.normal.url }}
-              />
+              <ContributorLogo source={item?.avatar?.normal.url} />
               <Body>
                 <Title left fontSize={20}>
                   {item.name}
@@ -181,102 +102,57 @@ function Finished() {
                 }
               }}
             >
-              <Text
-                style={{
-                  color: '#1e52b4',
-                  fontSize: 17,
-                  fontFamily: 'Helvetica',
-                  letterSpacing: 0.3,
-                }}
-              >
+              <SimpleText color={'#1e52b4'} letterSpacing={0.3}>
                 Voir un exemple réel >
-              </Text>
+              </SimpleText>
             </TouchableOpacity>
           </CardItem>
-        </Card>
+        </ItemFromList>
       );
     }
   }
 
   return (
     <View style={{ backgroundColor: '#e9eaef' }}>
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(false);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <TouchableOpacity
-              style={{
-                left: 120,
-                bottom: 20,
-              }}
-              onPress={() => {
-                setModalVisible(false);
-              }}
-            >
-              <Icon type="AntDesign" name="close" />
-            </TouchableOpacity>
-            {itemIds.includes(String(contributorForModal.id)) ? (
-              <Text
-                style={{
-                  letterSpacing: 0.9,
-                  textAlign: 'center',
-                  fontFamily: 'Helvetica',
-                  fontWeight: 'normal',
-                  color: '#000000',
-                  fontSize: 17,
-                  marginBottom: 30,
-                }}
-              >
-                Vous êtes abonné(e) à {contributorForModal.name}.
-              </Text>
-            ) : (
-              <Text
-                style={{
-                  letterSpacing: 0.9,
-                  textAlign: 'center',
-                  fontFamily: 'Helvetica',
-                  fontWeight: 'normal',
-                  color: '#000000',
-                  fontSize: 17,
-                  marginBottom: 30,
-                }}
-              >
-                Veuillez suivre {contributorForModal.name} pour voir ses
-                contributions.
-              </Text>
-            )}
-            {itemIds.includes(String(contributorForModal.id)) ? (
-              <Button
-                small
-                text={"Voir l'exemple"}
-                backgroundColor={'#07224a'}
-                onPress={() => {
-                  setModalVisible(false);
-                  Linking.openURL(contributorForModal.exampleMatchingUrl);
-                }}
-              />
-            ) : (
-              <Button
-                small
-                text={'Suivre'}
-                onPress={() => {
-                  setItemIds([...itemIds, String(contributorForModal.id)]);
-                  SharedPreferences.setItem(
-                    contributorForModal.name,
-                    String(contributorForModal.id)
-                  );
-                }}
-              />
-            )}
+      <PopUp modalVisible={modalVisible} setModalVisible={setModalVisible}>
+        {itemIds.includes(String(contributorForModal.id)) ? (
+          <View style={{ marginBottom: 30 }}>
+            <SimpleText>
+              Vous êtes abonné(e) à {contributorForModal.name}.
+            </SimpleText>
           </View>
-        </View>
-      </Modal>
+        ) : (
+          <View style={{ marginBottom: 30 }}>
+            <SimpleText>
+              Veuillez suivre {contributorForModal.name} pour voir ses
+              contributions.
+            </SimpleText>
+          </View>
+        )}
+        {itemIds.includes(String(contributorForModal.id)) ? (
+          <Button
+            small
+            text={"Voir l'exemple"}
+            backgroundColor={'#07224a'}
+            onPress={() => {
+              setModalVisible(false);
+              Linking.openURL(contributorForModal.exampleMatchingUrl);
+            }}
+          />
+        ) : (
+          <Button
+            small
+            text={'Suivre'}
+            onPress={() => {
+              setItemIds([...itemIds, String(contributorForModal.id)]);
+              SharedPreferences.setItem(
+                contributorForModal.name,
+                String(contributorForModal.id)
+              );
+            }}
+          />
+        )}
+      </PopUp>
       <View
         style={{
           height: 50,
@@ -285,62 +161,23 @@ function Finished() {
       >
         <Title>Choix des contributeurs</Title>
       </View>
-      <RadioForm
-        labelStyle={{ textAlign: 'center' }}
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          alignContent: 'center',
-          padding: 10,
-          borderRadius: 15,
-          backgroundColor: 'white',
-        }}
-        radio_props={radioProps}
-        formHorizontal={true}
-        labelHorizontal={false}
-        buttonColor={'#2855a2'}
-        animation={true}
-        initial={0}
+      <RadioButtons
         onPress={(value) => {
-          setButtonValue(value);
+          setRadioButtonThatIsActivated(value);
         }}
       />
       <FlatList
         style={{ marginTop: 15 }}
         data={
-          buttonValue === 'ALL'
+          radioButtonThatIsActivated === 'ALL'
             ? contributors
             : filteredContributors.sort((res) => res.contributions)
         }
-        renderItem={renderItem}
+        renderItem={contributorItemFromList}
         keyExtractor={(item) => String(item.id)}
       />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  centeredView: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: 'white',
-    borderRadius: 15,
-    padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-});
 
 export default Finished;
