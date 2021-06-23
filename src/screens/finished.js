@@ -1,6 +1,13 @@
 import React from 'react';
-import { Text, FlatList, View, TouchableOpacity } from 'react-native';
-import { Body, Left, Card, Thumbnail, CardItem } from 'native-base';
+import {
+  Text,
+  FlatList,
+  View,
+  TouchableOpacity,
+  Modal,
+  StyleSheet,
+} from 'react-native';
+import { Body, Left, Card, Thumbnail, CardItem, Icon } from 'native-base';
 import { Background } from '../nativeModules/get';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Title from '../components/title';
@@ -17,6 +24,10 @@ function Finished() {
   const [itemIds, setItemIds] = React.useState([]);
 
   const [buttonValue, setButtonValue] = React.useState('ALL');
+
+  const [modalVisible, setModalVisible] = React.useState(false);
+
+  const [contributorForModal, setContributorForModal] = React.useState({});
 
   let radioProps = [
     { label: 'Tous', value: 'ALL' },
@@ -45,14 +56,12 @@ function Finished() {
   React.useEffect(() => {
     AsyncStorage.getItem('alreadyLaunched').then((value) => {
       if (value == null) {
-        AsyncStorage.setItem('alreadyLaunched', 'true'); // No need to wait for `setItem` to finish, although you might want to handle errors
+        AsyncStorage.setItem('alreadyLaunched', 'true');
       }
     });
   }, []);
 
   React.useEffect(() => {
-    console.log('get contributors');
-
     async function getContributors() {
       SharedPreferences.getAll(async function (values) {
         const ids = [...new Set(values.map((res) => res[1]))];
@@ -159,7 +168,17 @@ function Finished() {
           >
             <TouchableOpacity
               onPress={() => {
-                Linking.openURL(item.contribution.example.exampleMatchingUrl);
+                if (itemIds.includes(String(item.id))) {
+                  Linking.openURL(item.contribution.example.exampleMatchingUrl);
+                } else {
+                  setContributorForModal({
+                    id: item.id,
+                    name: item.name,
+                    exampleMatchingUrl:
+                      item.contribution.example.exampleMatchingUrl,
+                  });
+                  setModalVisible(true);
+                }
               }}
             >
               <Text
@@ -181,6 +200,83 @@ function Finished() {
 
   return (
     <View style={{ backgroundColor: '#e9eaef' }}>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(false);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <TouchableOpacity
+              style={{
+                left: 120,
+                bottom: 20,
+              }}
+              onPress={() => {
+                setModalVisible(false);
+              }}
+            >
+              <Icon type="AntDesign" name="close" />
+            </TouchableOpacity>
+            {itemIds.includes(String(contributorForModal.id)) ? (
+              <Text
+                style={{
+                  letterSpacing: 0.9,
+                  textAlign: 'center',
+                  fontFamily: 'Helvetica',
+                  fontWeight: 'normal',
+                  color: '#000000',
+                  fontSize: 17,
+                  marginBottom: 30,
+                }}
+              >
+                Vous êtes abonné(e) à {contributorForModal.name}.
+              </Text>
+            ) : (
+              <Text
+                style={{
+                  letterSpacing: 0.9,
+                  textAlign: 'center',
+                  fontFamily: 'Helvetica',
+                  fontWeight: 'normal',
+                  color: '#000000',
+                  fontSize: 17,
+                  marginBottom: 30,
+                }}
+              >
+                Veuillez suivre {contributorForModal.name} pour voir ses
+                contributions.
+              </Text>
+            )}
+            {itemIds.includes(String(contributorForModal.id)) ? (
+              <Button
+                small
+                text={"Voir l'exemple"}
+                backgroundColor={'#07224a'}
+                onPress={() => {
+                  setModalVisible(false);
+                  Linking.openURL(contributorForModal.exampleMatchingUrl);
+                }}
+              />
+            ) : (
+              <Button
+                small
+                text={'Suivre'}
+                onPress={() => {
+                  setItemIds([...itemIds, String(contributorForModal.id)]);
+                  SharedPreferences.setItem(
+                    contributorForModal.name,
+                    String(contributorForModal.id)
+                  );
+                }}
+              />
+            )}
+          </View>
+        </View>
+      </Modal>
       <View
         style={{
           height: 50,
@@ -223,5 +319,28 @@ function Finished() {
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  centeredView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: 'white',
+    borderRadius: 15,
+    padding: 35,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+});
 
 export default Finished;
