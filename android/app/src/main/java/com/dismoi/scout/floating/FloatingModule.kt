@@ -14,22 +14,24 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.dismoi.scout.R
 import com.dismoi.scout.floating.layout.Bubble
 import com.dismoi.scout.floating.layout.Bubble.OnBubbleClickListener
 import com.dismoi.scout.floating.layout.Bubble.OnBubbleRemoveListener
 import com.dismoi.scout.floating.layout.Message
 import com.facebook.react.bridge.*
-import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
+import com.synnapps.carouselview.CarouselView
+import com.synnapps.carouselview.ViewListener
 import org.jsoup.Jsoup
+
 
 class FloatingModule(
   private val reactContext: ReactApplicationContext
-) : ReactContextBaseJavaModule(reactContext),
-  HighlightMessagesAdapter.onItemClickListener {
+) : ReactContextBaseJavaModule(reactContext) {
+
+  var imageArray:ArrayList<String> = ArrayList()
+  var carouselView:CarouselView? = null
 
   private var bubblesManager: Manager? = Manager.Builder(reactContext).setTrashLayout(
     R.layout.bubble_trash
@@ -145,91 +147,20 @@ class FloatingModule(
     movementMethod = LinkMovementMethod.getInstance()
   }
 
-  fun String.toSpanned(): Spanned {
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-      return Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)
-    } else {
-      @Suppress("DEPRECATION")
-      return Html.fromHtml(this)
-    }
-  }
-
-  private fun addNewFloatingDisMoiMessageDetail(x: Int, y: Int, name: String?, message: String?) {
-    removeDisMoiMessage()
-
-    messageDisMoiView = LayoutInflater.from(reactContext).inflate(
-      R.layout.message, messageDisMoiView, false
-    ) as Message
-
-    var textView: TextView? = messageDisMoiView!!.findViewById(R.id.link)
-
-    textView!!.text = message!!.toSpanned()
-
-    var textViewContributorName: TextView? = messageDisMoiView!!.findViewById(R.id.name)
-
-    textViewContributorName!!.text = name
-
-    textView.handleUrlClicks { url ->
-      sendEventToReactNative("URL_CLICK_LINK", Uri.parse(url).toString())
-    }
-
-    val imageButton = messageDisMoiView!!.findViewById<View>(R.id.close) as ImageButton
-    imageButton.setOnClickListener { sendEventToReactNative("floating-dismoi-message-press", "") }
-
-    messagesManager!!.addDisMoiMessage(messageDisMoiView!!, x, y)
-  }
-
-  private fun generateListForRecycleView(size: Int, notices: ReadableArray):
-    ArrayList<HighlightMessage> {
-      val list = ArrayList<HighlightMessage>()
-      for (i in 0 until size) {
-        val message: ReadableMap? = notices.getMap(i)
-        var disMoiMessage: String? = message!!.getString("message")
-        var disMoiContributorNameMap: ReadableMap? = message.getMap("contributor")
-
-        var disMoiContributorName: String? = disMoiContributorNameMap!!.getString("name")
-
-        var htmlToText = Jsoup.parse(disMoiMessage).text()
-
-        var cutText = htmlToText!!.substring(0, 90)
-        var cutToLastSpace = cutText.substringBeforeLast(" ")
-
-        val item = HighlightMessage(disMoiContributorName, cutToLastSpace + "...", i.toString())
-        list += item
-      }
-      return list
-    }
-
-  override fun onItemClick(position: Int) {
-    val message: ReadableMap? = _notices.getMap(position)
-
-    var disMoiContributorNameMap: ReadableMap? = message!!.getMap("contributor")
-
-    var disMoiContributorName: String? = disMoiContributorNameMap!!.getString("name")
-
-    var disMoiMessage: String? = message.getString("message")
-
-    addNewFloatingDisMoiMessageDetail(10, 1500, disMoiContributorName, disMoiMessage)
-  }
-
   private fun addNewFloatingDisMoiMessage(x: Int, y: Int) {
     removeDisMoiBubble()
-
-    val highlistMessageList = generateListForRecycleView(_size, _notices)
 
     messageDisMoiView = LayoutInflater.from(reactContext).inflate(
       R.layout.highlight_messages, messageDisMoiView, false
     ) as Message
 
-    val recycleViewHighlightMessageItems = messageDisMoiView!!.findViewById(
-      R.id.recycler_view_highlight_messages
-    ) as RecyclerView
+    val carouselView = messageDisMoiView!!.findViewById(
+      R.id.carouselView
+    ) as CarouselView
 
-    recycleViewHighlightMessageItems.adapter = HighlightMessagesAdapter(
-      highlistMessageList, this
-    )
+    carouselView!!.pageCount = _size
 
-    recycleViewHighlightMessageItems.layoutManager = LinearLayoutManager(reactContext)
+    carouselView!!.setViewListener(viewListener)
 
     val imageButton = messageDisMoiView!!.findViewById<View>(R.id.close) as ImageButton
     imageButton.setOnClickListener {
@@ -282,5 +213,44 @@ class FloatingModule(
     reactContext
       .getJSModule(RCTDeviceEventEmitter::class.java)
       .emit(eventName, params)
+  }
+
+  fun String.toSpanned(): Spanned {
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+      return Html.fromHtml(this, Html.FROM_HTML_MODE_LEGACY)
+    } else {
+      @Suppress("DEPRECATION")
+      return Html.fromHtml(this)
+    }
+  }
+
+  //set view attributes here
+  var viewListener: ViewListener = object : ViewListener {
+
+    override fun setViewForPosition(position: Int): View? {
+      val message: ReadableMap? = _notices.getMap(position)
+
+      var disMoiContributorNameMap: ReadableMap? = message!!.getMap("contributor")
+
+      var disMoiContributorName: String? = disMoiContributorNameMap!!.getString("name")
+
+      var disMoiMessage: String? = message.getString("message")
+
+      val customView: View = LayoutInflater.from(reactContext).inflate(R.layout.message, null)
+
+      var textView: TextView? = customView!!.findViewById(R.id.link)
+
+     textView!!.text = disMoiMessage!!.toSpanned()
+
+      var textViewContributorName: TextView? = customView!!.findViewById(R.id.name)
+
+      textViewContributorName!!.text = disMoiContributorName
+
+      textView!!.handleUrlClicks { url ->
+        sendEventToReactNative("URL_CLICK_LINK", Uri.parse(url).toString())
+      }
+
+      return customView
+    }
   }
 }

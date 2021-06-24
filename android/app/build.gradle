@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: 'kotlin-android'
 apply plugin: "com.github.konifar.gradle.unused-resources-remover"
+apply plugin: 'org.jetbrains.kotlin.android.extensions'
 
 import com.android.build.OutputFile
 
@@ -199,6 +200,8 @@ dependencies {
   implementation 'androidx.multidex:multidex:2.0.1'
   implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
   implementation 'androidx.recyclerview:recyclerview:1.2.0'
+
+  implementation 'com.synnapps:carouselview:0.1.5'
 
   debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
     exclude group:'com.facebook.fbjni'
