@@ -23,21 +23,20 @@ import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import com.synnapps.carouselview.CarouselView
 import com.synnapps.carouselview.ViewListener
-import org.jsoup.Jsoup
-
 
 class FloatingModule(
   private val reactContext: ReactApplicationContext
 ) : ReactContextBaseJavaModule(reactContext) {
 
-  var imageArray:ArrayList<String> = ArrayList()
-  var carouselView:CarouselView? = null
+  var bubbleIsInitialized = false
+  var messageIsInitialized = false
 
   private var bubblesManager: Manager? = Manager.Builder(reactContext).setTrashLayout(
     R.layout.bubble_trash
   ).setInitializationCallback(object : OnCallback {
     override fun onInitialized() {
-      Log.d("Notification", "Is initialized")
+      Log.d("Notification", "Bubble Is initialized")
+      bubbleIsInitialized = true
     }
   }).build()
 
@@ -45,7 +44,8 @@ class FloatingModule(
     R.layout.bubble_trash
   ).setInitializationCallback(object : OnCallback {
     override fun onInitialized() {
-      Log.d("Notification", "Is initialized")
+      Log.d("Notification", "Message Is initialized")
+      messageIsInitialized = true
     }
   }).build()
 
@@ -98,7 +98,10 @@ class FloatingModule(
 
     if (messageDisMoiView == null) {
       try {
-        removeDisMoiBubble()
+        if (bubbleIsInitialized === true) {
+          removeDisMoiBubble()
+        }
+
         addNewFloatingDisMoiMessage(x, y)
         promise.resolve("")
       } catch (e: Exception) {
@@ -109,12 +112,17 @@ class FloatingModule(
 
   @ReactMethod
   fun hideFloatingDisMoiBubble(promise: Promise) {
-    removeDisMoiBubble()
+    bubblesManager!!.initialize()
+    if (bubbleIsInitialized === true) {
+      removeDisMoiBubble()
+    }
+
     promise.resolve("")
   }
 
   @ReactMethod
   fun hideFloatingDisMoiMessage(promise: Promise) {
+    messagesManager!!.initialize()
     removeDisMoiMessage()
     promise.resolve("")
   }
@@ -148,7 +156,10 @@ class FloatingModule(
   }
 
   private fun addNewFloatingDisMoiMessage(x: Int, y: Int) {
-    removeDisMoiBubble()
+    if (bubbleIsInitialized === true) {
+      removeDisMoiBubble()
+    }
+
 
     messageDisMoiView = LayoutInflater.from(reactContext).inflate(
       R.layout.highlight_messages, messageDisMoiView, false
