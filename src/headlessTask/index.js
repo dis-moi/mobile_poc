@@ -1,6 +1,9 @@
 import { FloatingModule } from '../nativeModules/get';
 import { DeviceEventEmitter } from 'react-native';
 import { Linking } from 'react-native';
+import moment from 'moment';
+
+import 'moment/min/locales';
 
 function getNoticeIds(matchingContexts, eventMessageFromChromeURL) {
   return matchingContexts
@@ -29,8 +32,8 @@ function callActionListeners() {
   });
 
   DeviceEventEmitter.addListener('floating-dismoi-bubble-remove', (e) => {
-    console.log('FLOATING DISMOI BUBBLE REMOVE');
     // What to do when user press on the message
+    console.log('FLOATING DISMOI BUBBLE REMOVE');
   });
 
   DeviceEventEmitter.addListener('URL_CLICK_LINK', (event) => {
@@ -79,11 +82,33 @@ const HeadlessTask = async (taskData) => {
     if (notices.length > 0) {
       const numberOfNotice = notices.length;
 
+      const noticesToShow = notices.map((res) => {
+        const capitalize = (s) => {
+          if (typeof s !== 'string') return '';
+          return s.charAt(0).toUpperCase() + s.slice(1);
+        };
+
+        var month = moment(res.modified, 'YYYY-MM-DD')
+          .locale('fr')
+          .format('MMMM');
+        var day = moment(res.modified, 'YYYY-MM-DD').format('D');
+
+        var year = moment(res.modified, 'YYYY-MM-DD').format('Y');
+
+        const formattedDate = `${moment(res.modified, 'YYYY-MM-DD')
+          .locale('fr')
+          .format('dddd')} ${day} ${month} ${year}`;
+
+        res.modified = capitalize(formattedDate);
+
+        return res;
+      });
+
       FloatingModule.showFloatingDisMoiBubble(
         10,
         1500,
         numberOfNotice,
-        notices,
+        noticesToShow,
         eventMessageFromChromeURL
       ).then(() => {
         notices = [];

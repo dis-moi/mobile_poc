@@ -23,6 +23,7 @@ import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import com.synnapps.carouselview.CarouselView
 import com.synnapps.carouselview.ViewListener
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class FloatingModule(
   private val reactContext: ReactApplicationContext
@@ -40,9 +41,8 @@ class FloatingModule(
     }
   }).build()
 
-  private var messagesManager: Manager? = Manager.Builder(reactContext).setTrashLayout(
-    R.layout.bubble_trash
-  ).setInitializationCallback(object : OnCallback {
+  private var messagesManager: Manager? = Manager.Builder(reactContext)
+  .setInitializationCallback(object : OnCallback {
     override fun onInitialized() {
       Log.d("Notification", "Message Is initialized")
       messageIsInitialized = true
@@ -98,7 +98,7 @@ class FloatingModule(
 
     if (messageDisMoiView == null) {
       try {
-        if (bubbleIsInitialized === true) {
+        if (bubbleIsInitialized == true) {
           removeDisMoiBubble()
         }
 
@@ -113,7 +113,7 @@ class FloatingModule(
   @ReactMethod
   fun hideFloatingDisMoiBubble(promise: Promise) {
     bubblesManager!!.initialize()
-    if (bubbleIsInitialized === true) {
+    if (bubbleIsInitialized == true) {
       removeDisMoiBubble()
     }
 
@@ -156,9 +156,11 @@ class FloatingModule(
   }
 
   private fun addNewFloatingDisMoiMessage(x: Int, y: Int) {
-    if (bubbleIsInitialized === true) {
+    if (bubbleIsInitialized == true) {
       removeDisMoiBubble()
     }
+
+    lateinit var bottomSheetBehavior: BottomSheetBehavior<Message>
 
 
     messageDisMoiView = LayoutInflater.from(reactContext).inflate(
@@ -177,6 +179,25 @@ class FloatingModule(
     imageButton.setOnClickListener {
       sendEventToReactNative("floating-dismoi-message-press", "")
     }
+
+    bottomSheetBehavior!!.addBottomSheetCallback(object :
+      BottomSheetBehavior.BottomSheetCallback() {
+
+        override fun onSlide(bottomSheet: View, slideOffset: Float) {
+            // handle onSlide
+        }
+
+        override fun onStateChanged(bottomSheet: View, newState: Int) {
+          when (newState) {
+            BottomSheetBehavior.STATE_COLLAPSED -> Log.d("Notification", "STATE COLLAPSED")
+            BottomSheetBehavior.STATE_EXPANDED -> Log.d("Notification", "STATE EXPANDED")
+            BottomSheetBehavior.STATE_DRAGGING -> Log.d("Notification", "STATE DRAGGING")
+            BottomSheetBehavior.STATE_SETTLING -> Log.d("Notification", "STATE SETTLING")
+            BottomSheetBehavior.STATE_HIDDEN -> Log.d("Notification", "HIDDEN")
+            else -> Log.d("Notification", "OTHER STATE")
+          }
+        }
+    })
 
     messagesManager!!.addDisMoiMessage(messageDisMoiView!!, x, y)
   }
@@ -243,7 +264,16 @@ class FloatingModule(
 
       var disMoiContributorNameMap: ReadableMap? = message!!.getMap("contributor")
 
-      var disMoiContributorName: String? = disMoiContributorNameMap!!.getString("name")
+      var url: String? = disMoiContributorNameMap!!.getMap("avatar")!!.getMap("normal")!!.getString("url");
+
+      var modified: String? = message!!.getString("modified");
+
+      Log.d("Notification", "created")
+      Log.d("Notification", modified.toString());
+      Log.d("Notification", "url")
+      Log.d("Notification", url.toString());
+
+      var disMoiContributorName: String? = disMoiContributorNameMap.getString("name")
 
       var disMoiMessage: String? = message.getString("message")
 
@@ -251,11 +281,15 @@ class FloatingModule(
 
       var textView: TextView? = customView!!.findViewById(R.id.link)
 
-     textView!!.text = disMoiMessage!!.toSpanned()
+      textView!!.text = disMoiMessage!!.toSpanned()
 
       var textViewContributorName: TextView? = customView!!.findViewById(R.id.name)
 
+      var textViewDate: TextView? = customView!!.findViewById(R.id.date)
+
       textViewContributorName!!.text = disMoiContributorName
+
+      textViewDate!!.text = modified
 
       textView!!.handleUrlClicks { url ->
         sendEventToReactNative("URL_CLICK_LINK", Uri.parse(url).toString())
