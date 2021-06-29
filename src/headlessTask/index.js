@@ -21,7 +21,7 @@ let matchingContexts = [];
 
 function callActionListeners() {
   DeviceEventEmitter.addListener('floating-dismoi-bubble-press', (e) => {
-    return FloatingModule.showFloatingDisMoiMessage(10, 1500).then(() => {
+    return FloatingModule.showFloatingDisMoiMessage(0, 1500).then(() => {
       // What to do when user press on the bubble
       console.log('Bubble press');
     });

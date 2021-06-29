@@ -160,7 +160,7 @@ class FloatingModule(
       removeDisMoiBubble()
     }
 
-    lateinit var bottomSheetBehavior: BottomSheetBehavior<Message>
+    // lateinit var bottomSheetBehavior: BottomSheetBehavior<Message>
 
 
     messageDisMoiView = LayoutInflater.from(reactContext).inflate(
@@ -180,30 +180,10 @@ class FloatingModule(
       sendEventToReactNative("floating-dismoi-message-press", "")
     }
 
-    bottomSheetBehavior!!.addBottomSheetCallback(object :
-      BottomSheetBehavior.BottomSheetCallback() {
-
-        override fun onSlide(bottomSheet: View, slideOffset: Float) {
-            // handle onSlide
-        }
-
-        override fun onStateChanged(bottomSheet: View, newState: Int) {
-          when (newState) {
-            BottomSheetBehavior.STATE_COLLAPSED -> Log.d("Notification", "STATE COLLAPSED")
-            BottomSheetBehavior.STATE_EXPANDED -> Log.d("Notification", "STATE EXPANDED")
-            BottomSheetBehavior.STATE_DRAGGING -> Log.d("Notification", "STATE DRAGGING")
-            BottomSheetBehavior.STATE_SETTLING -> Log.d("Notification", "STATE SETTLING")
-            BottomSheetBehavior.STATE_HIDDEN -> Log.d("Notification", "HIDDEN")
-            else -> Log.d("Notification", "OTHER STATE")
-          }
-        }
-    })
-
     messagesManager!!.addDisMoiMessage(messageDisMoiView!!, x, y)
   }
 
   private fun addNewFloatingDisMoiBubble(x: Int, y: Int, numberOfNotice: String) {
-
     bubbleDisMoiView = LayoutInflater.from(reactContext).inflate(
       R.layout.bubble, bubbleDisMoiView, false
     ) as Bubble

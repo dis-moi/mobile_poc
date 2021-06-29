@@ -3,20 +3,13 @@ package com.dismoi.scout.floating
 import android.app.Service
 import android.content.Intent
 import android.graphics.PixelFormat
-import android.os.Binder
-import android.os.Build
-import android.os.Handler
-import android.os.IBinder
-import android.os.Looper
+import android.os.*
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
-import com.dismoi.scout.floating.layout.Bubble
-import com.dismoi.scout.floating.layout.Coordinator
-import com.dismoi.scout.floating.layout.Layout
+import com.dismoi.scout.floating.layout.*
 import com.dismoi.scout.floating.layout.Message
-import com.dismoi.scout.floating.layout.Trash
 
 class FloatingService : Service() {
   private val binder = FloatingServiceBinder()
@@ -135,12 +128,13 @@ class FloatingService : Service() {
         WindowManager.LayoutParams.MATCH_PARENT,
         WindowManager.LayoutParams.WRAP_CONTENT,
         WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN,
         PixelFormat.TRANSPARENT
       )
     }
-    params!!.gravity = Gravity.TOP or Gravity.START
-    params.x = x
+    params!!.gravity = Gravity.END
+    //params!!.flags = WindowManager.LayoutParams.FLAG_DIM_BEHIND.inv()
+    // params.x = x
     params.y = y
     return params
   }

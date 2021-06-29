@@ -9,6 +9,7 @@ open class Layout : FrameLayout {
   var windowManager: WindowManager? = null
   var viewParams: WindowManager.LayoutParams? = null
   var layoutCoordinator: Coordinator? = null
+  
   fun create(
     getWindowManager: WindowManager?,
     layoutParams: WindowManager.LayoutParams?,
