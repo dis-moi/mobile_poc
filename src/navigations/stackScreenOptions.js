@@ -13,10 +13,7 @@ function LogoTitle() {
 
 export default function stackScreenOptions() {
   return {
-    headerTitle: () => (
-      // App Logo
-      <LogoTitle />
-    ),
+    headerTitle: () => <LogoTitle />,
     headerTitleAlign: 'center',
     headerLeft: () => null,
     headerStyle: {

@@ -45,9 +45,15 @@ function callActionListeners() {
 }
 
 async function callMatchingContext() {
+  console.log('_________________CALL MATHING CONTEXT____________________');
+
   matchingContexts = await fetch(
     'https://notices.bulles.fr/api/v3/matching-contexts'
   ).then((response) => {
+    console.log(
+      '_________________END CALL MATHING CONTEXT____________________'
+    );
+
     return response.json();
   });
 }

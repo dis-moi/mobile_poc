@@ -6,7 +6,6 @@ import Button from '../components/button';
 import SharedPreferences from 'react-native-shared-preferences';
 import Paragraph from '../components/paragraph';
 import { Linking } from 'react-native';
-import useStartBackgroundServiceEffect from '../useEffectHooks/startBackgroundService';
 import useEverythingIsReadyEffect from '../useEffectHooks/everythingIsReady';
 import useHandleContributorsEffect from '../useEffectHooks/handleContributors';
 import PopUp from '../components/popUp';
@@ -25,8 +24,6 @@ function Finished() {
   const [modalVisible, setModalVisible] = React.useState(false);
 
   const [contributorForModal, setContributorForModal] = React.useState({});
-
-  useStartBackgroundServiceEffect();
 
   useEverythingIsReadyEffect();
 

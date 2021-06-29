@@ -1,13 +1,15 @@
 import React from 'react';
 import { Background } from '../nativeModules/get';
 
-function StartBackgroundServiceUseEffect() {
+function StartBackgroundServiceUseEffect(isAccessibilityEnabled) {
   React.useEffect(() => {
     function startDisMoiAppInBackground() {
-      Background.startService();
+      if (isAccessibilityEnabled) {
+        Background.startService();
+      }
     }
     startDisMoiAppInBackground();
-  }, []);
+  }, [isAccessibilityEnabled]);
 }
 
 export default StartBackgroundServiceUseEffect;
