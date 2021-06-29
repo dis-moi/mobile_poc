@@ -1,74 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-  <com.dismoi.scout.floating.layout.Message
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:elevation="7dp"
-    android:background="@drawable/shadow"
+<com.dismoi.scout.floating.layout.Message
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:elevation="7dp"
+  android:background="@drawable/shadow"
+>
+  <LinearLayout
+    android:layout_width="fill_parent"
+    android:layout_height="600dp"
+    android:elevation="10dp"
+    android:orientation="vertical"
+    android:layout_gravity="bottom"
+    android:gravity="bottom"
   >
-      <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="600dp"
-        android:elevation="10dp"
-        android:orientation="vertical"
-        android:layout_gravity="bottom"
-        android:gravity="bottom"
-      >
-      <LinearLayout 
-        android:layout_width="fill_parent"
-        android:layout_height="350dp"
-        android:background="#efeded"
-        android:orientation="vertical"
-      >
+    <LinearLayout 
+      android:layout_width="fill_parent"
+      android:layout_height="350dp"
+      android:background="#efeded"
+      android:orientation="vertical"
+    >
       <LinearLayout 
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:orientation="horizontal"
       >
-    <ImageView
-      android:src="@drawable/profile"
-      android:layout_width="38dp"
-      android:layout_height="38dp"
-      android:layout_marginLeft="2dp"
-      android:layout_marginTop="2dp"
-      android:contentDescription="@string/dismoi_logo_description" />
-      <LinearLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:gravity="right"
-        android:orientation="horizontal" >
-        <ImageButton
-          android:id="@+id/close"
+        <ImageView
+          android:src="@drawable/profile"
           android:layout_width="38dp"
           android:layout_height="38dp"
-          android:layout_gravity="right"
-          android:contentDescription="@string/close_dis_moi_content_message_button"
-          android:src="@drawable/close" />
-      </LinearLayout>
-      </LinearLayout>
-      
-
-      <com.synnapps.carouselview.CarouselView
-          android:id="@+id/carouselView"
-          android:layout_width="match_parent"
-          android:layout_height="300dp"
-          android:layout_gravity="bottom"
-          android:gravity="center|bottom"
-          app:layout_constraintTop_toTopOf="parent"
-          app:layout_constraintLeft_toLeftOf="parent"
-          app:layout_constraintRight_toRightOf="parent"
-          android:paddingTop="5dp"
-          android:paddingBottom="5dp"
-          android:paddingRight="15dp"
-          android:paddingLeft="15dp"
-          app:fillColor="#FFFFFFFF"
-          app:autoPlay="false"
-          app:pageColor="#00000000"
-          app:radius="6dp"
-          app:strokeColor="#FF777777"
-          app:strokeWidth="1dp"/>
+          android:layout_marginLeft="2dp"
+          android:layout_marginTop="2dp"
+          android:contentDescription="@string/dismoi_logo_description" />
+        <LinearLayout
+          android:layout_width="fill_parent"
+          android:layout_height="wrap_content"
+          android:gravity="right"
+          android:orientation="horizontal" >
+          <ImageButton
+            android:id="@+id/close"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_gravity="right"
+            android:contentDescription="@string/close_dis_moi_content_message_button"
+            android:src="@drawable/close" />
         </LinearLayout>
       </LinearLayout>
-    
-  </com.dismoi.scout.floating.layout.Message>
+      
+      <com.synnapps.carouselview.CarouselView
+        android:id="@+id/carouselView"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:layout_gravity="bottom"
+        android:gravity="center|bottom"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:paddingRight="15dp"
+        android:paddingLeft="15dp"
+        app:autoPlay="false"
+        app:pageColor="#00000000"
+        app:radius="6dp"
+        app:fillColor="#2855a2"
+        app:strokeColor="#2855a2"
+        app:strokeWidth="2dp"
+      />  
+    </LinearLayout>
+  </LinearLayout>
+</com.dismoi.scout.floating.layout.Message>
