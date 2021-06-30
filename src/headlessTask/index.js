@@ -10,6 +10,10 @@ function getNoticeIds(matchingContexts, eventMessageFromChromeURL) {
     .map((res) => {
       const addWWWForBuildingURL = `www.${eventMessageFromChromeURL}`;
 
+      if (res.xpath) {
+        return;
+      }
+
       if (addWWWForBuildingURL.match(new RegExp(res.urlRegex, 'g'))) {
         return res.noticeId;
       }
@@ -117,7 +121,6 @@ const HeadlessTask = async (taskData) => {
       });
 
       console.log('NOTICES TO SHOW');
-      console.log(noticesToShow);
 
       FloatingModule.initialize().then(() => {
         FloatingModule.showFloatingDisMoiBubble(
