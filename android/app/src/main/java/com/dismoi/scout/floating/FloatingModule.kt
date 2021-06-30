@@ -127,10 +127,7 @@ class FloatingModule(
 
   @ReactMethod
   fun hideFloatingDisMoiBubble(promise: Promise) {
-    bubblesManager!!.initialize()
-    if (bubbleIsInitialized == true) {
-      removeDisMoiBubble()
-    }
+    removeDisMoiBubble()
 
     promise.resolve("")
   }

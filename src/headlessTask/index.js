@@ -25,14 +25,18 @@ let matchingContexts = [];
 
 function callActionListeners() {
   DeviceEventEmitter.addListener('floating-dismoi-bubble-press', (e) => {
-    return FloatingModule.showFloatingDisMoiMessage(0, 1500).then(() => {
-      // What to do when user press on the bubble
-      console.log('Bubble press');
+    FloatingModule.initialize().then(() => {
+      return FloatingModule.showFloatingDisMoiMessage(0, 1500).then(() => {
+        // What to do when user press on the bubble
+        console.log('Bubble press');
+      });
     });
   });
   DeviceEventEmitter.addListener('floating-dismoi-message-press', (e) => {
-    // What to do when user press on the message
-    return FloatingModule.hideFloatingDisMoiMessage().then(() => {});
+    FloatingModule.initialize().then(() => {
+      // What to do when user press on the message
+      return FloatingModule.hideFloatingDisMoiMessage().then(() => {});
+    });
   });
 
   DeviceEventEmitter.addListener('floating-dismoi-bubble-remove', (e) => {
@@ -41,10 +45,12 @@ function callActionListeners() {
   });
 
   DeviceEventEmitter.addListener('URL_CLICK_LINK', (event) => {
-    FloatingModule.hideFloatingDisMoiBubble().then(() =>
-      FloatingModule.hideFloatingDisMoiMessage()
-    );
-    Linking.openURL(event);
+    FloatingModule.initialize().then(() => {
+      FloatingModule.hideFloatingDisMoiBubble().then(() =>
+        FloatingModule.hideFloatingDisMoiMessage()
+      );
+      Linking.openURL(event);
+    });
   });
 }
 
@@ -72,9 +78,11 @@ const HeadlessTask = async (taskData) => {
   console.log(taskData);
 
   if (taskData.hide === 'true') {
-    FloatingModule.hideFloatingDisMoiBubble().then(() =>
-      FloatingModule.hideFloatingDisMoiMessage()
-    );
+    FloatingModule.initialize().then(() => {
+      FloatingModule.hideFloatingDisMoiBubble().then(() =>
+        FloatingModule.hideFloatingDisMoiMessage()
+      );
+    });
 
     return;
   }
