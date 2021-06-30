@@ -32,22 +32,9 @@ class FloatingModule(
   var bubbleIsInitialized = false
   var messageIsInitialized = false
 
-  private var bubblesManager: Manager? = Manager.Builder(reactContext).setTrashLayout(
-    R.layout.bubble_trash
-  ).setInitializationCallback(object : OnCallback {
-    override fun onInitialized() {
-      Log.d("Notification", "Bubble Is initialized")
-      bubbleIsInitialized = true
-    }
-  }).build()
+  private var bubblesManager: Manager? = null
 
-  private var messagesManager: Manager? = Manager.Builder(reactContext)
-  .setInitializationCallback(object : OnCallback {
-    override fun onInitialized() {
-      Log.d("Notification", "Message Is initialized")
-      messageIsInitialized = true
-    }
-  }).build()
+  private var messagesManager: Manager? = null
 
   private var bubbleDisMoiView: Bubble? = null
   private var messageDisMoiView: Message? = null
@@ -72,6 +59,32 @@ class FloatingModule(
   }
 
   @ReactMethod
+  fun initialize(promise: Promise) {
+    bubblesManager = Manager.Builder(reactContext).setTrashLayout(
+      R.layout.bubble_trash
+    ).setInitializationCallback(object : OnCallback {
+      override fun onInitialized() {
+        Log.d("Notification", "Bubble Is initialized")
+        bubbleIsInitialized = true
+      }
+    }).build()
+
+    messagesManager = Manager.Builder(reactContext)
+    .setInitializationCallback(object : OnCallback {
+      override fun onInitialized() {
+        Log.d("Notification", "Message Is initialized")
+        messageIsInitialized = true
+
+        promise.resolve("")
+      }
+    }).build()
+
+
+    bubblesManager!!.initialize()
+    messagesManager!!.initialize()
+  }
+
+  @ReactMethod
   fun showFloatingDisMoiBubble(
     x: Int,
     y: Int,
@@ -81,6 +94,7 @@ class FloatingModule(
     promise: Promise
   ) {
     bubblesManager!!.initialize()
+    messagesManager!!.initialize()
 
     if (bubbleDisMoiView == null && messageDisMoiView == null) {
       _url = url
@@ -93,8 +107,6 @@ class FloatingModule(
 
   @ReactMethod
   fun showFloatingDisMoiMessage(x: Int, y: Int, promise: Promise) {
-    bubblesManager!!.initialize()
-    messagesManager!!.initialize()
 
     if (messageDisMoiView == null) {
       try {
@@ -160,27 +172,29 @@ class FloatingModule(
       removeDisMoiBubble()
     }
 
-    // lateinit var bottomSheetBehavior: BottomSheetBehavior<Message>
+    Log.d("Notification", "MESSAGE IS INITIALIZED");
+    Log.d("Notification", messageIsInitialized.toString());
 
+    if (messageIsInitialized == true) {
+      messageDisMoiView = LayoutInflater.from(reactContext).inflate(
+        R.layout.highlight_messages, messageDisMoiView, false
+      ) as Message
 
-    messageDisMoiView = LayoutInflater.from(reactContext).inflate(
-      R.layout.highlight_messages, messageDisMoiView, false
-    ) as Message
+      val carouselView = messageDisMoiView!!.findViewById(
+        R.id.carouselView
+      ) as CarouselView
 
-    val carouselView = messageDisMoiView!!.findViewById(
-      R.id.carouselView
-    ) as CarouselView
+      carouselView!!.pageCount = _size
 
-    carouselView!!.pageCount = _size
+      carouselView!!.setViewListener(viewListener)
 
-    carouselView!!.setViewListener(viewListener)
+      val imageButton = messageDisMoiView!!.findViewById<View>(R.id.close) as ImageButton
+      imageButton.setOnClickListener {
+        sendEventToReactNative("floating-dismoi-message-press", "")
+      }
 
-    val imageButton = messageDisMoiView!!.findViewById<View>(R.id.close) as ImageButton
-    imageButton.setOnClickListener {
-      sendEventToReactNative("floating-dismoi-message-press", "")
-    }
-
-    messagesManager!!.addDisMoiMessage(messageDisMoiView!!, x, y)
+      messagesManager!!.addDisMoiMessage(messageDisMoiView!!, x, y)
+    }    
   }
 
   private fun addNewFloatingDisMoiBubble(x: Int, y: Int, numberOfNotice: String) {

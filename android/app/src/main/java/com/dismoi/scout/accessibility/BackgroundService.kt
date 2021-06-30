@@ -107,10 +107,12 @@ class BackgroundService : AccessibilityService() {
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       if (canDrawOverlays(applicationContext)) {
+        Log.d("Notification", "INSIDE CAN DRAW OVERLAY")
 
         if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
           event.getClassName() === "android.widget.FrameLayout"
         ) {
+          Log.d("Notification", "TYPE_VIEW_CLICKED & android.widget.FrameLayout")
           _hide = "true"
           handler.post(runnableCode)
           return
@@ -119,6 +121,7 @@ class BackgroundService : AccessibilityService() {
         if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
           event.getPackageName() == "com.android.systemui"
         ) {
+          Log.d("Notification", "TYPE_VIEW_CLICKED & com.android.systemui")
           _hide = "true"
           handler.post(runnableCode)
           return
@@ -127,6 +130,7 @@ class BackgroundService : AccessibilityService() {
         if (getEventType(event) === "TYPE_VIEW_TEXT_SELECTION_CHANGED" &&
           event.getPackageName() == "com.android.chrome"
         ) {
+          Log.d("Notification", "TYPE_VIEW_TEXT_SELECTION_CHANGED & com.android.chrome")
           _hide = "true"
           handler.post(runnableCode)
           return
@@ -135,12 +139,14 @@ class BackgroundService : AccessibilityService() {
         if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
           event.getPackageName() == "com.android.chrome"
         ) {
+          Log.d("Notification", "TYPE_VIEW_CLICKED & com.android.chrome")
           _hide = "true"
           handler.post(runnableCode)
           return
         }
 
         if (event.getPackageName() != "com.android.systemui") {
+          Log.d("Notification", "com.android.systemui")
           val parentNodeInfo = event.source ?: return
           val packageName = event.packageName.toString()
           var browserConfig: SupportedBrowserConfig? = null
@@ -166,11 +172,13 @@ class BackgroundService : AccessibilityService() {
 
           // we can't find an url. Browser either was updated or opened page without url text field
           if (capturedUrl == null) {
+            Log.d("Notification", "captured url = null")
             return
           }
 
           // some kind of redirect throttling
           if (eventTime - lastRecordedTime > 2000) {
+            Log.d("Notification", "POST WITH URL")
             previousUrlDetections[detectionId] = eventTime
 
             _url = capturedUrl
@@ -253,7 +261,7 @@ class BackgroundService : AccessibilityService() {
     
     startForeground(SERVICE_NOTIFICATION_ID, notification)
 
-    handler.post(runnableCode)
+    // handler.post(runnableCode)
     return START_STICKY
   }
 

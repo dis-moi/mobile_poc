@@ -64,6 +64,9 @@ const HeadlessTask = async (taskData) => {
     await callMatchingContext();
   }
 
+  console.log('TASK DATA');
+  console.log(taskData);
+
   if (taskData.hide === 'true') {
     FloatingModule.hideFloatingDisMoiBubble().then(() =>
       FloatingModule.hideFloatingDisMoiMessage()
@@ -75,6 +78,9 @@ const HeadlessTask = async (taskData) => {
   const eventMessageFromChromeURL = taskData.url;
 
   if (eventMessageFromChromeURL) {
+    console.log('INSIDE EVENT MESSAGE FROM CHROME URL');
+    console.log(eventMessageFromChromeURL);
+
     const noticeIds = getNoticeIds(matchingContexts, eventMessageFromChromeURL);
 
     let notices = await Promise.all(
@@ -110,14 +116,19 @@ const HeadlessTask = async (taskData) => {
         return res;
       });
 
-      FloatingModule.showFloatingDisMoiBubble(
-        10,
-        1500,
-        numberOfNotice,
-        noticesToShow,
-        eventMessageFromChromeURL
-      ).then(() => {
-        notices = [];
+      console.log('NOTICES TO SHOW');
+      console.log(noticesToShow);
+
+      FloatingModule.initialize().then(() => {
+        FloatingModule.showFloatingDisMoiBubble(
+          10,
+          1500,
+          numberOfNotice,
+          noticesToShow,
+          eventMessageFromChromeURL
+        ).then(() => {
+          notices = [];
+        });
       });
     }
   }
