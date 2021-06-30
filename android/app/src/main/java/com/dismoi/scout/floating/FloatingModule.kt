@@ -1,5 +1,6 @@
 package com.dismoi.scout.floating
 
+import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
 import android.text.Html
@@ -16,8 +17,6 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.drawable.GlideDrawable
-import com.bumptech.glide.request.target.Target
 import com.dismoi.scout.R
 import com.dismoi.scout.floating.layout.Bubble
 import com.dismoi.scout.floating.layout.Bubble.OnBubbleClickListener
@@ -277,13 +276,22 @@ class FloatingModule(
 
       val customView: View = LayoutInflater.from(reactContext).inflate(R.layout.message, null)
 
+      val type = Typeface.createFromAsset(reactContext.assets, "fonts/Helvetica.ttf")
+
+      val typeBold = Typeface.createFromAsset(reactContext.assets, "fonts/Helvetica-Bold.ttf")
       var textView: TextView? = customView!!.findViewById(R.id.link)
+
+      textView!!.setTypeface(type);
 
       textView!!.text = disMoiMessage!!.toSpanned()
 
       var textViewContributorName: TextView? = customView!!.findViewById(R.id.name)
 
+      textViewContributorName!!.setTypeface(typeBold);
+
       var textViewDate: TextView? = customView!!.findViewById(R.id.date)
+
+      textViewDate!!.setTypeface(typeBold);
 
       textViewContributorName!!.text = disMoiContributorName
 
