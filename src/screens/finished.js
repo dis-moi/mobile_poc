@@ -15,6 +15,7 @@ import ContributorLogo from '../components/contributorLogo';
 import SimpleText from '../components/text';
 import RadioButtons from '../components/radioButtons';
 import useStartBackgroundServiceEffect from '../useEffectHooks/startBackgroundService';
+import { FloatingModule } from '../nativeModules/get';
 
 function Finished() {
   const [itemIds, setItemIds] = React.useState([]);
@@ -91,7 +92,9 @@ function Finished() {
             <TouchableOpacity
               onPress={() => {
                 if (itemIds.includes(String(item.id))) {
-                  Linking.openURL(item.contribution.example.exampleMatchingUrl);
+                  FloatingModule.openLink(
+                    item.contribution.example.exampleMatchingUrl
+                  );
                 } else {
                   setContributorForModal({
                     id: item.id,
@@ -137,7 +140,7 @@ function Finished() {
             backgroundColor={'#07224a'}
             onPress={() => {
               setModalVisible(false);
-              Linking.openURL(contributorForModal.exampleMatchingUrl);
+              FloatingModule.openLink(contributorForModal.exampleMatchingUrl);
             }}
           />
         ) : (

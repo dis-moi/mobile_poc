@@ -1,8 +1,10 @@
 package com.dismoi.scout.floating
 
+import android.content.Intent
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Build
+import android.os.Bundle
 import android.text.Html
 import android.text.SpannableStringBuilder
 import android.text.Spanned
@@ -16,6 +18,7 @@ import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat.startActivity
 import com.bumptech.glide.Glide
 import com.dismoi.scout.R
 import com.dismoi.scout.floating.layout.Bubble
@@ -130,6 +133,19 @@ class FloatingModule(
     removeDisMoiBubble()
 
     promise.resolve("")
+  }
+
+  @ReactMethod
+  fun openLink(url: String, promise: Promise) {
+    val sharingIntent = Intent(Intent.ACTION_VIEW)
+    sharingIntent.data = Uri.parse(url)
+    sharingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+    sharingIntent.setPackage("com.android.chrome")
+
+    val bundle = Bundle()
+
+    reactContext.startActivityForResult(sharingIntent, 0, bundle)
+
   }
 
   @ReactMethod
