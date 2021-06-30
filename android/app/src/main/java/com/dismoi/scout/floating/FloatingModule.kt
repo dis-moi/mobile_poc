@@ -12,8 +12,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageButton
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.drawable.GlideDrawable
+import com.bumptech.glide.request.target.Target
 import com.dismoi.scout.R
 import com.dismoi.scout.floating.layout.Bubble
 import com.dismoi.scout.floating.layout.Bubble.OnBubbleClickListener
@@ -23,7 +27,7 @@ import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule.RCTDeviceEventEmitter
 import com.synnapps.carouselview.CarouselView
 import com.synnapps.carouselview.ViewListener
-import com.google.android.material.bottomsheet.BottomSheetBehavior
+
 
 class FloatingModule(
   private val reactContext: ReactApplicationContext
@@ -288,6 +292,12 @@ class FloatingModule(
       textView!!.handleUrlClicks { url ->
         sendEventToReactNative("URL_CLICK_LINK", Uri.parse(url).toString())
       }
+
+      val imageView: ImageView = customView!!.findViewById(R.id.contributorProfile) as ImageView
+
+      Glide.with(reactContext)
+        .load<Any>(url)
+        .into(imageView)
 
       return customView
     }
