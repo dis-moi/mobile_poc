@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { Switch, ListItem, Body, Right } from 'native-base';
 import { Background } from '../nativeModules/get';
 import Screen from '../components/screen';
@@ -11,7 +11,6 @@ import Italic from '../components/italic';
 import listenToAppStateUseEffect from '../useEffectHooks/appState';
 import useCheckIfAccessibilityIsEnabledEffect from '../useEffectHooks/nativeModules/accessibilityService/sendMessage/checkIfAccessibilityIsEnabled';
 import useCheckIfCanDrawOverlayIsEnabledEffect from '../useEffectHooks/nativeModules/accessibilityService/sendMessage/checkIfCanDrawOverlayIsEnabled';
-import useStartBackgroundServiceEffect from '../useEffectHooks/startBackgroundService';
 
 function Authorizations({ navigation }) {
   const appState = listenToAppStateUseEffect();
@@ -23,8 +22,6 @@ function Authorizations({ navigation }) {
   const canDrawOverlayIsChecked = useCheckIfCanDrawOverlayIsEnabledEffect(
     appState
   );
-
-  useStartBackgroundServiceEffect(accessibilityServiceIsEnabled);
 
   return (
     <Screen>

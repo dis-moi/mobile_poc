@@ -25,18 +25,6 @@ class BackgroundModule(@Nonnull reactContext: ReactApplicationContext) :
   }
 
   @ReactMethod
-  fun startService() {
-    val serviceToStart = Intent(reactContext, BackgroundService::class.java)
-    reactContext.startService(serviceToStart)
-    val launchIntent = reactContext.packageManager.getLaunchIntentForPackage(
-      reactContext.packageName
-    )
-    if (launchIntent != null) {
-      reactContext.startActivity(launchIntent)
-    }
-  }
-
-  @ReactMethod
   fun stopService() {
     reactContext.stopService(Intent(reactContext, BackgroundService::class.java))
   }

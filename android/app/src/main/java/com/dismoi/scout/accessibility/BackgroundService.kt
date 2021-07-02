@@ -206,17 +206,6 @@ class BackgroundService : AccessibilityService() {
     return browsers
   }
 
-  @RequiresApi(Build.VERSION_CODES.O)
-  private fun createNotificationChannel() {
-    val importance = NotificationManager.IMPORTANCE_LOW
-    val channel = NotificationChannel(CHANNEL_ID, "BACKGROUND", importance)
-    channel.description = "CHANEL DESCRIPTION"
-    channel.enableVibration(false)
-
-    val notificationManager = getSystemService(NotificationManager::class.java)
-    notificationManager.createNotificationChannel(channel)
-  }
-
   override fun onCreate() {
     super.onCreate()
   }
@@ -226,36 +215,5 @@ class BackgroundService : AccessibilityService() {
 
     sendEventFromAccessibilityServicePermission("false");
     handler.removeCallbacks(runnableCode)
-  }
-
-  @RequiresApi(Build.VERSION_CODES.O)
-  override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-    createNotificationChannel()
-
-    val notificationIntent = Intent(this, MainActivity::class.java)
-    val contentIntent = PendingIntent.getActivity(
-      this,
-      0,
-      notificationIntent,
-      PendingIntent.FLAG_CANCEL_CURRENT
-    )
-    val notification = NotificationCompat.Builder(this, CHANNEL_ID)
-      .setContentTitle("DisMoi")
-      .setContentText("DisMoi is running in background...")
-      .setSmallIcon(R.mipmap.ic_launcher)
-      .setContentIntent(contentIntent)
-      .setOngoing(true)
-      .setVibrate(null)
-      .build()
-    
-    startForeground(SERVICE_NOTIFICATION_ID, notification)
-
-    // handler.post(runnableCode)
-    return START_STICKY
-  }
-
-  companion object {
-    private const val SERVICE_NOTIFICATION_ID = 12345
-    private const val CHANNEL_ID = "BACKGROUND"
   }
 }
