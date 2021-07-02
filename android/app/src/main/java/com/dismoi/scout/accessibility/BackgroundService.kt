@@ -1,8 +1,6 @@
 package com.dismoi.scout.accessibility
 
 import android.accessibilityservice.AccessibilityService
-import android.accessibilityservice.AccessibilityServiceInfo
-import android.provider.Settings.canDrawOverlays
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -10,6 +8,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
+import android.provider.Settings.canDrawOverlays
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
@@ -17,8 +16,8 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.dismoi.scout.MainActivity
 import com.dismoi.scout.R
-import com.facebook.react.HeadlessJsTaskService
 import com.dismoi.scout.accessibility.BackgroundModule.Companion.sendEventFromAccessibilityServicePermission
+import com.facebook.react.HeadlessJsTaskService
 
 class BackgroundService : AccessibilityService() {
   private var _url: String? = ""
@@ -27,6 +26,8 @@ class BackgroundService : AccessibilityService() {
   private var _packageName: String? = ""
   private var _eventText: String? = ""
   private var _hide: String? = ""
+
+  private val NOTIFICATION_TIMEOUT: Long = 200
 
   private val handler = Handler()
   private val runnableCode: Runnable = object : Runnable {
@@ -54,11 +55,7 @@ class BackgroundService : AccessibilityService() {
   override fun onServiceConnected() {
     val info = serviceInfo
 
-    // info.flags = AccessibilityServiceInfo.DEFAULT
-    // info.eventTypes = AccessibilityEvent.TYPES_ALL_MASK
-    // info.feedbackType = AccessibilityServiceInfo.FEEDBACK_GENERIC
-
-    info.notificationTimeout = 1000
+    info.notificationTimeout = NOTIFICATION_TIMEOUT
 
     this.serviceInfo = info
 
@@ -102,94 +99,86 @@ class BackgroundService : AccessibilityService() {
     return sb.toString()
   }
 
+  fun isLauncherPackage(packageName: CharSequence): Boolean {
+    return "com.android.systemui" == packageName || "com.android.launcher3" == packageName
+  }
+
+  fun theseEventsNeedToHideTheBubble(event: AccessibilityEvent): Boolean {
+    return getEventType(event) === "TYPE_VIEW_CLICKED" &&
+      event.getClassName() === "android.widget.FrameLayout" ||
+      getEventType(event) === "TYPE_VIEW_CLICKED" &&
+      event.getPackageName() == "com.android.systemui" ||
+      getEventType(event) === "TYPE_VIEW_TEXT_SELECTION_CHANGED" &&
+      event.getPackageName() == "com.android.chrome" ||
+      getEventType(event) === "TYPE_VIEW_CLICKED" &&
+      event.getPackageName() == "com.android.chrome"
+  }
+
   @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
   override fun onAccessibilityEvent(event: AccessibilityEvent) {
 
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       if (canDrawOverlays(applicationContext)) {
-        Log.d("Notification", "INSIDE CAN DRAW OVERLAY")
-
-        if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
-          event.getClassName() === "android.widget.FrameLayout"
-        ) {
-          Log.d("Notification", "TYPE_VIEW_CLICKED & android.widget.FrameLayout")
+        if (theseEventsNeedToHideTheBubble(event)) {
           _hide = "true"
+          _url = ""
+          _eventType = getEventType(event)
+          _className = event.getClassName().toString()
+          _packageName = event.getPackageName().toString()
+          _eventText = getEventText(event)
           handler.post(runnableCode)
           return
         }
 
-        if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
-          event.getPackageName() == "com.android.systemui"
-        ) {
-          Log.d("Notification", "TYPE_VIEW_CLICKED & com.android.systemui")
-          _hide = "true"
-          handler.post(runnableCode)
-          return
-        }
+        if (event!!.getPackageName() != null) {
+          if (!isLauncherPackage(event!!.getPackageName())) {
+            val parentNodeInfo = event.source ?: return
+            val packageName = event.packageName.toString()
+            var browserConfig: SupportedBrowserConfig? = null
 
-        if (getEventType(event) === "TYPE_VIEW_TEXT_SELECTION_CHANGED" &&
-          event.getPackageName() == "com.android.chrome"
-        ) {
-          Log.d("Notification", "TYPE_VIEW_TEXT_SELECTION_CHANGED & com.android.chrome")
-          _hide = "true"
-          handler.post(runnableCode)
-          return
-        }
 
-        if (getEventType(event) === "TYPE_VIEW_CLICKED" &&
-          event.getPackageName() == "com.android.chrome"
-        ) {
-          Log.d("Notification", "TYPE_VIEW_CLICKED & com.android.chrome")
-          _hide = "true"
-          handler.post(runnableCode)
-          return
-        }
+            for (supportedConfig in getSupportedBrowsers()) {
+              if (supportedConfig.packageName == packageName) {
+                browserConfig = supportedConfig
+              }
+            }
 
-        if (event.getPackageName() != "com.android.systemui") {
-          Log.d("Notification", "com.android.systemui")
-          val parentNodeInfo = event.source ?: return
-          val packageName = event.packageName.toString()
-          var browserConfig: SupportedBrowserConfig? = null
-          for (supportedConfig in getSupportedBrowsers()) {
-            if (supportedConfig.packageName == packageName) {
-              browserConfig = supportedConfig
+            // this is not supported browser, so exit
+            if (browserConfig == null) {
+              return
+            }
+            val capturedUrl = captureUrl(parentNodeInfo, browserConfig)
+            parentNodeInfo.recycle()
+
+            // we can't find an url. Browser either was updated or opened page without url text field
+            if (capturedUrl == null) {
+              return
+            }
+
+            val eventTime = event.eventTime
+            val detectionId = "$packageName"
+            val lastRecordedTime =
+              if (previousUrlDetections.containsKey(detectionId)) {
+                previousUrlDetections[detectionId]!!
+              } else 0.toLong()
+
+            // some kind of redirect throttling
+            if (eventTime - lastRecordedTime > NOTIFICATION_TIMEOUT) {
+              Log.d("Notification", "POST WITH URL")
+              previousUrlDetections[detectionId] = eventTime
+
+              _url = capturedUrl
+              _eventType = getEventType(event)
+              _className = event.getClassName().toString()
+              _packageName = event.getPackageName().toString()
+              _eventText = getEventText(event)
+              _hide = "false"
+              handler.post(runnableCode)
             }
           }
 
-          val eventTime = event.eventTime
-          val detectionId = "$packageName"
-          val lastRecordedTime =
-            if (previousUrlDetections.containsKey(detectionId)) {
-              previousUrlDetections[detectionId]!!
-            } else 0.toLong()
-
-          // this is not supported browser, so exit
-          if (browserConfig == null) {
-            return
-          }
-          val capturedUrl = captureUrl(parentNodeInfo, browserConfig)
-          parentNodeInfo.recycle()
-
-          // we can't find an url. Browser either was updated or opened page without url text field
-          if (capturedUrl == null) {
-            Log.d("Notification", "captured url = null")
-            return
-          }
-
-          // some kind of redirect throttling
-          if (eventTime - lastRecordedTime > 2000) {
-            Log.d("Notification", "POST WITH URL")
-            previousUrlDetections[detectionId] = eventTime
-
-            _url = capturedUrl
-            _eventType = getEventType(event)
-            _className = event.getClassName().toString()
-            _packageName = event.getPackageName().toString()
-            _eventText = getEventText(event)
-            _hide = "false"
-            handler.post(runnableCode)
-          }
         }
+
       }
     }
   }

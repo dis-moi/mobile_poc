@@ -4,6 +4,7 @@ import android.app.Service
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.*
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -13,7 +14,7 @@ import com.dismoi.scout.floating.layout.Message
 
 class FloatingService : Service() {
   private val binder = FloatingServiceBinder()
-  private val bubbles: MutableList<Bubble> = ArrayList()
+  private var bubbles: MutableList<Bubble> = ArrayList()
   private val messages: MutableList<Message> = ArrayList()
   private var bubblesTrash: Trash? = null
   private var windowManager: WindowManager? = null
@@ -38,9 +39,11 @@ class FloatingService : Service() {
         if (cachedBubble === bubble) {
           bubble.notifyBubbleRemoved()
           bubbles.remove(cachedBubble)
+          bubblesTrash = null
           break
         }
       }
+
     }
   }
 
@@ -50,6 +53,7 @@ class FloatingService : Service() {
       for (cachedMessage in messages) {
         if (cachedMessage == message) {
           messages.remove(cachedMessage)
+          bubblesTrash = null
           break
         }
       }
@@ -66,6 +70,7 @@ class FloatingService : Service() {
   fun addDisMoiBubble(bubble: Bubble, x: Int, y: Int) {
     val layoutParams = buildLayoutParamsForBubble(x, y)
     bubble.create(getWindowManager(), layoutParams, layoutCoordinator)
+
     bubbles.add(bubble)
     addViewToWindow(bubble)
   }
@@ -74,7 +79,7 @@ class FloatingService : Service() {
     val layoutParams = buildLayoutParamsForMessage(x, y)
     message!!.create(getWindowManager(), layoutParams, layoutCoordinator)
     messages.add(message)
-    addViewToWindowForMessage(message)
+    addViewToWindow(message)
   }
 
   fun addTrash(trashLayoutResourceId: Int) {
@@ -97,11 +102,9 @@ class FloatingService : Service() {
   }
 
   private fun addViewToWindow(view: Layout) {
-    Handler(Looper.getMainLooper()).post { getWindowManager()!!.addView(view, view.viewParams) }
-  }
-
-  private fun addViewToWindowForMessage(view: Layout) {
-    Handler(Looper.getMainLooper()).post { getWindowManager()!!.addView(view, view.viewParams) }
+    Handler(Looper.getMainLooper()).post {
+      getWindowManager()!!.addView(view, view.viewParams)
+    }
   }
 
   private fun buildLayoutParamsForBubble(x: Int, y: Int): WindowManager.LayoutParams? {
