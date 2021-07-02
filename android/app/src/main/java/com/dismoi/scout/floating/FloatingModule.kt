@@ -35,6 +35,8 @@ class FloatingModule(
   private val reactContext: ReactApplicationContext
 ) : ReactContextBaseJavaModule(reactContext) {
 
+  private var bubblesService: FloatingService? = null
+
   var bubbleIsInitialized = false
   var messageIsInitialized = false
 
@@ -70,7 +72,6 @@ class FloatingModule(
       R.layout.bubble_trash
     ).setInitializationCallback(object : OnCallback {
       override fun onInitialized() {
-        Log.d("Notification", "Bubble Is initialized")
         bubbleIsInitialized = true
       }
     }).build()
@@ -78,7 +79,6 @@ class FloatingModule(
     messagesManager = Manager.Builder(reactContext)
     .setInitializationCallback(object : OnCallback {
       override fun onInitialized() {
-        Log.d("Notification", "Message Is initialized")
         messageIsInitialized = true
 
         promise.resolve("")
@@ -99,16 +99,16 @@ class FloatingModule(
     url: String,
     promise: Promise
   ) {
-    bubblesManager!!.initialize()
-    messagesManager!!.initialize()
+    _url = url
+    _notices = notices
+    _size = numberOfNotice
 
-    if (bubbleDisMoiView == null && messageDisMoiView == null) {
-      _url = url
-      _notices = notices
-      _size = numberOfNotice
-      addNewFloatingDisMoiBubble(x, y, numberOfNotice.toString())
-      promise.resolve("")
+    if (bubbleDisMoiView != null) {
+      removeDisMoiBubble()
     }
+
+    addNewFloatingDisMoiBubble(x, y, numberOfNotice.toString())
+    promise.resolve("")
   }
 
   @ReactMethod
@@ -116,9 +116,7 @@ class FloatingModule(
 
     if (messageDisMoiView == null) {
       try {
-        if (bubbleIsInitialized == true) {
-          removeDisMoiBubble()
-        }
+        removeDisMoiBubble()
 
         addNewFloatingDisMoiMessage(x, y)
         promise.resolve("")
@@ -145,12 +143,10 @@ class FloatingModule(
     val bundle = Bundle()
 
     reactContext.startActivityForResult(sharingIntent, 0, bundle)
-
   }
 
   @ReactMethod
   fun hideFloatingDisMoiMessage(promise: Promise) {
-    messagesManager!!.initialize()
     removeDisMoiMessage()
     promise.resolve("")
   }
@@ -184,12 +180,7 @@ class FloatingModule(
   }
 
   private fun addNewFloatingDisMoiMessage(x: Int, y: Int) {
-    if (bubbleIsInitialized == true) {
-      removeDisMoiBubble()
-    }
-
-    Log.d("Notification", "MESSAGE IS INITIALIZED");
-    Log.d("Notification", messageIsInitialized.toString());
+    removeDisMoiBubble()
 
     if (messageIsInitialized == true) {
       messageDisMoiView = LayoutInflater.from(reactContext).inflate(
@@ -206,11 +197,12 @@ class FloatingModule(
 
       val imageButton = messageDisMoiView!!.findViewById<View>(R.id.close) as ImageButton
       imageButton.setOnClickListener {
+        Log.d("Notifications", "cool")
         sendEventToReactNative("floating-dismoi-message-press", "")
       }
 
       messagesManager!!.addDisMoiMessage(messageDisMoiView!!, x, y)
-    }    
+    }
   }
 
   private fun addNewFloatingDisMoiBubble(x: Int, y: Int, numberOfNotice: String) {

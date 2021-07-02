@@ -1,7 +1,8 @@
 import { FloatingModule } from '../nativeModules/get';
 import { DeviceEventEmitter } from 'react-native';
 import { Linking } from 'react-native';
-import moment from 'moment';
+
+import { formatDate } from '../libraries';
 
 import 'moment/min/locales';
 
@@ -25,18 +26,14 @@ let matchingContexts = [];
 
 function callActionListeners() {
   DeviceEventEmitter.addListener('floating-dismoi-bubble-press', (e) => {
-    FloatingModule.initialize().then(() => {
-      return FloatingModule.showFloatingDisMoiMessage(0, 1500).then(() => {
-        // What to do when user press on the bubble
-        console.log('Bubble press');
-      });
+    return FloatingModule.showFloatingDisMoiMessage(0, 1500).then(() => {
+      // What to do when user press on the bubble
+      console.log('Bubble press');
     });
   });
   DeviceEventEmitter.addListener('floating-dismoi-message-press', (e) => {
-    FloatingModule.initialize().then(() => {
-      // What to do when user press on the message
-      return FloatingModule.hideFloatingDisMoiMessage().then(() => {});
-    });
+    // What to do when user press on the message
+    return FloatingModule.hideFloatingDisMoiMessage().then(() => {});
   });
 
   DeviceEventEmitter.addListener('floating-dismoi-bubble-remove', (e) => {
@@ -54,6 +51,8 @@ function callActionListeners() {
   });
 }
 
+let url = '';
+
 async function callMatchingContext() {
   console.log('_________________CALL MATHING CONTEXT____________________');
 
@@ -68,21 +67,22 @@ async function callMatchingContext() {
   });
 }
 
-const HeadlessTask = async (taskData) => {
-  if (matchingContexts.length === 0) {
-    callActionListeners();
-    await callMatchingContext();
-  }
+let urlList = [];
 
+const HeadlessTask = async (taskData) => {
   console.log('TASK DATA');
   console.log(taskData);
 
+  if (matchingContexts.length === 0) {
+    callActionListeners();
+    FloatingModule.initialize();
+    await callMatchingContext();
+  }
+
   if (taskData.hide === 'true') {
-    FloatingModule.initialize().then(() => {
-      FloatingModule.hideFloatingDisMoiBubble().then(() =>
-        FloatingModule.hideFloatingDisMoiMessage()
-      );
-    });
+    FloatingModule.hideFloatingDisMoiBubble().then(() =>
+      FloatingModule.hideFloatingDisMoiMessage()
+    );
 
     return;
   }
@@ -90,57 +90,63 @@ const HeadlessTask = async (taskData) => {
   const eventMessageFromChromeURL = taskData.url;
 
   if (eventMessageFromChromeURL) {
-    console.log('INSIDE EVENT MESSAGE FROM CHROME URL');
-    console.log(eventMessageFromChromeURL);
+    if (
+      eventMessageFromChromeURL.indexOf(' ') >= 0 ||
+      taskData.eventType === 'TYPE_VIEW_TEXT_CHANGED'
+    ) {
+      if (eventMessageFromChromeURL.indexOf(' ') >= 0) {
+        urlList.push('no url');
+      }
 
-    const noticeIds = getNoticeIds(matchingContexts, eventMessageFromChromeURL);
+      url = '';
+      FloatingModule.hideFloatingDisMoiBubble().then(() =>
+        FloatingModule.hideFloatingDisMoiMessage()
+      );
+      return;
+    }
 
-    let notices = await Promise.all(
-      noticeIds.map((noticeId) =>
-        fetch(
-          `https://notices.bulles.fr/api/v3/notices/${noticeId}`
-        ).then((response) => response.json())
-      )
-    );
+    if (taskData.eventText === '') {
+      const noticeIds = getNoticeIds(
+        matchingContexts,
+        eventMessageFromChromeURL
+      );
 
-    if (notices.length > 0) {
-      const numberOfNotice = notices.length;
+      let notices = await Promise.all(
+        noticeIds.map((noticeId) =>
+          fetch(
+            `https://notices.bulles.fr/api/v3/notices/${noticeId}`
+          ).then((response) => response.json())
+        )
+      );
+      if (notices.length > 0) {
+        const numberOfNotice = notices.length;
+        const noticesToShow = notices.map((res) => {
+          const formattedDate = formatDate(res);
 
-      const noticesToShow = notices.map((res) => {
-        const capitalize = (s) => {
-          if (typeof s !== 'string') return '';
-          return s.charAt(0).toUpperCase() + s.slice(1);
-        };
+          res.modified = formattedDate;
 
-        var month = moment(res.modified, 'YYYY-MM-DD')
-          .locale('fr')
-          .format('MMMM');
-        var day = moment(res.modified, 'YYYY-MM-DD').format('D');
-
-        var year = moment(res.modified, 'YYYY-MM-DD').format('Y');
-
-        const formattedDate = `${moment(res.modified, 'YYYY-MM-DD')
-          .locale('fr')
-          .format('dddd')} ${day} ${month} ${year}`;
-
-        res.modified = capitalize(formattedDate);
-
-        return res;
-      });
-
-      console.log('NOTICES TO SHOW');
-
-      FloatingModule.initialize().then(() => {
-        FloatingModule.showFloatingDisMoiBubble(
-          10,
-          1500,
-          numberOfNotice,
-          noticesToShow,
-          eventMessageFromChromeURL
-        ).then(() => {
-          notices = [];
+          return res;
         });
-      });
+
+        if (url !== eventMessageFromChromeURL) {
+          if (
+            taskData.className === 'android.widget.FrameLayout' &&
+            urlList.includes('no url')
+          ) {
+            urlList = [];
+            return;
+          }
+
+          url = eventMessageFromChromeURL;
+          FloatingModule.showFloatingDisMoiBubble(
+            10,
+            1500,
+            numberOfNotice,
+            noticesToShow,
+            eventMessageFromChromeURL
+          ).then(() => {});
+        }
+      }
     }
   }
 };
