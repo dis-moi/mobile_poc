@@ -8,18 +8,22 @@ function useFloatingBubbleRequestPermissionEffect(appState) {
   ] = React.useState(false);
 
   React.useEffect(() => {
-    function callIsAccessibilityEnabledMethod() {
-      Background.isAccessibilityEnabled((result) => {
+    let cancelled = false;
+
+    Background.isAccessibilityEnabled((result) => {
+      if (!cancelled) {
         if (result === '1') {
           setIsAccessibilityServiceEnabled(true);
         }
         if (result === '0') {
           setIsAccessibilityServiceEnabled(false);
         }
-      });
-    }
+      }
+    });
 
-    callIsAccessibilityEnabledMethod();
+    return () => {
+      cancelled = true;
+    };
   }, [appState]);
 
   return isAccessibilityServiceEnabled;
