@@ -117,8 +117,6 @@ function Finished() {
     }
   }
 
-  console.log(filteredContributors);
-
   return (
     <View style={{ backgroundColor: '#e9eaef' }}>
       <PopUp modalVisible={modalVisible} setModalVisible={setModalVisible}>
