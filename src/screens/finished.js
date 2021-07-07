@@ -5,7 +5,6 @@ import Title from '../components/title';
 import Button from '../components/button';
 import SharedPreferences from 'react-native-shared-preferences';
 import Paragraph from '../components/paragraph';
-import { Linking } from 'react-native';
 
 import useEverythingIsReadyEffect from '../useEffectHooks/everythingIsReady';
 import useHandleContributorsEffect from '../useEffectHooks/handleContributors';
@@ -14,7 +13,6 @@ import ItemFromList from '../components/itemFromList';
 import ContributorLogo from '../components/contributorLogo';
 import SimpleText from '../components/text';
 import RadioButtons from '../components/radioButtons';
-import useStartBackgroundServiceEffect from '../useEffectHooks/startBackgroundService';
 import { FloatingModule } from '../nativeModules/get';
 
 function Finished() {
@@ -29,8 +27,6 @@ function Finished() {
   const [contributorForModal, setContributorForModal] = React.useState({});
 
   useEverythingIsReadyEffect();
-
-  useStartBackgroundServiceEffect();
 
   const { contributors, filteredContributors } = useHandleContributorsEffect(
     radioButtonThatIsActivated,

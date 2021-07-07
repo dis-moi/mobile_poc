@@ -4,6 +4,8 @@ import { Linking } from 'react-native';
 
 import { formatDate } from '../libraries';
 
+import SharedPreferences from 'react-native-shared-preferences';
+
 import 'moment/min/locales';
 
 function getNoticeIds(matchingContexts, eventMessageFromChromeURL) {
@@ -53,102 +55,86 @@ function callActionListeners() {
 
 let url = '';
 
-async function callMatchingContext() {
+let matchingContextFetchApi =
+  'https://notices.bulles.fr/api/v3/matching-contexts?';
+
+async function callMatchingContext(savedUrlMatchingContext) {
   console.log('_________________CALL MATHING CONTEXT____________________');
 
+  console.log(matchingContextFetchApi + savedUrlMatchingContext);
+
   matchingContexts = await fetch(
-    'https://notices.bulles.fr/api/v3/matching-contexts'
+    matchingContextFetchApi + savedUrlMatchingContext
   ).then((response) => {
     console.log(
       '_________________END CALL MATHING CONTEXT____________________'
     );
-
     return response.json();
   });
 }
 
-let urlList = [];
-
 const HeadlessTask = async (taskData) => {
-  console.log('TASK DATA');
-  console.log(taskData);
-
-  if (matchingContexts.length === 0) {
+  SharedPreferences.getItem('url', async function (savedUrlMatchingContext) {
     callActionListeners();
     FloatingModule.initialize();
-    await callMatchingContext();
-  }
+    await callMatchingContext(savedUrlMatchingContext);
 
-  if (taskData.hide === 'true') {
-    FloatingModule.hideFloatingDisMoiBubble().then(() =>
-      FloatingModule.hideFloatingDisMoiMessage()
-    );
-
-    return;
-  }
-
-  const eventMessageFromChromeURL = taskData.url;
-
-  if (eventMessageFromChromeURL) {
-    if (
-      eventMessageFromChromeURL.indexOf(' ') >= 0 ||
-      taskData.eventType === 'TYPE_VIEW_TEXT_CHANGED'
-    ) {
-      if (eventMessageFromChromeURL.indexOf(' ') >= 0) {
-        urlList.push('no url');
-      }
-
-      url = '';
+    if (taskData.hide === 'true') {
       FloatingModule.hideFloatingDisMoiBubble().then(() =>
         FloatingModule.hideFloatingDisMoiMessage()
       );
       return;
     }
+    const eventMessageFromChromeURL = taskData.url;
 
-    if (taskData.eventText === '') {
-      const noticeIds = getNoticeIds(
-        matchingContexts,
-        eventMessageFromChromeURL
-      );
+    if (eventMessageFromChromeURL) {
+      if (
+        eventMessageFromChromeURL.indexOf(' ') >= 0 ||
+        taskData.eventType === 'TYPE_VIEW_TEXT_CHANGED'
+      ) {
+        FloatingModule.hideFloatingDisMoiBubble().then(() =>
+          FloatingModule.hideFloatingDisMoiMessage()
+        );
+        return;
+      }
 
-      let notices = await Promise.all(
-        noticeIds.map((noticeId) =>
-          fetch(
-            `https://notices.bulles.fr/api/v3/notices/${noticeId}`
-          ).then((response) => response.json())
-        )
-      );
-      if (notices.length > 0) {
-        const numberOfNotice = notices.length;
-        const noticesToShow = notices.map((res) => {
-          const formattedDate = formatDate(res);
+      if (taskData.eventText === '') {
+        const noticeIds = getNoticeIds(
+          matchingContexts,
+          eventMessageFromChromeURL
+        );
 
-          res.modified = formattedDate;
+        let notices = await Promise.all(
+          noticeIds.map((noticeId) =>
+            fetch(
+              `https://notices.bulles.fr/api/v3/notices/${noticeId}`
+            ).then((response) => response.json())
+          )
+        );
 
-          return res;
-        });
+        if (notices.length > 0) {
+          const noticesToShow = notices.map((res) => {
+            const formattedDate = formatDate(res);
+            res.modified = formattedDate;
 
-        if (url !== eventMessageFromChromeURL) {
-          if (
-            taskData.className === 'android.widget.FrameLayout' &&
-            urlList.includes('no url')
-          ) {
-            urlList = [];
-            return;
+            return res;
+          });
+
+          if (url !== eventMessageFromChromeURL) {
+            url = eventMessageFromChromeURL;
+
+            FloatingModule.showFloatingDisMoiBubble(
+              10,
+              1500,
+              notices.length,
+              noticesToShow,
+              eventMessageFromChromeURL
+            ).then(() => {});
           }
-
-          url = eventMessageFromChromeURL;
-          FloatingModule.showFloatingDisMoiBubble(
-            10,
-            1500,
-            numberOfNotice,
-            noticesToShow,
-            eventMessageFromChromeURL
-          ).then(() => {});
         }
       }
     }
-  }
+  });
 };
 
 export default HeadlessTask;
