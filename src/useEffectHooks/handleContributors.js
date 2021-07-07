@@ -21,7 +21,17 @@ function HandleContributorsEffect(
   React.useEffect(() => {
     async function getContributors() {
       SharedPreferences.getAll(async function (values) {
-        const ids = [...new Set(values.map((res) => res[1]))];
+        const ids = [
+          ...new Set(
+            values
+              .map((res) => {
+                if (res[0] !== 'url') {
+                  return res[1];
+                }
+              })
+              .filter(Boolean)
+          ),
+        ];
 
         const contributorsFromV3api = await fetch(
           'https://notices.bulles.fr/api/v3/contributors'
@@ -68,6 +78,28 @@ function HandleContributorsEffect(
       ]);
     }
   }, [radioButtonThatIsActivated, contributors, itemIds]);
+
+  React.useEffect(() => {
+    function setUrl() {
+      const uniqueIds = [...new Set(itemIds)];
+
+      let queryURL = '';
+
+      uniqueIds.forEach((contributorId, index) => {
+        if (contributorId) {
+          if (index === 0) {
+            queryURL = queryURL + `contributors[]=${contributorId}`;
+          } else {
+            queryURL = queryURL + `&contributors[]=${contributorId}`;
+          }
+        }
+      });
+
+      SharedPreferences.setItem('url', queryURL);
+    }
+
+    setUrl();
+  }, [itemIds]);
 
   return { filteredContributors, contributors };
 }

@@ -151,7 +151,7 @@ class FloatingModule(
     promise.resolve("")
   }
 
-/**
+  /**
    * Searches for all URLSpans in current text replaces them with our own ClickableSpans
    * forwards clicks to provided function.
    */
@@ -197,7 +197,6 @@ class FloatingModule(
 
       val imageButton = messageDisMoiView!!.findViewById<View>(R.id.close) as ImageButton
       imageButton.setOnClickListener {
-        Log.d("Notifications", "cool")
         sendEventToReactNative("floating-dismoi-message-press", "")
       }
 

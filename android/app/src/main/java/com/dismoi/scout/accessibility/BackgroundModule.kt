@@ -6,12 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import com.facebook.react.bridge.Callback
-import com.facebook.react.bridge.Promise
-import com.facebook.react.bridge.ReactApplicationContext
-import com.facebook.react.bridge.ReactContext
-import com.facebook.react.bridge.ReactContextBaseJavaModule
-import com.facebook.react.bridge.ReactMethod
+import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import javax.annotation.Nonnull
 
@@ -22,23 +17,6 @@ class BackgroundModule(@Nonnull reactContext: ReactApplicationContext) :
   @Nonnull
   override fun getName(): String {
     return "Background"
-  }
-
-  @ReactMethod
-  fun startService() {
-    val serviceToStart = Intent(reactContext, BackgroundService::class.java)
-    reactContext.startService(serviceToStart)
-    val launchIntent = reactContext.packageManager.getLaunchIntentForPackage(
-      reactContext.packageName
-    )
-    if (launchIntent != null) {
-      reactContext.startActivity(launchIntent)
-    }
-  }
-
-  @ReactMethod
-  fun stopService() {
-    reactContext.stopService(Intent(reactContext, BackgroundService::class.java))
   }
 
   private fun isAccessibilitySettingsOn(mContext: Context): Boolean {
