@@ -1,20 +1,19 @@
 package com.dismoi.scout.accessibility
 
 import android.accessibilityservice.AccessibilityService
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.provider.Settings.canDrawOverlays
+import android.text.TextUtils
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.RequiresApi
 import com.dismoi.scout.accessibility.BackgroundModule.Companion.sendEventFromAccessibilityServicePermission
 import com.facebook.react.HeadlessJsTaskService
+
 
 class BackgroundService : AccessibilityService() {
   private var _url: String? = ""
@@ -49,14 +48,13 @@ class BackgroundService : AccessibilityService() {
 
   private val previousUrlDetections: HashMap<String, Long> = HashMap()
 
+  @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
   override fun onServiceConnected() {
     val info = serviceInfo
 
     info.notificationTimeout = NOTIFICATION_TIMEOUT
 
     this.serviceInfo = info
-
-    sendEventFromAccessibilityServicePermission("true")
   }
 
   @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -111,6 +109,18 @@ class BackgroundService : AccessibilityService() {
       event.getPackageName() == "com.android.chrome"
   }
 
+  fun dfs(info: AccessibilityNodeInfo?) {
+    if (info == null) return
+    if (info.text != null && info.text.length > 0) {
+      Log.d("Notification", info.text.toString() + " class: " + info.className)
+    }
+    for (i in 0 until info.childCount) {
+      val child = info.getChild(i)
+      dfs(child)
+      child?.recycle()
+    }
+  }
+
   @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
   override fun onAccessibilityEvent(event: AccessibilityEvent) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -132,7 +142,6 @@ class BackgroundService : AccessibilityService() {
             val packageName = event.packageName.toString()
             var browserConfig: SupportedBrowserConfig? = null
 
-
             for (supportedConfig in getSupportedBrowsers()) {
               if (supportedConfig.packageName == packageName) {
                 browserConfig = supportedConfig
@@ -143,33 +152,40 @@ class BackgroundService : AccessibilityService() {
             if (browserConfig == null) {
               return
             }
-            val capturedUrl = captureUrl(parentNodeInfo, browserConfig)
-            parentNodeInfo.recycle()
+            if (AccessibilityEvent.eventTypeToString(event.getEventType()).contains("WINDOW")) {
+              Log.d("Notification", "-------------------- EVENT IS SHOWN ---------------------------------------------")
+              dfs(parentNodeInfo);
 
-            // we can't find an url. Browser either was updated or opened page without url text field
-            if (capturedUrl == null) {
-              return
-            }
+              val capturedUrl = captureUrl(parentNodeInfo, browserConfig)
 
-            val eventTime = event.eventTime
-            val detectionId = "$packageName"
-            val lastRecordedTime =
-              if (previousUrlDetections.containsKey(detectionId)) {
-                previousUrlDetections[detectionId]!!
-              } else 0.toLong()
+              // we can't find an url. Browser either was updated or opened page without url text field
+              if (capturedUrl == null) {
+                return
+              }
 
-            // some kind of redirect throttling
-            if (eventTime - lastRecordedTime > NOTIFICATION_TIMEOUT) {
-              Log.d("Notification", "POST WITH URL")
-              previousUrlDetections[detectionId] = eventTime
 
-              _url = capturedUrl
-              _eventType = getEventType(event)
-              _className = event.getClassName().toString()
-              _packageName = event.getPackageName().toString()
-              _eventText = getEventText(event)
-              _hide = "false"
-              handler.post(runnableCode)
+              parentNodeInfo.recycle()
+
+              val eventTime = event.eventTime
+              val detectionId = "$packageName"
+              val lastRecordedTime =
+                if (previousUrlDetections.containsKey(detectionId)) {
+                  previousUrlDetections[detectionId]!!
+                } else 0.toLong()
+
+              // some kind of redirect throttling
+              if (eventTime - lastRecordedTime > NOTIFICATION_TIMEOUT) {
+                Log.d("Notification", "POST WITH URL")
+                previousUrlDetections[detectionId] = eventTime
+
+                _url = capturedUrl
+                _eventType = getEventType(event)
+                _className = event.getClassName().toString()
+                _packageName = event.getPackageName().toString()
+                _eventText = getEventText(event)
+                _hide = "false"
+                handler.post(runnableCode)
+              }
             }
           }
 
