@@ -68,8 +68,6 @@ let matchingContextFetchApi =
 async function callMatchingContext(savedUrlMatchingContext) {
   console.log('_________________CALL MATHING CONTEXT____________________');
 
-  console.log(matchingContextFetchApi + savedUrlMatchingContext);
-
   matchingContexts = await fetch(
     matchingContextFetchApi + savedUrlMatchingContext
   ).then((response) => {
@@ -138,19 +136,15 @@ const HeadlessTask = async (taskData) => {
             return res;
           });
 
-          if (url !== eventMessageFromChromeURL) {
-            url = eventMessageFromChromeURL;
-
-            FloatingModule.showFloatingDisMoiBubble(
-              10,
-              1500,
-              notices.length,
-              noticesToShow,
-              eventMessageFromChromeURL
-            ).then(() => {
-              noticeIds = [];
-            });
-          }
+          FloatingModule.showFloatingDisMoiBubble(
+            10,
+            1500,
+            notices.length,
+            noticesToShow,
+            eventMessageFromChromeURL
+          ).then(() => {
+            noticeIds = [];
+          });
         }
       }
     }
