@@ -6,14 +6,12 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.provider.Settings.canDrawOverlays
-import android.text.TextUtils
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
 import androidx.annotation.RequiresApi
 import com.dismoi.scout.accessibility.BackgroundModule.Companion.sendEventFromAccessibilityServicePermission
 import com.facebook.react.HeadlessJsTaskService
-
 
 class BackgroundService : AccessibilityService() {
   private var _url: String? = ""
@@ -23,7 +21,7 @@ class BackgroundService : AccessibilityService() {
   private var _eventText: String? = ""
   private var _hide: String? = ""
 
-  private val NOTIFICATION_TIMEOUT: Long = 200
+  private val NOTIFICATION_TIMEOUT: Long = 300
 
   private val handler = Handler()
   private val runnableCode: Runnable = object : Runnable {
@@ -153,8 +151,6 @@ class BackgroundService : AccessibilityService() {
               return
             }
             if (AccessibilityEvent.eventTypeToString(event.getEventType()).contains("WINDOW")) {
-              Log.d("Notification", "-------------------- EVENT IS SHOWN ---------------------------------------------")
-              dfs(parentNodeInfo);
 
               val capturedUrl = captureUrl(parentNodeInfo, browserConfig)
 
@@ -162,7 +158,6 @@ class BackgroundService : AccessibilityService() {
               if (capturedUrl == null) {
                 return
               }
-
 
               parentNodeInfo.recycle()
 

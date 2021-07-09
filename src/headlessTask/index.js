@@ -1,4 +1,4 @@
-import { FloatingModule } from '../nativeModules/get';
+import { Background, FloatingModule } from '../nativeModules/get';
 import { DeviceEventEmitter } from 'react-native';
 import { Linking } from 'react-native';
 
@@ -8,23 +8,30 @@ import SharedPreferences from 'react-native-shared-preferences';
 
 import 'moment/min/locales';
 
-function getNoticeIds(matchingContexts, eventMessageFromChromeURL) {
-  return matchingContexts
-    .map((res) => {
-      const addWWWForBuildingURL = `www.${eventMessageFromChromeURL}`;
-
-      if (res.xpath) {
-        return;
-      }
-
-      if (addWWWForBuildingURL.match(new RegExp(res.urlRegex, 'g'))) {
-        return res.noticeId;
-      }
-    })
-    .filter(Boolean);
-}
-
 let matchingContexts = [];
+let HTML = '';
+let noticeIds = [];
+
+async function getNoticeIds(eventMessageFromChromeURL) {
+  for (const matchingContext of matchingContexts) {
+    const addWWWForBuildingURL = `www.${eventMessageFromChromeURL}`;
+
+    if (addWWWForBuildingURL.match(new RegExp(matchingContext.urlRegex, 'g'))) {
+      if (matchingContext.xpath) {
+        const result = await Background.testWithXpath(
+          HTML,
+          matchingContext.xpath
+        );
+
+        if (result === 'true') {
+          noticeIds.push(matchingContext.noticeId);
+        }
+        continue;
+      }
+      noticeIds.push(matchingContext.noticeId);
+    }
+  }
+}
 
 function callActionListeners() {
   DeviceEventEmitter.addListener('floating-dismoi-bubble-press', (e) => {
@@ -73,11 +80,23 @@ async function callMatchingContext(savedUrlMatchingContext) {
   });
 }
 
+async function getHTMLOfCurrentChromeURL(eventMessageFromChromeURL) {
+  HTML = await fetch(`http://www.${eventMessageFromChromeURL}`).then(function (
+    response
+  ) {
+    // The API call was successful!
+    return response.text();
+  });
+}
+
 const HeadlessTask = async (taskData) => {
   SharedPreferences.getItem('url', async function (savedUrlMatchingContext) {
     callActionListeners();
     FloatingModule.initialize();
-    await callMatchingContext(savedUrlMatchingContext);
+    await Promise.all([
+      await callMatchingContext(savedUrlMatchingContext),
+      await getHTMLOfCurrentChromeURL(taskData.url),
+    ]);
 
     if (taskData.hide === 'true') {
       FloatingModule.hideFloatingDisMoiBubble().then(() =>
@@ -99,13 +118,12 @@ const HeadlessTask = async (taskData) => {
       }
 
       if (taskData.eventText === '') {
-        const noticeIds = getNoticeIds(
-          matchingContexts,
-          eventMessageFromChromeURL
-        );
+        await getNoticeIds(eventMessageFromChromeURL);
+
+        let uniqueIds = [...new Set(noticeIds)];
 
         let notices = await Promise.all(
-          noticeIds.map((noticeId) =>
+          uniqueIds.map((noticeId) =>
             fetch(
               `https://notices.bulles.fr/api/v3/notices/${noticeId}`
             ).then((response) => response.json())
@@ -129,7 +147,9 @@ const HeadlessTask = async (taskData) => {
               notices.length,
               noticesToShow,
               eventMessageFromChromeURL
-            ).then(() => {});
+            ).then(() => {
+              noticeIds = [];
+            });
           }
         }
       }
