@@ -107,18 +107,6 @@ class BackgroundService : AccessibilityService() {
       event.getPackageName() == "com.android.chrome"
   }
 
-  fun dfs(info: AccessibilityNodeInfo?) {
-    if (info == null) return
-    if (info.text != null && info.text.length > 0) {
-      Log.d("Notification", info.text.toString() + " class: " + info.className)
-    }
-    for (i in 0 until info.childCount) {
-      val child = info.getChild(i)
-      dfs(child)
-      child?.recycle()
-    }
-  }
-
   @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
   override fun onAccessibilityEvent(event: AccessibilityEvent) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
