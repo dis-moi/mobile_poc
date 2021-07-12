@@ -60,24 +60,18 @@ class BackgroundService : AccessibilityService() {
 
   @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
   private fun captureUrl(info: AccessibilityNodeInfo, config: SupportedBrowserConfig): String? {
-    if (info.childCount > 0) {
-      if (info.getChild(0).className.toString() == "android.widget.LinearLayout") {
-        if (info.childCount > 1) {
-          if (info.getChild(1).className.toString() != "android.widget.EditText") {
-            val nodes = info.findAccessibilityNodeInfosByViewId(config.addressBarId)
-            if (nodes == null || nodes.size <= 0) {
-              return null
-            }
-            val addressBarNodeInfo = nodes[0]
-            var url: String? = null
-            if (addressBarNodeInfo.text != null) {
-              url = addressBarNodeInfo.text.toString()
-            }
-            addressBarNodeInfo.recycle()
-            return url
-          }
-        }
+    if (chromeWebpageIsRendering(info)) {
+      val nodes = info.findAccessibilityNodeInfosByViewId(config.addressBarId)
+      if (nodes == null || nodes.size <= 0) {
+        return null
       }
+      val addressBarNodeInfo = nodes[0]
+      var url: String? = null
+      if (addressBarNodeInfo.text != null) {
+        url = addressBarNodeInfo.text.toString()
+      }
+      addressBarNodeInfo.recycle()
+      return url
     }
     return null
   }
@@ -106,6 +100,13 @@ class BackgroundService : AccessibilityService() {
 
   fun isLauncherPackage(packageName: CharSequence): Boolean {
     return "com.android.systemui" == packageName || "com.android.launcher3" == packageName
+  }
+
+  private fun chromeWebpageIsRendering(info: AccessibilityNodeInfo): Boolean {
+    return info.childCount > 0 && 
+      info.getChild(0).className.toString() == "android.widget.LinearLayout" && 
+      info.childCount > 1 && 
+      info.getChild(1).className.toString() != "android.widget.EditText"
   }
 
   @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -143,7 +144,7 @@ class BackgroundService : AccessibilityService() {
           }
 
           val nodeInfo = event.source
-
+          
           val capturedUrl = captureUrl(nodeInfo, browserConfig)
 
           parentNodeInfo.recycle()
@@ -162,7 +163,6 @@ class BackgroundService : AccessibilityService() {
 
           // some kind of redirect throttling
           if (eventTime - lastRecordedTime > NOTIFICATION_TIMEOUT) {
-
             previousUrlDetections[detectionId] = eventTime
 
             if (_url != capturedUrl) {
@@ -171,7 +171,6 @@ class BackgroundService : AccessibilityService() {
               _className = event.getClassName().toString()
               _packageName = event.getPackageName().toString()
               _eventText = getEventText(event)
-              //_hide = "false"
 
               handler.post(runnableCode)
             }
