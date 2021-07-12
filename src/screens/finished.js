@@ -172,11 +172,7 @@ function Finished() {
         }}
       />
       {contributors.length === 0 && (
-        <ActivityIndicator
-          isVisible={contributors.length === 0}
-          size={40}
-          color={'#2855a2'}
-        />
+        <ActivityIndicator isVisible size={40} color={'#2855a2'} />
       )}
 
       {contributors.length > 0 && (
