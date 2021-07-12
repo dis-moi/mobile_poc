@@ -1,9 +1,6 @@
 package com.dismoi.scout.accessibility
 
 import android.accessibilityservice.AccessibilityService
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -24,7 +21,7 @@ class BackgroundService : AccessibilityService() {
   private var _eventText: String? = ""
   private var _hide: String? = ""
 
-  private val NOTIFICATION_TIMEOUT: Long = 200
+  private val NOTIFICATION_TIMEOUT: Long = 300
 
   private val handler = Handler()
   private val runnableCode: Runnable = object : Runnable {
@@ -49,14 +46,13 @@ class BackgroundService : AccessibilityService() {
 
   private val previousUrlDetections: HashMap<String, Long> = HashMap()
 
+  @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
   override fun onServiceConnected() {
     val info = serviceInfo
 
     info.notificationTimeout = NOTIFICATION_TIMEOUT
 
     this.serviceInfo = info
-
-    sendEventFromAccessibilityServicePermission("true")
   }
 
   @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
@@ -132,7 +128,6 @@ class BackgroundService : AccessibilityService() {
             val packageName = event.packageName.toString()
             var browserConfig: SupportedBrowserConfig? = null
 
-
             for (supportedConfig in getSupportedBrowsers()) {
               if (supportedConfig.packageName == packageName) {
                 browserConfig = supportedConfig
@@ -143,33 +138,37 @@ class BackgroundService : AccessibilityService() {
             if (browserConfig == null) {
               return
             }
-            val capturedUrl = captureUrl(parentNodeInfo, browserConfig)
-            parentNodeInfo.recycle()
+            if (AccessibilityEvent.eventTypeToString(event.getEventType()).contains("WINDOW")) {
 
-            // we can't find an url. Browser either was updated or opened page without url text field
-            if (capturedUrl == null) {
-              return
-            }
+              val capturedUrl = captureUrl(parentNodeInfo, browserConfig)
 
-            val eventTime = event.eventTime
-            val detectionId = "$packageName"
-            val lastRecordedTime =
-              if (previousUrlDetections.containsKey(detectionId)) {
-                previousUrlDetections[detectionId]!!
-              } else 0.toLong()
+              // we can't find an url. Browser either was updated or opened page without url text field
+              if (capturedUrl == null) {
+                return
+              }
 
-            // some kind of redirect throttling
-            if (eventTime - lastRecordedTime > NOTIFICATION_TIMEOUT) {
-              Log.d("Notification", "POST WITH URL")
-              previousUrlDetections[detectionId] = eventTime
+              parentNodeInfo.recycle()
 
-              _url = capturedUrl
-              _eventType = getEventType(event)
-              _className = event.getClassName().toString()
-              _packageName = event.getPackageName().toString()
-              _eventText = getEventText(event)
-              _hide = "false"
-              handler.post(runnableCode)
+              val eventTime = event.eventTime
+              val detectionId = "$packageName"
+              val lastRecordedTime =
+                if (previousUrlDetections.containsKey(detectionId)) {
+                  previousUrlDetections[detectionId]!!
+                } else 0.toLong()
+
+              // some kind of redirect throttling
+              if (eventTime - lastRecordedTime > NOTIFICATION_TIMEOUT) {
+                Log.d("Notification", "POST WITH URL")
+                previousUrlDetections[detectionId] = eventTime
+
+                _url = capturedUrl
+                _eventType = getEventType(event)
+                _className = event.getClassName().toString()
+                _packageName = event.getPackageName().toString()
+                _eventText = getEventText(event)
+                _hide = "false"
+                handler.post(runnableCode)
+              }
             }
           }
 
