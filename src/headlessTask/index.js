@@ -8,11 +8,8 @@ import SharedPreferences from 'react-native-shared-preferences';
 
 import 'moment/min/locales';
 
-let matchingContexts = [];
-let HTML = '';
-let noticeIds = [];
-
-async function getNoticeIds(eventMessageFromChromeURL) {
+async function getNoticeIds(eventMessageFromChromeURL, matchingContexts, HTML) {
+  const noticeIds = [];
   for (const matchingContext of matchingContexts) {
     const addWWWForBuildingURL = `www.${eventMessageFromChromeURL}`;
 
@@ -31,6 +28,8 @@ async function getNoticeIds(eventMessageFromChromeURL) {
       noticeIds.push(matchingContext.noticeId);
     }
   }
+
+  return noticeIds;
 }
 
 function callActionListeners() {
@@ -60,26 +59,24 @@ function callActionListeners() {
   });
 }
 
-let url = '';
-
 let matchingContextFetchApi =
   'https://notices.bulles.fr/api/v3/matching-contexts?';
 
 async function callMatchingContext(savedUrlMatchingContext) {
   console.log('_________________CALL MATHING CONTEXT____________________');
 
-  matchingContexts = await fetch(
-    matchingContextFetchApi + savedUrlMatchingContext
-  ).then((response) => {
-    console.log(
-      '_________________END CALL MATHING CONTEXT____________________'
-    );
-    return response.json();
-  });
+  return await fetch(matchingContextFetchApi + savedUrlMatchingContext).then(
+    (response) => {
+      console.log(
+        '_________________END CALL MATHING CONTEXT____________________'
+      );
+      return response.json();
+    }
+  );
 }
 
 async function getHTMLOfCurrentChromeURL(eventMessageFromChromeURL) {
-  HTML = await fetch(`http://www.${eventMessageFromChromeURL}`).then(function (
+  return await fetch(`http://www.${eventMessageFromChromeURL}`).then(function (
     response
   ) {
     // The API call was successful!
@@ -91,10 +88,13 @@ const HeadlessTask = async (taskData) => {
   SharedPreferences.getItem('url', async function (savedUrlMatchingContext) {
     callActionListeners();
     FloatingModule.initialize();
-    await Promise.all([
+    const res = await Promise.all([
       await callMatchingContext(savedUrlMatchingContext),
       await getHTMLOfCurrentChromeURL(taskData.url),
     ]);
+
+    const matchingContexts = res[0];
+    const HTML = res[1];
 
     if (taskData.hide === 'true') {
       FloatingModule.hideFloatingDisMoiBubble().then(() =>
@@ -116,9 +116,13 @@ const HeadlessTask = async (taskData) => {
       }
 
       if (taskData.eventText === '') {
-        await getNoticeIds(eventMessageFromChromeURL);
+        let noticeIds = await getNoticeIds(
+          eventMessageFromChromeURL,
+          matchingContexts,
+          HTML
+        );
 
-        let uniqueIds = [...new Set(noticeIds)];
+        const uniqueIds = [...new Set(noticeIds)];
 
         let notices = await Promise.all(
           uniqueIds.map((noticeId) =>
