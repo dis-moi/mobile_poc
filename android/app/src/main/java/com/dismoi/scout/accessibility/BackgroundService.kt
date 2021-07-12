@@ -1,9 +1,7 @@
 package com.dismoi.scout.accessibility
 
 import android.accessibilityservice.AccessibilityService
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -51,6 +49,13 @@ class BackgroundService : AccessibilityService() {
 
   override fun onServiceConnected() {
     val info = serviceInfo
+
+    info.eventTypes = AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED
+    info.packageNames = packageNames()
+    info.feedbackType = AccessibilityServiceInfo.FEEDBACK_VISUAL
+    info.notificationTimeout = 300
+    info.flags = AccessibilityServiceInfo.FLAG_REPORT_VIEW_IDS or
+      AccessibilityServiceInfo.FLAG_RETRIEVE_INTERACTIVE_WINDOWS
 
     info.notificationTimeout = NOTIFICATION_TIMEOUT
 
@@ -113,6 +118,7 @@ class BackgroundService : AccessibilityService() {
 
   @RequiresApi(Build.VERSION_CODES.JELLY_BEAN_MR2)
   override fun onAccessibilityEvent(event: AccessibilityEvent) {
+
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
       if (canDrawOverlays(applicationContext)) {
         if (theseEventsNeedToHideTheBubble(event)) {
@@ -160,7 +166,6 @@ class BackgroundService : AccessibilityService() {
 
             // some kind of redirect throttling
             if (eventTime - lastRecordedTime > NOTIFICATION_TIMEOUT) {
-              Log.d("Notification", "POST WITH URL")
               previousUrlDetections[detectionId] = eventTime
 
               _url = capturedUrl
@@ -172,7 +177,6 @@ class BackgroundService : AccessibilityService() {
               handler.post(runnableCode)
             }
           }
-
         }
 
       }
