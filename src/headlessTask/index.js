@@ -53,8 +53,6 @@ function callActionListeners() {
   });
 }
 
-let url = '';
-
 let matchingContextFetchApi =
   'https://notices.bulles.fr/api/v3/matching-contexts?';
 
@@ -88,16 +86,6 @@ const HeadlessTask = async (taskData) => {
     const eventMessageFromChromeURL = taskData.url;
 
     if (eventMessageFromChromeURL) {
-      if (
-        eventMessageFromChromeURL.indexOf(' ') >= 0 ||
-        taskData.eventType === 'TYPE_VIEW_TEXT_CHANGED'
-      ) {
-        FloatingModule.hideFloatingDisMoiBubble().then(() =>
-          FloatingModule.hideFloatingDisMoiMessage()
-        );
-        return;
-      }
-
       if (taskData.eventText === '') {
         const noticeIds = getNoticeIds(
           matchingContexts,
@@ -120,17 +108,13 @@ const HeadlessTask = async (taskData) => {
             return res;
           });
 
-          if (url !== eventMessageFromChromeURL) {
-            url = eventMessageFromChromeURL;
-
-            FloatingModule.showFloatingDisMoiBubble(
-              10,
-              1500,
-              notices.length,
-              noticesToShow,
-              eventMessageFromChromeURL
-            ).then(() => {});
-          }
+          FloatingModule.showFloatingDisMoiBubble(
+            10,
+            1500,
+            notices.length,
+            noticesToShow,
+            eventMessageFromChromeURL
+          ).then(() => {});
         }
       }
     }
